@@ -1,0 +1,35 @@
+
+
+**********************************************************************************
+
+Khi đặt tên migration
+- bắt buộc phải theo form (lưu ý trước tên phải là hai dấu gạch dưới)
+V1.1__<tên tùy ý>.sql
+V1.2__<tên tùy ý>.sql
+cứ mỗi lần thêm một file thì đổi số sau dấu chấm +1 không thay đổi V1
+ví dụ:
+V1.1__
+V1.2__
+V1.3__
+V1.4__
+...
+
+- code bên trong sẽ là câu lệnh tạo bảng insert bảng như bình thường
+  Lưu ý: khi đặt insert trong này mỗi khi tạo migrate lại sẽ insert luôn
+  thành data gốc
+
+**************** ĐẶC BIỆT QUAN TRỌNG !!!!!!!!!! ***********************
+*  MỖI KHI CÓ THAY ĐỔI GÌ KHÔNG ĐƯỢC SỬA LẠI VÀO FILE CŨ ĐỂ TRÁNH CONFLIX
+*  MÀ PHẢI TẠO FILE MỚI RỒI VIẾT CÂU LỆNH ALERT NHƯ BÌNH THƯỜNG
+
+- khi viết xong chỉ cần chạy lại chương trình và bảng sẽ tự generate ra
+  trường hợp báo lỗi flyway cần check lại tên xem đã bị trùng chưa
+  hoặc có thể do thay đổi quá nhiều trên databasse thì cần drop toàn bộ database
+  và run lại chương trình điều này sẽ mất data khi thêm bằng code
+ví dụ:
+  V1.1__test1.sql
+  V1.1__test123.sql | trường hợp này false vì version bị trùng
+
+
+
+***********************************************************************************
