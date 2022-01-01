@@ -32,13 +32,17 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public ResponseWrapper updateCategory(CategoryEntity categoryEntity) {
     var category = categoryRepository.findFirstById(categoryEntity.getId());
-    categoryEntity.setModifiedDate(LocalDateTime.now());
-    categoryEntity.setCreatedDate(category.getCreatedDate());
-    if(category != null){
+
+    if (category != null) {
+      categoryEntity.setModifiedDate(LocalDateTime.now());
+      categoryEntity.setCreatedDate(category.getCreatedDate());
       return new ResponseWrapper(EnumResponse.SUCCESS,
           categoryRepository.save(categoryEntity));
+    } else {
+      var response = EnumResponse.FAIL;
+      response.setResponseMessage("NOT FOUND");
+      return new ResponseWrapper(response, null);
     }
-    return null;
   }
 
 
