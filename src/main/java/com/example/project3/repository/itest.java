@@ -12,6 +12,5 @@ public interface itest extends JpaRepository<testEntity, Long> {
 
   @Query(value = "select * from t_test", nativeQuery = true)
   List<testEntity> getAll();
-
   Long countAllByName(String name);
 }

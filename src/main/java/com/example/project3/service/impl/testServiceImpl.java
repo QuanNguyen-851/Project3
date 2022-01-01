@@ -1,7 +1,8 @@
-package com.example.project3.service;
+package com.example.project3.service.impl;
 
 import com.example.project3.model.entity.testEntity;
 import com.example.project3.repository.itest;
+import com.example.project3.service.testService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class testServiceImpl implements testService{
+public class testServiceImpl implements testService {
   @Autowired
   private itest repository;
   @Override
