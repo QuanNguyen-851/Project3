@@ -1,5 +1,7 @@
 package com.example.project3.model.dto;
 
+import com.example.project3.model.entity.ProductInformationEntity;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +22,5 @@ public class ProductDTO {
   private String status;
   private String category;
   private String production;
+  private List<ProductInformationEntity> listInformation;
 }

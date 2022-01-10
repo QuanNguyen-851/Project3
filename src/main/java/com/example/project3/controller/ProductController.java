@@ -24,7 +24,7 @@ public class ProductController {
   @Autowired
   private ProductService productService;
 
-  @GetMapping("/getAll")
+  @GetMapping("/getall")
   private ResponseEntity<Iterable<ProductDTO>> getAll(@RequestParam int page, @RequestParam int size) {
     return new ResponseEntity<>(productService.getAll(page, size), HttpStatus.OK);
   }
