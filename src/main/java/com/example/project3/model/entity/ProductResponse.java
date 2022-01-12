@@ -1,5 +1,6 @@
 package com.example.project3.model.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,5 +35,6 @@ public class ProductResponse {
   private String avatarUrl;
   @Transient
   private List<ProductInformationEntity> listInformation;
-
+  private LocalDateTime createdDate;
+  private LocalDateTime modifiedDate;
 }

@@ -1,5 +1,6 @@
 package com.example.project3.model.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +43,8 @@ public class ProductEntity {
   private String status;
 //  @Column(name = "avartar_url")
   private String avatarUrl;
+  private LocalDateTime createdDate;
+  private LocalDateTime modifiedDate;
 
 //  @Transient
 //  private String category;
