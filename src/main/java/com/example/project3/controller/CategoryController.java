@@ -34,7 +34,7 @@ public class CategoryController {
     ), HttpStatus.OK);
   }
 
-  @GetMapping("/getAll")
+  @GetMapping("/getall")
   private ResponseEntity<List<CategoryEntity>> getAll() {
     return new ResponseEntity<>(categoryService.getAllCategory(), HttpStatus.OK);
   }
