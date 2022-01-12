@@ -9,7 +9,7 @@ import lombok.Setter;
 public class ResponseWrapper {
     private String responseCode;
     private String responseMessage;
-    private Object responseData;
+    private Object responseData=null;
         public ResponseWrapper(EnumResponse response, Object data) {
         this.responseCode = response.getResponseCode();
         this.responseMessage = response.getResponseMessage();

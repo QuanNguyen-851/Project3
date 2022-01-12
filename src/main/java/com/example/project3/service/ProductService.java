@@ -17,5 +17,5 @@ public interface ProductService {
 
   ResponseWrapper create(ProductResponse productResponse);
 
-
+  ResponseWrapper update(ProductResponse productResponse);
 }
