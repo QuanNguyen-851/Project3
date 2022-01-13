@@ -43,8 +43,9 @@ public class ProductServiceImpl implements ProductService {
   private ProductionRepository productionRepository;
 
   @Override
-  public Page<ProductResponse> getAll(int page, int limit) {
-    Pageable pageable = PageRequest.of(page, limit);
+  public List<ProductResponse> getAll() {
+
+//    Pageable pageable = PageRequest.of(page, limit);
 //    return repository.getAllProduct(pageable)
 //        .map(value ->
 //            Maper.getInstance().ProductEntityToDTO(value))
@@ -54,7 +55,8 @@ public class ProductServiceImpl implements ProductService {
 //          return value;
 //        });
 //    List<ProductDTO> = repository.getAllProduct().
-    return new PageImpl<>(repository.getAllProduct(), pageable, repository.getAllProduct().size());
+    return repository.getAllProduct();
+//    return new PageImpl<>(repository.getAllProduct(), pageable, repository.getAllProduct().size());
 
 
 //        return new PageImpl<>(studentPackageResponses, pageable, countResults);

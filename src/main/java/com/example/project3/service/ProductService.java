@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
 
-  Page<ProductResponse> getAll(int page, int size);
+  List<ProductResponse> getAll();
 
   ProductResponse getDetail(Long id);
 

@@ -30,8 +30,8 @@ public class ProductController {
   private ProductService productService;
 
   @GetMapping("/getall")
-  private ResponseEntity<Iterable<ProductResponse>> getAll(@RequestParam int page, @RequestParam int size) {
-    return new ResponseEntity<>(productService.getAll(page, size), HttpStatus.OK);
+  private ResponseEntity<Iterable<ProductResponse>> getAll() {
+    return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
   }
 
   @GetMapping("/getdetail")
