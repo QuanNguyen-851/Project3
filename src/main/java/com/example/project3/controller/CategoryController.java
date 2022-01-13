@@ -43,4 +43,11 @@ public class CategoryController {
   private ResponseEntity<ResponseWrapper> updateCategory(@RequestBody @Validated CategoryEntity categoryEntity){
     return new  ResponseEntity<>(categoryService.updateCategory(categoryEntity), HttpStatus.OK);
   }
+  @GetMapping("/getdetail")
+  private ResponseEntity<CategoryEntity> getById(@RequestParam Long id){
+    if(categoryService.getById(id)!=null){
+      return new ResponseEntity<>(categoryService.getById(id), HttpStatus.OK);
+    }
+    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+  }
 }

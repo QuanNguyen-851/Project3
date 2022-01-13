@@ -1,5 +1,6 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.model.DisableStatus;
 import com.example.project3.model.entity.ProductionEntity;
 import com.example.project3.repository.ProductionRepository;
 import com.example.project3.response.EnumResponse;
@@ -24,6 +25,7 @@ public class ProductionServiceImpl implements ProductionService {
   @Override
   public ResponseWrapper create(ProductionEntity productionEntity) {
     productionEntity.setCreatedDate(LocalDateTime.now());
+    productionEntity.setStatus(DisableStatus.ENABLE.name());
      var re = productionRepository.save(productionEntity);
     return new ResponseWrapper(EnumResponse.SUCCESS, re );
   }
@@ -40,5 +42,12 @@ public class ProductionServiceImpl implements ProductionService {
       response.setResponseMessage("NOT FOUND");
       return new ResponseWrapper(response, null);
     }
+  }
+
+  @Override
+  public ProductionEntity getById(Long id) {
+    if(id!=null){
+      return productionRepository.findFirstById(id);}
+    return null;
   }
 }

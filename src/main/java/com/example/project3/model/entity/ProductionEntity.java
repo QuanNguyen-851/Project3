@@ -22,6 +22,7 @@ public class ProductionEntity {
   private Long id;
   private String name;
   private String company;
+  private String status;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
 }

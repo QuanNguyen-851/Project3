@@ -9,4 +9,6 @@ List<ProductionEntity>getAll();
 ResponseWrapper create(ProductionEntity productionEntity);
 
 ResponseWrapper update(ProductionEntity productionEntity);
+
+ProductionEntity getById(Long id);
 }

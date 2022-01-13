@@ -21,13 +21,22 @@ public class ProductionController {
   private ResponseEntity<List<ProductionEntity>> getAll() {
     return new ResponseEntity<>(productionService.getAll(), HttpStatus.OK);
   }
-  @PostMapping("/create")
-  private ResponseEntity<ResponseWrapper> create( @RequestBody ProductionEntity productionEntity){
-  return new ResponseEntity<>(productionService.create(productionEntity), HttpStatus.OK);
-  }
-  @PutMapping("/update")
-  private ResponseEntity<ResponseWrapper> update( @RequestBody ProductionEntity productionEntity){
-    return new ResponseEntity<>(productionService.update(productionEntity), HttpStatus.OK);
 
+  @PostMapping("/create")
+  private ResponseEntity<ResponseWrapper> create(@RequestBody ProductionEntity productionEntity) {
+    return new ResponseEntity<>(productionService.create(productionEntity), HttpStatus.OK);
+  }
+
+  @PutMapping("/update")
+  private ResponseEntity<ResponseWrapper> update(@RequestBody ProductionEntity productionEntity) {
+    return new ResponseEntity<>(productionService.update(productionEntity), HttpStatus.OK);
+  }
+
+  @GetMapping("/getdetail")
+  private ResponseEntity<ProductionEntity> getDetail(@RequestParam Long id) {
+    if (productionService.getById(id) != null) {
+      return new ResponseEntity<>(productionService.getById(id), HttpStatus.OK);
+    }
+    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
   }
 }

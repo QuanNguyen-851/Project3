@@ -12,4 +12,6 @@ public interface ProductInformationRepository extends JpaRepository<ProductInfor
   List<ProductInformationEntity> findAllByProductId(Long ProductId);
 
   ProductInformationEntity findFirstById(Long id);
+
+  ProductInformationEntity findFirstByProductIdAndKey(Long productId, String key);
 }
