@@ -1,52 +1,38 @@
 package com.example.project3.model.entity;
 
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Builder;
+import javax.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Transient;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "p_product")
-public class ProductEntity {
+public class ProductResponse {
 
   @Id
-//  @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-//  @Column(name = "code")
   private String code;
-//  @Column(name = "name")
   private String name;
-//  @Column(name = "description")
-//  private String subName;
   private String description;
-//  @Column(name = "category_id")
   private Long categoryId;
-//  @Column(name = "production_id")
   private Long productionId;
-//  @Column(name = "price")
   private Long price;
-//  @Column(name = "quantity")
   private Long quantity;
-//  @Column(name = "status")
   private String status;
-//  @Column(name = "avartar_url")
+    private String category;
+  private String production;
   private String avatarUrl;
-
-//  @Transient
-//  private String category;
-//  @Transient
-//  private String production;
-
+  @Transient
+  private List<ProductInformationEntity> listInformation;
 
 }
