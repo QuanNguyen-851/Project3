@@ -1,5 +1,6 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.model.DisableStatus;
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.repository.CategoryRepository;
 import com.example.project3.response.EnumResponse;
@@ -26,6 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public CategoryEntity createCategory(CategoryEntity categoryEntity) {
     categoryEntity.setCreatedDate(LocalDateTime.now());
+    categoryEntity.setStatus(DisableStatus.ENABLE.name());
     return categoryRepository.save(categoryEntity);
   }
 
@@ -43,6 +45,13 @@ public class CategoryServiceImpl implements CategoryService {
       response.setResponseMessage("NOT FOUND");
       return new ResponseWrapper(response, null);
     }
+  }
+
+  @Override
+  public CategoryEntity getById(Long id) {
+    if(id!=null){
+    return categoryRepository.findFirstById(id);}
+    return null;
   }
 
 

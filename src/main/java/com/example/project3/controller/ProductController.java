@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,8 +30,8 @@ public class ProductController {
   private ProductService productService;
 
   @GetMapping("/getall")
-  private ResponseEntity<Iterable<ProductResponse>> getAll(@RequestParam int page, @RequestParam int size) {
-    return new ResponseEntity<>(productService.getAll(page, size), HttpStatus.OK);
+  private ResponseEntity<Iterable<ProductResponse>> getAll() {
+    return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
   }
 
   @GetMapping("/getdetail")
@@ -41,6 +42,10 @@ public class ProductController {
   @PostMapping("/create")
   private ResponseEntity<ResponseWrapper> create(@RequestBody ProductResponse request){
     return new ResponseEntity<>(productService.create(request), HttpStatus.OK);
+  }
+  @PutMapping ("/update")
+  private ResponseEntity<ResponseWrapper> update(@RequestBody ProductResponse request){
+    return new ResponseEntity<>(productService.update(request), HttpStatus.OK);
   }
 
 

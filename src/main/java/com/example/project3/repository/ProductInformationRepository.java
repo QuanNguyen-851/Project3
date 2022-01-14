@@ -10,4 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface ProductInformationRepository extends JpaRepository<ProductInformationEntity, Long> {
 
   List<ProductInformationEntity> findAllByProductId(Long ProductId);
+
+  ProductInformationEntity findFirstById(Long id);
+
+  ProductInformationEntity findFirstByProductIdAndKey(Long productId, String key);
 }

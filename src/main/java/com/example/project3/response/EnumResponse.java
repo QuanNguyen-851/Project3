@@ -8,7 +8,8 @@ import lombok.Setter;
 public enum EnumResponse {
   SUCCESS("200", "SUCCESS"),
   NOT_FOUND("404", "NOT FOUND"),
-  FAIL("400", "SOME_THING_WRONG");
+  FAIL("400", "SOME_THING_WRONG"),
+  EXIST("401", "THIS REQUEST ALREADY EXIST");
 
   private String responseCode;
   private String getResponseMessage;

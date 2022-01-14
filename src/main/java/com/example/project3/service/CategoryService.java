@@ -12,5 +12,7 @@ public interface CategoryService {
 
   ResponseWrapper updateCategory(CategoryEntity categoryEntity);
 
+  CategoryEntity getById(Long id);
+
 
 }

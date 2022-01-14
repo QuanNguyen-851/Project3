@@ -25,6 +25,7 @@ public class CategoryEntity {
   private String name;
   private String title;
   private String sortName;
+  private String status;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
 

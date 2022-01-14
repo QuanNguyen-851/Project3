@@ -43,8 +43,9 @@ public class ProductServiceImpl implements ProductService {
   private ProductionRepository productionRepository;
 
   @Override
-  public Page<ProductResponse> getAll(int page, int limit) {
-    Pageable pageable = PageRequest.of(page, limit);
+  public List<ProductResponse> getAll() {
+
+//    Pageable pageable = PageRequest.of(page, limit);
 //    return repository.getAllProduct(pageable)
 //        .map(value ->
 //            Maper.getInstance().ProductEntityToDTO(value))
@@ -54,7 +55,8 @@ public class ProductServiceImpl implements ProductService {
 //          return value;
 //        });
 //    List<ProductDTO> = repository.getAllProduct().
-    return new PageImpl<>(repository.getAllProduct(), pageable, repository.getAllProduct().size());
+    return repository.getAllProduct();
+//    return new PageImpl<>(repository.getAllProduct(), pageable, repository.getAllProduct().size());
 
 
 //        return new PageImpl<>(studentPackageResponses, pageable, countResults);
@@ -62,9 +64,14 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductResponse getDetail(Long id) {
-    var product = repository.getProductById(id);
-    product.setListInformation(productInformationRepository.findAllByProductId(id));
-    return product;
+    try {
+      var product = repository.getProductById(id);
+      product.setListInformation(productInformationRepository.findAllByProductId(id));
+      return product;
+    }catch (Exception e){
+      return new ProductResponse();
+    }
+
   }
 
   @Override
@@ -85,10 +92,50 @@ public class ProductServiceImpl implements ProductService {
     repository.save(newProduct);
     for (ProductInformationEntity item : productResponse.getListInformation() ) {
       item.setProductId(newProduct.getId());
-//      item.setCreatedDate(LocalDateTime.now());
+      item.setCreatedDate(LocalDateTime.now());
       productInformationRepository.save(item);
     }
     return new ResponseWrapper(EnumResponse.SUCCESS, productResponse);
+  }
+
+  @Override
+  public ResponseWrapper update(ProductResponse request) {
+    if(request.getId()!=null){
+      try{
+      ProductResponse productResponse = this.getDetail(request.getId());
+        ProductEntity productupdate = new ProductEntity();
+        productupdate.setId(request.getId());
+        productupdate.setCode(productResponse.getCode());
+        productupdate.setName(request.getName());
+        productupdate.setDescription(request.getDescription());
+        productupdate.setCategoryId(request.getCategoryId());
+        productupdate.setProductionId(request.getProductionId());
+        productupdate.setPrice(request.getPrice());
+        productupdate.setQuantity(request.getQuantity());
+        productupdate.setStatus(request.getStatus());
+        productupdate.setAvatarUrl(request.getAvatarUrl());
+        productupdate.setCreatedDate(productResponse.getCreatedDate());
+        productupdate.setModifiedDate(LocalDateTime.now());
+        repository.save(productupdate);
+        for (ProductInformationEntity itemUpdate: request.getListInformation()) {
+          if(itemUpdate.getId()!=null){
+            ProductInformationEntity info = productInformationRepository.findFirstById(itemUpdate.getId());
+            itemUpdate.setProductId(info.getProductId());
+            itemUpdate.setCreatedDate(info.getCreatedDate());
+            itemUpdate.setModifiedDate(LocalDateTime.now());
+            productInformationRepository.save(itemUpdate);
+          }else{
+            itemUpdate.setProductId(request.getId());
+            itemUpdate.setCreatedDate(LocalDateTime.now());
+            productInformationRepository.save(itemUpdate);
+          }
+        }
+        return new ResponseWrapper(EnumResponse.SUCCESS, request);
+      }catch (Exception e){
+        return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+      }
+    }
+    return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
   }
 
 
