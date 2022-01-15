@@ -4,7 +4,6 @@ import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.entity.ProductResponse;
-import com.example.project3.model.entity.Producttest;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductService;
 

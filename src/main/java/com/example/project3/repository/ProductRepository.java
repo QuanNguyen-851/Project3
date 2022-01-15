@@ -1,13 +1,7 @@
 package com.example.project3.repository;
 
-import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.ProductEntity;
-import com.example.project3.model.entity.ProductionEntity;
-import com.example.project3.model.entity.Producttest;
 import com.example.project3.repository.custom.ProductRepositoryCustom;
-import java.util.List;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -6,7 +6,6 @@ import com.example.project3.model.entity.ProductEntity;
 //import com.example.project3.repository.ProductInformationRepository;
 import com.example.project3.model.entity.ProductInformationEntity;
 import com.example.project3.model.entity.ProductResponse;
-import com.example.project3.model.entity.Producttest;
 //import com.example.project3.repository.CategoryRepository;
 import com.example.project3.repository.CategoryRepository;
 import com.example.project3.repository.ProductInformationRepository;
@@ -85,15 +84,18 @@ public class ProductServiceImpl implements ProductService {
     productEntity.setQuantity(productResponse.getQuantity());
     productEntity.setStatus(productResponse.getStatus());
     productEntity.setAvatarUrl(productResponse.getAvatarUrl());
-    repository.save(productEntity);
+//    repository.save(productEntity);
      String sortName = categoryRepository.getById(productResponse.getCategoryId()).getSortName();
-    ProductEntity newProduct = repository.getNewProduct();
+//    ProductEntity newProduct = repository.getNewProduct();
+    ProductEntity newProduct = repository.save(productEntity);
     newProduct.setCode(sortName + newProduct.getId());
     repository.save(newProduct);
     for (ProductInformationEntity item : productResponse.getListInformation() ) {
       item.setProductId(newProduct.getId());
       item.setCreatedDate(LocalDateTime.now());
-      productInformationRepository.save(item);
+      try {
+        productInformationRepository.save(item);
+      }catch (Exception e){}
     }
     return new ResponseWrapper(EnumResponse.SUCCESS, productResponse);
   }
