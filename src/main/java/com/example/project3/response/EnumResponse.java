@@ -9,7 +9,10 @@ public enum EnumResponse {
   SUCCESS("200", "SUCCESS"),
   NOT_FOUND("404", "NOT FOUND"),
   FAIL("400", "SOME_THING_WRONG"),
-  EXIST("401", "THIS REQUEST ALREADY EXIST");
+  EXIST("401", "THIS REQUEST ALREADY EXIST"),
+  EMAILEXIST("001", "THIS EMAIL ALREADY EXIST"),
+  PHONEXIST("002", "THIS PHONE ALREADY EXIST");
+
 
   private String responseCode;
   private String getResponseMessage;
