@@ -30,7 +30,7 @@ public class ProductResponse {
   private Long price;
   private Long quantity;
   private String status;
-    private String category;
+  private String category;
   private String production;
   private String avatarUrl;
   @Transient

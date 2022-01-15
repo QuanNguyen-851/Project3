@@ -50,4 +50,26 @@ public class ProductionServiceImpl implements ProductionService {
       return productionRepository.findFirstById(id);}
     return null;
   }
+
+  @Override
+  public ProductionEntity deleteById(Long id) {
+    if(id!=null && productionRepository.findFirstById(id)!=null){
+      var res = productionRepository.findFirstById(id);
+      productionRepository.deleteById(id);
+      return res;
+    }
+    return null;
+  }
+
+  @Override
+  public ProductionEntity updateStatus(Long id, DisableStatus status) {
+    ProductionEntity productionEntity = productionRepository.findFirstById(id);
+    if(productionEntity!=null){
+      productionEntity.setStatus(status.name());
+      productionEntity.setModifiedDate(LocalDateTime.now());
+      productionRepository.save(productionEntity);
+      return productionEntity;
+    }
+    return null;
+  }
 }
