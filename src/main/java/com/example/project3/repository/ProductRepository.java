@@ -20,6 +20,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 
   //  Page<ProductEntity> getAllBy(Pageable pageable);
 
-  @Query(value = "select p_product.*   from p_product order by id DESC limit 1 ", nativeQuery = true)
+  @Query(value = "select p_product.*from p_product order by id DESC limit 1 ", nativeQuery = true)
   ProductEntity getNewProduct();
 }

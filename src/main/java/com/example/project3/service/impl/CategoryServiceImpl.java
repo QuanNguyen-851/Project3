@@ -1,5 +1,6 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.Common.FormatDate;
 import com.example.project3.model.DisableStatus;
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.repository.CategoryRepository;
@@ -51,6 +52,28 @@ public class CategoryServiceImpl implements CategoryService {
   public CategoryEntity getById(Long id) {
     if(id!=null){
     return categoryRepository.findFirstById(id);}
+    return null;
+  }
+
+  @Override
+  public CategoryEntity deleteById(Long id) {
+    if(id!=null && categoryRepository.findFirstById(id)!=null){
+      var res = categoryRepository.findFirstById(id);
+      categoryRepository.deleteById(id);
+      return res;
+    }
+    return null;
+  }
+
+  @Override
+  public CategoryEntity updateStatus(Long id, DisableStatus disableStatus) {
+    var re = categoryRepository.findFirstById( id);
+    if(re!=null){
+      re.setStatus(disableStatus.name());
+      re.setModifiedDate(LocalDateTime.now());
+      categoryRepository.save(re);
+      return  re;
+    }
     return null;
   }
 

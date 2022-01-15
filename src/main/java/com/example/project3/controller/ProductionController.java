@@ -1,6 +1,8 @@
 package com.example.project3.controller;
 
+import com.example.project3.model.DisableStatus;
 import com.example.project3.model.entity.ProductionEntity;
+import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductionService;
 import java.util.List;
@@ -38,5 +40,27 @@ public class ProductionController {
       return new ResponseEntity<>(productionService.getById(id), HttpStatus.OK);
     }
     return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+  }
+  @DeleteMapping("/delete")
+  private ResponseEntity<ResponseWrapper> deleteById(@RequestParam Long id) {
+    if(id!=null){
+      var res = productionService.deleteById(id);
+      if (res !=null){
+        return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
+      }
+    }
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.BAD_REQUEST);
+  }
+
+  @PutMapping("/updateStatus")
+  private ResponseEntity<ResponseWrapper> updateStatus(@RequestParam Long id, @RequestParam DisableStatus status) {
+    if (status != null && id != null) {
+      var re = productionService.updateStatus(id, status);
+      if (re != null) {
+        return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, re), HttpStatus.OK);
+      }
+    }
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.BAD_REQUEST);
+
   }
 }
