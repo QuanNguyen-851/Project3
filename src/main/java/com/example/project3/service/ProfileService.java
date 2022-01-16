@@ -8,4 +8,6 @@ public interface ProfileService {
   ProfileEntity getById(Long id);
 
   ResponseWrapper createProfile(ProfileEntity profileEntity);
+
+  String findByPhoneAndPassword(String phone, String pass);
 }

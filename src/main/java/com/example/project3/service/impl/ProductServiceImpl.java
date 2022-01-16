@@ -84,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
     productEntity.setQuantity(productResponse.getQuantity());
     productEntity.setStatus(productResponse.getStatus());
     productEntity.setAvatarUrl(productResponse.getAvatarUrl());
+    productEntity.setCreatedDate(LocalDateTime.now());
 //    repository.save(productEntity);
      String sortName = categoryRepository.getById(productResponse.getCategoryId()).getSortName();
 //    ProductEntity newProduct = repository.getNewProduct();
