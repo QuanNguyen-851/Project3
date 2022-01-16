@@ -1,6 +1,7 @@
 package com.example.project3.repository;
 
 import com.example.project3.model.entity.ProfileEntity;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,5 @@ public interface ProfileRepository extends JpaRepository<ProfileEntity, Long> {
   @Query(value = "select * from p_profile ORDER BY id DESC limit 1", nativeQuery = true)
   ProfileEntity findNewUser();
 
+  ProfileEntity findFirstByPhoneAndPassWord(String phone, String password);
 }
