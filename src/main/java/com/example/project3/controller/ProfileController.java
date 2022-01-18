@@ -1,7 +1,9 @@
 package com.example.project3.controller;
 
 import com.example.project3.model.dto.LoginDto;
+import com.example.project3.model.dto.LoginResponse;
 import com.example.project3.model.entity.ProfileEntity;
+import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,13 @@ public class ProfileController {
   }
 
   @PostMapping("/signin")
-  public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
-    return new ResponseEntity<>(service.findByPhoneAndPassword(loginDto.getPhone(), loginDto.getPassword()), HttpStatus.OK);
+  private ResponseEntity<ResponseWrapper> authenticateUser(@RequestBody LoginDto loginDto) {
+    LoginResponse res = service.findByPhoneAndPassword(loginDto.getPhone(), loginDto.getPassword());
+    if(res!=null){
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
+    }
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, res), HttpStatus.NOT_FOUND);
   }
+
+
 }

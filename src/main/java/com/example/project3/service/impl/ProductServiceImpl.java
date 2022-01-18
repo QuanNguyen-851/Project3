@@ -141,5 +141,20 @@ public class ProductServiceImpl implements ProductService {
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
   }
 
+  @Override
+  public ResponseWrapper deleteById(Long id) {
+    var res = this.getDetail(id);
+    if(res !=null){
+      if(!res.getListInformation().isEmpty()){
+        for ( ProductInformationEntity infor : res.getListInformation()) {
+          productInformationRepository.deleteById(infor.getId());
+        }
+      }
+      repository.deleteById(res.getId());
+      return new ResponseWrapper(EnumResponse.SUCCESS,res);
+    }
+    return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+  }
+
 
 }

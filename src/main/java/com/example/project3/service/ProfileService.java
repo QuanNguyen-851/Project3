@@ -1,5 +1,6 @@
 package com.example.project3.service;
 
+import com.example.project3.model.dto.LoginResponse;
 import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.response.ResponseWrapper;
 
@@ -9,5 +10,6 @@ public interface ProfileService {
 
   ResponseWrapper createProfile(ProfileEntity profileEntity);
 
-  String findByPhoneAndPassword(String phone, String pass);
+  LoginResponse findByPhoneAndPassword(String phone, String pass);
+
 }
