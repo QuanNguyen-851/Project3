@@ -1,5 +1,7 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.Common.Token;
+import com.example.project3.model.dto.LoginResponse;
 import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.repository.ProfileRepository;
@@ -46,29 +48,18 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   @Override
-  public String findByPhoneAndPassword(String phone, String pass) {
+  public LoginResponse findByPhoneAndPassword(String phone, String pass) {
     var res = repository.findFirstByPhoneAndPassWord(phone,pass);
     String token ;
     if(res!=null){
       var temp = res.getEmail() + res.getPhone()+ res.getPassWord();
-      var temptoken = this.convertHashToString(temp);
-      return temptoken;
+      token = Token.convertHashToString(temp);
+
+      return LoginResponse.builder()
+          .token(token)
+          .role(res.getRole())
+          .build();
     }
     return null;
-  }
-
-  private String convertHashToString(String text) {
-    MessageDigest md = null;
-    try {
-      md = MessageDigest.getInstance("MD5");
-    } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-    }
-    byte[] hashInBytes = md.digest(text.getBytes(StandardCharsets.UTF_8));
-    StringBuilder sb = new StringBuilder();
-    for (byte b : hashInBytes) {
-      sb.append(String.format("%02x", b));
-    }
-    return sb.toString();
   }
 }
