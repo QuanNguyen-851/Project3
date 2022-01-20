@@ -6,6 +6,7 @@ create table b_bill
     sale_id       bigint,
     description   text,
     total_price   bigint,
+    discount_price bigint,
     owner_name    varchar(255) not null,
     phone         varchar(11) not null,
     email         varchar(255) not null,

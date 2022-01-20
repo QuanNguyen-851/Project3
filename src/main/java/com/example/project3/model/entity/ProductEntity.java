@@ -20,6 +20,12 @@ import org.springframework.data.annotation.Transient;
 @Table(name = "p_product")
 public class ProductEntity {
 
+ public enum ProductEnum{
+    ACTIVE,
+    PAUSE,
+    EMPTY
+  }
+
   @Id
 //  @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +42,11 @@ public class ProductEntity {
 //  @Column(name = "production_id")
   private Long productionId;
 //  @Column(name = "price")
-  private Long price;
-//  @Column(name = "quantity")
+  private Long salePrice;
+  private Long importPrice;
+  private Float discount;
+
+  //  @Column(name = "quantity")
   private Long quantity;
 //  @Column(name = "status")
   private String status;

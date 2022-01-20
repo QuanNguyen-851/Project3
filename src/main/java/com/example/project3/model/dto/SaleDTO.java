@@ -12,6 +12,8 @@ public class SaleDTO {
   private String name;
   private String key;
   private Float percentage;
+  private Long discountPrice;
+  private Boolean isPercent;
   private LocalDate startDate;
   private LocalDate endDate;
 }

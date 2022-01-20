@@ -22,6 +22,9 @@ private SaleRepository repository;
   public SaleEntity create(SaleDTO saleDTO) {
     SaleEntity saleEntity = new SaleEntity();
     saleEntity.setCreatedDate(LocalDateTime.now());
+    saleEntity.setDiscountPrice(saleDTO.getDiscountPrice());
+    saleEntity.setPercentage(saleDTO.getPercentage());
+    saleEntity.setIsPercent(saleDTO.getIsPercent());
     var start = saleDTO.getStartDate();
     var end = saleDTO.getEndDate();
     saleEntity.setStartDate( start.atStartOfDay());
