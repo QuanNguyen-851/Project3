@@ -121,7 +121,7 @@ public class ProductServiceImpl implements ProductService {
         productupdate.setModifiedDate(LocalDateTime.now());
         repository.save(productupdate);
         for (ProductInformationEntity itemUpdate: request.getListInformation()) {
-          if(itemUpdate.getId()!=null){
+          if(itemUpdate.getId()!=null || itemUpdate.getId().equals(0)){
             ProductInformationEntity info = productInformationRepository.findFirstById(itemUpdate.getId());
             itemUpdate.setProductId(info.getProductId());
             itemUpdate.setCreatedDate(info.getCreatedDate());
