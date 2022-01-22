@@ -1,6 +1,6 @@
 package com.example.project3.service;
 
-import com.example.project3.model.DisableStatus;
+import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.response.ResponseWrapper;
 import java.util.List;

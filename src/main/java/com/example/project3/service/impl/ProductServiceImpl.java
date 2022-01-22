@@ -2,13 +2,18 @@ package com.example.project3.service.impl;
 
 import com.example.project3.Common.Maper;
 import com.example.project3.model.dto.ProductDTO;
+import com.example.project3.model.entity.ImageEntity;
 import com.example.project3.model.entity.ProductEntity;
 //import com.example.project3.repository.ProductInformationRepository;
 import com.example.project3.model.entity.ProductEntity.ProductEnum;
+import com.example.project3.model.entity.ProductImageEntity;
 import com.example.project3.model.entity.ProductInformationEntity;
 import com.example.project3.model.entity.ProductResponse;
 //import com.example.project3.repository.CategoryRepository;
+import com.example.project3.model.enumpk.ImageType;
 import com.example.project3.repository.CategoryRepository;
+import com.example.project3.repository.ImageRepository;
+import com.example.project3.repository.ProductImageRepository;
 import com.example.project3.repository.ProductInformationRepository;
 import com.example.project3.repository.ProductRepository;
 //import com.example.project3.repository.ProductionRepository;
@@ -16,6 +21,7 @@ import com.example.project3.repository.ProductionRepository;
 import com.example.project3.repository.custom.ProductRepositoryCustom;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
+import com.example.project3.service.ImageService;
 import com.example.project3.service.ProductService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,12 +41,14 @@ public class ProductServiceImpl implements ProductService {
   private ProductInformationRepository productInformationRepository;
   @Autowired
   private ProductRepository repository;
-  //  @Autowired
-//  private ProductRepositoryCustom repositoryCustom;
+    @Autowired
+  private ProductImageRepository productImageRepository;
   @Autowired
   private CategoryRepository categoryRepository;
   @Autowired
   private ProductionRepository productionRepository;
+  @Autowired
+  private ImageRepository imageRepository;
 
   @Override
   public List<ProductResponse> getAll() {
@@ -67,6 +75,7 @@ public class ProductServiceImpl implements ProductService {
     try {
       var product = repository.getProductById(id);
       product.setListInformation(productInformationRepository.findAllByProductId(id));
+      product.setListImage(imageRepository.getProductImageByIdProduct(id));
       return product;
     }catch (Exception e){
       return new ProductResponse();
@@ -94,14 +103,36 @@ public class ProductServiceImpl implements ProductService {
     ProductEntity newProduct = repository.save(productEntity);
     newProduct.setCode(sortName + newProduct.getId());
     repository.save(newProduct);
-    for (ProductInformationEntity item : productResponse.getListInformation() ) {
-      item.setProductId(newProduct.getId());
+    if(productResponse.getListInformation()!=null){
+      this.setProductInfor(productResponse.getListInformation(), newProduct.getId());
+    }
+    if(productResponse.getListImage()!=null){
+      this.setImage(productResponse.getListImage(), newProduct.getId());
+    }
+    return new ResponseWrapper(EnumResponse.SUCCESS, productResponse);
+  }
+  private Void setImage(List<ImageEntity>list, Long productId){
+    for(ImageEntity item : list){
+      item.setType(ImageType.PRODUCT.name());
+      item.setCreatedDate(LocalDateTime.now());
+      var newimage= imageRepository.save(item);
+      ProductImageEntity pImage = new ProductImageEntity();
+      pImage.setImageId(newimage.getId());
+      pImage.setOwnerId(productId);
+      productImageRepository.save(pImage);
+    }
+    return null;
+  }
+
+  private Void setProductInfor(List<ProductInformationEntity> list, Long productId){
+    for (ProductInformationEntity item : list ) {
+      item.setProductId(productId);
       item.setCreatedDate(LocalDateTime.now());
       try {
         productInformationRepository.save(item);
       }catch (Exception e){}
     }
-    return new ResponseWrapper(EnumResponse.SUCCESS, productResponse);
+    return null;
   }
 
   @Override

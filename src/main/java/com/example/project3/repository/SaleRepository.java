@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SaleRepository  extends JpaRepository<SaleEntity, Long> {
+  SaleEntity findFirstByKey(String key);
+
+  SaleEntity findFirstById(Long id);
 }

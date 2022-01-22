@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 
 public class SaleDTO {
+  private Long id;
   private String name;
   private String key;
   private Float percentage;

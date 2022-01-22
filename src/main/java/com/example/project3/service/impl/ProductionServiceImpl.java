@@ -1,6 +1,6 @@
 package com.example.project3.service.impl;
 
-import com.example.project3.model.DisableStatus;
+import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.ProductionEntity;
 import com.example.project3.repository.ProductionRepository;
 import com.example.project3.response.EnumResponse;

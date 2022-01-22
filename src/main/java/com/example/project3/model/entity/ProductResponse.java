@@ -37,6 +37,8 @@ public class ProductResponse {
   private String avatarUrl;
   @Transient
   private List<ProductInformationEntity> listInformation;
+  @Transient
+  private List<ImageEntity> listImage;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
 }
