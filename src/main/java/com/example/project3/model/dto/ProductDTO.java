@@ -18,7 +18,9 @@ public class ProductDTO {
   private String description;
   private Long categoryId;
   private Long productionId;
-  private Long price;
+  private Long salePrice;
+  private Long importPrice;
+  private Float discount;
   private Long quantity;
   private String status;
   private String category;

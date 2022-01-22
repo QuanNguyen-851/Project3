@@ -33,7 +33,6 @@ public class ProductController {
   private ResponseEntity<Iterable<ProductResponse>> getAll() {
     return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
   }
-
   @GetMapping("/getdetail")
   private ResponseEntity<ProductResponse> getDetail(@RequestParam Long id){
     return new ResponseEntity<>(productService.getDetail(id), HttpStatus.OK);

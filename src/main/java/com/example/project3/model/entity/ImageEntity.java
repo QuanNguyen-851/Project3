@@ -7,24 +7,21 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "s_sale")
-public class SaleEntity {
+@Table(name = "i_image")
+public class ImageEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  private String name;
-  private String key;
-  private Float percentage;
-  private Long discountPrice;
-  private Boolean isPercent;
-  private LocalDateTime startDate;
-  private LocalDateTime endDate;
+  private String imageUrl;
+  private String title;
+  private String type;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
-
 }

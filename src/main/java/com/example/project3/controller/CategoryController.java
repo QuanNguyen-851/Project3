@@ -1,6 +1,6 @@
 package com.example.project3.controller;
 
-import com.example.project3.model.DisableStatus;
+import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
