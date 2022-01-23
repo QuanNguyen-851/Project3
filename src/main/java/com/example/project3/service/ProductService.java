@@ -6,7 +6,12 @@ import java.util.List;
 
 public interface ProductService {
 
-  List<ProductResponse> getAll();
+  List<ProductResponse> getAll(
+      String status,
+      String code,
+      String name,
+      Long idCate,
+      Long idProduction);
 
   ProductResponse getDetail(Long id);
 

@@ -10,5 +10,11 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepositoryCustom {
   ProductResponse getProductById(Long id);
 
-  List<ProductResponse>getAllProduct();
+  List<ProductResponse>getAllProduct(
+      String status,
+      String code,
+      String name,
+      Long idCate,
+      Long idProduction
+  );
 }

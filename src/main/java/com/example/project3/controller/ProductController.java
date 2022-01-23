@@ -30,24 +30,39 @@ public class ProductController {
   private ProductService productService;
 
   @GetMapping("/getall")
-  private ResponseEntity<Iterable<ProductResponse>> getAll() {
-    return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
+  private ResponseEntity<Iterable<ProductResponse>> getAll(
+      @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "code", required = false) String code,
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "idCate", required = false) Long idCate,
+      @RequestParam(value = "idProduction", required = false) Long idProduction
+      ) {
+    return new ResponseEntity<>(productService.getAll(
+        status,
+        code,
+        name,
+        idCate,
+        idProduction
+    ), HttpStatus.OK);
   }
+
   @GetMapping("/getdetail")
-  private ResponseEntity<ProductResponse> getDetail(@RequestParam Long id){
+  private ResponseEntity<ProductResponse> getDetail(@RequestParam Long id) {
     return new ResponseEntity<>(productService.getDetail(id), HttpStatus.OK);
   }
 
   @PostMapping("/create")
-  private ResponseEntity<ResponseWrapper> create(@RequestBody ProductResponse request){
+  private ResponseEntity<ResponseWrapper> create(@RequestBody ProductResponse request) {
     return new ResponseEntity<>(productService.create(request), HttpStatus.OK);
   }
-  @PutMapping ("/update")
-  private ResponseEntity<ResponseWrapper> update(@RequestBody ProductResponse request){
+
+  @PutMapping("/update")
+  private ResponseEntity<ResponseWrapper> update(@RequestBody ProductResponse request) {
     return new ResponseEntity<>(productService.update(request), HttpStatus.OK);
   }
+
   @DeleteMapping("/delete")
-  private ResponseEntity<ResponseWrapper> deleteById(@RequestParam Long id){
+  private ResponseEntity<ResponseWrapper> deleteById(@RequestParam Long id) {
     return new ResponseEntity<>(productService.deleteById(id), HttpStatus.OK);
   }
 

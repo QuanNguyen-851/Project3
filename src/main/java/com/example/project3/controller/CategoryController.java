@@ -37,8 +37,12 @@ public class CategoryController {
   }
 
   @GetMapping("/getall")
-  private ResponseEntity<List<CategoryEntity>> getAll() {
-    return new ResponseEntity<>(categoryService.getAllCategory(), HttpStatus.OK);
+  private ResponseEntity<List<CategoryEntity>> getAll(
+      @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "name", required = false) String name
+  ) {
+    return new ResponseEntity<>(
+        categoryService.getAllCategory(status, name), HttpStatus.OK);
   }
 
   @PutMapping("/update")
