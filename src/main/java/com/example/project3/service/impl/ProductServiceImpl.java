@@ -157,7 +157,7 @@ public class ProductServiceImpl implements ProductService {
         productupdate.setModifiedDate(LocalDateTime.now());
         repository.save(productupdate);
         for (ProductInformationEntity itemUpdate: request.getListInformation()) {
-          if(itemUpdate.getId()!=null || itemUpdate.getId().equals(0)){
+          if(itemUpdate.getId()!=null ){
             ProductInformationEntity info = productInformationRepository.findFirstById(itemUpdate.getId());
             itemUpdate.setProductId(info.getProductId());
             itemUpdate.setCreatedDate(info.getCreatedDate());
@@ -171,7 +171,7 @@ public class ProductServiceImpl implements ProductService {
         }
         return new ResponseWrapper(EnumResponse.SUCCESS, request);
       }catch (Exception e){
-        return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+        return new ResponseWrapper(EnumResponse.FAIL, null);
       }
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
