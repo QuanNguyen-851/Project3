@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CategoryService {
 
-  List<CategoryEntity> getAllCategory();
+  List<CategoryEntity> getAllCategory(String status, String name);
 
   CategoryEntity createCategory(CategoryEntity categoryEntity);
 

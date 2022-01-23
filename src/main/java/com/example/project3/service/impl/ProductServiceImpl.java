@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
   private ProductInformationRepository productInformationRepository;
   @Autowired
   private ProductRepository repository;
-    @Autowired
+  @Autowired
   private ProductImageRepository productImageRepository;
   @Autowired
   private CategoryRepository categoryRepository;
@@ -51,23 +51,20 @@ public class ProductServiceImpl implements ProductService {
   private ImageRepository imageRepository;
 
   @Override
-  public List<ProductResponse> getAll() {
-
-//    Pageable pageable = PageRequest.of(page, limit);
-//    return repository.getAllProduct(pageable)
-//        .map(value ->
-//            Maper.getInstance().ProductEntityToDTO(value))
-//        .map(value -> {
-//          value.setCategory(categoryRepository.getById(value.getCategoryId()).getName());
-//          value.setDescription(productionRepository.getById(value.getProductionId()).getName());
-//          return value;
-//        });
-//    List<ProductDTO> = repository.getAllProduct().
-    return repository.getAllProduct();
-//    return new PageImpl<>(repository.getAllProduct(), pageable, repository.getAllProduct().size());
-
-
-//        return new PageImpl<>(studentPackageResponses, pageable, countResults);
+  public List<ProductResponse> getAll(
+      String status,
+      String code,
+      String name,
+      Long idCate,
+      Long idProduction
+  ) {
+    return repository.getAllProduct(
+        status,
+        code,
+        name,
+        idCate,
+        idProduction
+    );
   }
 
   @Override
@@ -77,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
       product.setListInformation(productInformationRepository.findAllByProductId(id));
       product.setListImage(imageRepository.getProductImageByIdProduct(id));
       return product;
-    }catch (Exception e){
+    } catch (Exception e) {
       return new ProductResponse();
     }
 
@@ -98,48 +95,51 @@ public class ProductServiceImpl implements ProductService {
     productEntity.setAvatarUrl(productResponse.getAvatarUrl());
     productEntity.setCreatedDate(LocalDateTime.now());
 //    repository.save(productEntity);
-     String sortName = categoryRepository.getById(productResponse.getCategoryId()).getSortName();
+    String sortName = categoryRepository.getById(productResponse.getCategoryId()).getSortName();
 //    ProductEntity newProduct = repository.getNewProduct();
     ProductEntity newProduct = repository.save(productEntity);
     newProduct.setCode(sortName + newProduct.getId());
     repository.save(newProduct);
-    if(productResponse.getListInformation()!=null){
-      this.setProductInfor(productResponse.getListInformation(), newProduct.getId());
+    if (productResponse.getListInformation() != null) {
+      for (ProductInformationEntity item : productResponse.getListInformation()) {
+        this.setProductInfor(item, newProduct.getId());
+      }
     }
-    if(productResponse.getListImage()!=null){
-      this.setImage(productResponse.getListImage(), newProduct.getId());
+    if (productResponse.getListImage() != null) {
+      for (ImageEntity item : productResponse.getListImage()) {
+        this.setImage(item, newProduct.getId());
+      }
     }
     return new ResponseWrapper(EnumResponse.SUCCESS, productResponse);
   }
-  private Void setImage(List<ImageEntity>list, Long productId){
-    for(ImageEntity item : list){
-      item.setType(ImageType.PRODUCT.name());
-      item.setCreatedDate(LocalDateTime.now());
-      var newimage= imageRepository.save(item);
-      ProductImageEntity pImage = new ProductImageEntity();
-      pImage.setImageId(newimage.getId());
-      pImage.setOwnerId(productId);
-      productImageRepository.save(pImage);
-    }
+
+
+  private Void setImage(ImageEntity item, Long productId) {
+    item.setType(ImageType.PRODUCT.name());
+    item.setCreatedDate(LocalDateTime.now());
+    var newimage = imageRepository.save(item);
+    ProductImageEntity pImage = new ProductImageEntity();
+    pImage.setImageId(newimage.getId());
+    pImage.setOwnerId(productId);
+    productImageRepository.save(pImage);
     return null;
   }
 
-  private Void setProductInfor(List<ProductInformationEntity> list, Long productId){
-    for (ProductInformationEntity item : list ) {
-      item.setProductId(productId);
-      item.setCreatedDate(LocalDateTime.now());
-      try {
-        productInformationRepository.save(item);
-      }catch (Exception e){}
+  private Void setProductInfor(ProductInformationEntity item, Long productId) {
+    item.setProductId(productId);
+    item.setCreatedDate(LocalDateTime.now());
+    try {
+      productInformationRepository.save(item);
+    } catch (Exception e) {
     }
     return null;
   }
 
   @Override
   public ResponseWrapper update(ProductResponse request) {
-    if(request.getId()!=null){
-      try{
-      ProductResponse productResponse = this.getDetail(request.getId());
+    if (request.getId() != null) {
+      try {
+        ProductResponse productResponse = this.getDetail(request.getId());
         ProductEntity productupdate = new ProductEntity();
         productupdate.setId(request.getId());
         productupdate.setCode(productResponse.getCode());
@@ -156,38 +156,56 @@ public class ProductServiceImpl implements ProductService {
         productupdate.setCreatedDate(productResponse.getCreatedDate());
         productupdate.setModifiedDate(LocalDateTime.now());
         repository.save(productupdate);
-        for (ProductInformationEntity itemUpdate: request.getListInformation()) {
-          if(itemUpdate.getId()!=null ){
-            ProductInformationEntity info = productInformationRepository.findFirstById(itemUpdate.getId());
-            itemUpdate.setProductId(info.getProductId());
-            itemUpdate.setCreatedDate(info.getCreatedDate());
-            itemUpdate.setModifiedDate(LocalDateTime.now());
-            productInformationRepository.save(itemUpdate);
-          }else{
-            itemUpdate.setProductId(request.getId());
-            itemUpdate.setCreatedDate(LocalDateTime.now());
-            productInformationRepository.save(itemUpdate);
-          }
+        for (ProductInformationEntity itemUpdate : request.getListInformation()) {
+          this.updateProductInfor(itemUpdate, request.getId());
+        }
+        for (ImageEntity imageUpdate : request.getListImage()) {
+          this.updateImage(imageUpdate, request.getId(), imageUpdate.getId());
         }
         return new ResponseWrapper(EnumResponse.SUCCESS, request);
-      }catch (Exception e){
-        return new ResponseWrapper(EnumResponse.FAIL, null);
+      } catch (Exception e) {
+        return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
       }
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
   }
 
+  private Void updateImage(ImageEntity item, Long productId, Long imageId) {
+    if (item.getId() != null) {
+      ImageEntity image = imageRepository.findFirstById(imageId);
+      item.setCreatedDate(image.getCreatedDate());
+      item.setModifiedDate(LocalDateTime.now());
+    } else {
+      this.setImage(item, productId);
+    }
+    return null;
+  }
+
+  private Void updateProductInfor(ProductInformationEntity itemUpdate, Long productId) {
+    if (itemUpdate.getId() != null) {
+      ProductInformationEntity info = productInformationRepository.findFirstById(itemUpdate.getId());
+      itemUpdate.setProductId(info.getProductId());
+      itemUpdate.setCreatedDate(info.getCreatedDate());
+      itemUpdate.setModifiedDate(LocalDateTime.now());
+      productInformationRepository.save(itemUpdate);
+    } else {
+      this.setProductInfor(itemUpdate, productId);
+    }
+    return null;
+  }
+
+
   @Override
   public ResponseWrapper deleteById(Long id) {
     var res = this.getDetail(id);
-    if(res !=null){
-      if(!res.getListInformation().isEmpty()){
-        for ( ProductInformationEntity infor : res.getListInformation()) {
+    if (res != null) {
+      if (!res.getListInformation().isEmpty()) {
+        for (ProductInformationEntity infor : res.getListInformation()) {
           productInformationRepository.deleteById(infor.getId());
         }
       }
       repository.deleteById(res.getId());
-      return new ResponseWrapper(EnumResponse.SUCCESS,res);
+      return new ResponseWrapper(EnumResponse.SUCCESS, res);
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
   }
