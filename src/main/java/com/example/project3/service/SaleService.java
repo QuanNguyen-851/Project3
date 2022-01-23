@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SaleService {
 
-  List<SaleEntity> getAll();
+  List<SaleEntity> getAll(String name, String key, Boolean isPercent );
 
   ResponseWrapper create(SaleDTO saleEntity);
 

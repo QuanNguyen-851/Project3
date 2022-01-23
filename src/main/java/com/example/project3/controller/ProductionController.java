@@ -20,8 +20,11 @@ public class ProductionController {
   private ProductionService productionService;
 
   @GetMapping("/getall")
-  private ResponseEntity<List<ProductionEntity>> getAll() {
-    return new ResponseEntity<>(productionService.getAll(), HttpStatus.OK);
+  private ResponseEntity<List<ProductionEntity>> getAll(
+      @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "name", required = false) String name
+  ) {
+    return new ResponseEntity<>(productionService.getAll(status, name), HttpStatus.OK);
   }
 
   @PostMapping("/create")

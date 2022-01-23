@@ -24,8 +24,13 @@ public class SaleController {
   @Autowired
   private SaleService service;
   @GetMapping("/getall")
-  private ResponseEntity<List<SaleEntity>> getAll() {
-  return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+  private ResponseEntity<List<SaleEntity>> getAll(
+
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "key", required = false) String key,
+      @RequestParam(value = "isPercent", required = false) Boolean isPercent
+  ) {
+  return new ResponseEntity<>(service.getAll(name, key, isPercent), HttpStatus.OK);
   }
   @PostMapping("/create")
   private ResponseEntity<ResponseWrapper> create(@RequestBody SaleDTO saleDTO){

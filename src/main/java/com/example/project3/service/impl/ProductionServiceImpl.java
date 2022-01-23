@@ -18,8 +18,11 @@ public class ProductionServiceImpl implements ProductionService {
   private ProductionRepository productionRepository;
 
   @Override
-  public List<ProductionEntity> getAll() {
-    return productionRepository.findAll();
+  public List<ProductionEntity> getAll(
+      String status,
+      String name
+  ) {
+    return productionRepository.getAll(status, name);
   }
 
   @Override

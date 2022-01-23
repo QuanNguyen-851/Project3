@@ -18,8 +18,8 @@ public class SaleServiceImpl implements SaleService {
   private SaleRepository repository;
 
   @Override
-  public List<SaleEntity> getAll() {
-    return repository.findAll();
+  public List<SaleEntity> getAll(String name, String key, Boolean isPercent) {
+    return repository.getall(name, key, isPercent);
   }
 
   @Override

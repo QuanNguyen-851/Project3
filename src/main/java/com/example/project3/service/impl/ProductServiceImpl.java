@@ -58,17 +58,6 @@ public class ProductServiceImpl implements ProductService {
       Long idCate,
       Long idProduction
   ) {
-
-//    Pageable pageable = PageRequest.of(page, limit);
-//    return repository.getAllProduct(pageable)
-//        .map(value ->
-//            Maper.getInstance().ProductEntityToDTO(value))
-//        .map(value -> {
-//          value.setCategory(categoryRepository.getById(value.getCategoryId()).getName());
-//          value.setDescription(productionRepository.getById(value.getProductionId()).getName());
-//          return value;
-//        });
-//    List<ProductDTO> = repository.getAllProduct().
     return repository.getAllProduct(
         status,
         code,
@@ -76,10 +65,6 @@ public class ProductServiceImpl implements ProductService {
         idCate,
         idProduction
     );
-//    return new PageImpl<>(repository.getAllProduct(), pageable, repository.getAllProduct().size());
-
-
-//        return new PageImpl<>(studentPackageResponses, pageable, countResults);
   }
 
   @Override

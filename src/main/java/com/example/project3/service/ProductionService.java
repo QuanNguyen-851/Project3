@@ -6,7 +6,10 @@ import com.example.project3.response.ResponseWrapper;
 import java.util.List;
 
 public interface ProductionService {
-List<ProductionEntity>getAll();
+List<ProductionEntity>getAll(
+    String status,
+    String name
+);
 ResponseWrapper create(ProductionEntity productionEntity);
 
 ResponseWrapper update(ProductionEntity productionEntity);
