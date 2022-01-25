@@ -5,7 +5,8 @@ import com.example.project3.response.ResponseWrapper;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface ImageService {
 List<ImageEntity> getImageByProductId (Long id);
+
+ImageEntity deleteImateById(Long id);
 }
