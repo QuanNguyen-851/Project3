@@ -1,25 +1,24 @@
 package com.example.project3.repository.custom.impl;
 
-import com.example.project3.model.entity.CategoryEntity;
-import com.example.project3.model.entity.SaleEntity;
-import com.example.project3.repository.custom.SaleRepositoryCustom;
+import com.example.project3.model.entity.VoucherEntity;
+import com.example.project3.repository.custom.VoucherRepositoryCustom;
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-public class SaleRepositoryImpl implements SaleRepositoryCustom {
+public class VoucherRepositoryImpl implements VoucherRepositoryCustom {
 
   @PersistenceContext
   private EntityManager entityManager;
 
   @Override
-  public List<SaleEntity> getall(String name, String key, Boolean isPercent) {
+  public List<VoucherEntity> getall(String name, String key, Boolean isPercent) {
     StringBuilder sql = new StringBuilder();
-    sql.append("select s.* from s_sale s \n"
-        + "where s.id>0 ");
+    sql.append("select v.* from v_voucher v \n"
+        + "where v.id>0 ");
     if (key != null) {
-      sql.append("and s.key = :key \n");
+      sql.append("and v.key = :key \n");
     }
     if (isPercent != null) {
       sql.append("and is_percent = :isPercent \n");
@@ -27,8 +26,8 @@ public class SaleRepositoryImpl implements SaleRepositoryCustom {
     if (name != null) {
       sql.append("and lower(name) LIKE :name");
     }
-    sql.append(" order by s.key Asc ");
-    var query = entityManager.createNativeQuery(sql.toString(), SaleEntity.class);
+    sql.append(" order by v.key Asc ");
+    var query = entityManager.createNativeQuery(sql.toString(), VoucherEntity.class);
     if (key != null) {
       query.setParameter("key", key);
     }
@@ -38,7 +37,7 @@ public class SaleRepositoryImpl implements SaleRepositoryCustom {
     if (isPercent != null) {
       query.setParameter("isPercent", isPercent);
     }
-    List<SaleEntity> list = query.getResultList();
+    List<VoucherEntity> list = query.getResultList();
     return list;
   }
 }

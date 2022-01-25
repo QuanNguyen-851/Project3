@@ -40,7 +40,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
       Long idProduction
   ) {
     StringBuilder sql = new StringBuilder();
-    sql.append("select pp.*, cc.name as category, p.name as production from p_product pp\n"
+    sql.append("select pp.*, cc.name as category, p.name as production "
+        + ",pp.created_by, pp.modified_by "
+        + " from p_product pp\n"
         + "left join c_category cc on pp.category_id = cc.id\n"
         + "left join p_production p on p.id = pp.production_id\n"
         + "where pp.id>0 ");
@@ -70,7 +72,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
       query.setParameter("code", code);
     }
     if (name != null) {
-      query.setParameter("name", "%"+name.toLowerCase(Locale.ROOT)+"%");
+      query.setParameter("name", "%" + name.toLowerCase(Locale.ROOT) + "%");
     }
     if (idCate != null) {
       query.setParameter("idCate", idCate);
@@ -79,6 +81,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
       query.setParameter("idProduction", idProduction);
     }
     List<ProductResponse> list = query.getResultList();
+    System.out.println(sql.toString());
     return list;
   }
 }

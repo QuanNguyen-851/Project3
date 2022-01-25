@@ -41,4 +41,10 @@ public class ProductResponse {
   private List<ImageEntity> listImage;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
+  private Long createdBy;
+  private Long modifiedBy;
+  @Transient
+  private String createdByName;
+  @Transient
+  private String modifiedByName;
 }

@@ -39,6 +39,7 @@ public class ProfileServiceImpl implements ProfileService {
         return new ResponseWrapper(EnumResponse.EMAILEXIST, profileEntity);
       }
       profileEntity.setCreatedDate(LocalDateTime.now());
+      profileEntity.setModifiedDate(LocalDateTime.now());
       profileEntity.setRole(RoleEnum.ADMIN.name());
       var sa = repository.save(profileEntity);
       return new ResponseWrapper(EnumResponse.SUCCESS, profileEntity);
@@ -58,6 +59,7 @@ public class ProfileServiceImpl implements ProfileService {
       return LoginResponse.builder()
           .token(token)
           .role(res.getRole())
+          .profile(res)
           .build();
     }
     return null;

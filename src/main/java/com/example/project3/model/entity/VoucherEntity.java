@@ -12,8 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "s_sale")
-public class SaleEntity {
+@Table(name = "v_voucher")
+public class VoucherEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -28,6 +28,7 @@ public class ProductionServiceImpl implements ProductionService {
   @Override
   public ResponseWrapper create(ProductionEntity productionEntity) {
     productionEntity.setCreatedDate(LocalDateTime.now());
+    productionEntity.setModifiedDate(LocalDateTime.now());
     productionEntity.setStatus(DisableStatus.ENABLE.name());
      var re = productionRepository.save(productionEntity);
     return new ResponseWrapper(EnumResponse.SUCCESS, re );

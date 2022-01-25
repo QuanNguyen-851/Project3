@@ -27,38 +27,23 @@ public class ProductEntity {
   }
 
   @Id
-//  @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-//  @Column(name = "code")
   private String code;
-//  @Column(name = "name")
   private String name;
-//  @Column(name = "description")
-//  private String subName;
   private String description;
-//  @Column(name = "category_id")
   private Long categoryId;
-//  @Column(name = "production_id")
   private Long productionId;
-//  @Column(name = "price")
   private Long salePrice;
   private Long importPrice;
   private Float discount;
-
-  //  @Column(name = "quantity")
   private Long quantity;
-//  @Column(name = "status")
   private String status;
-//  @Column(name = "avartar_url")
   private String avatarUrl;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
-
-//  @Transient
-//  private String category;
-//  @Transient
-//  private String production;
+  private Long createdBy;
+  private Long modifiedBy;
 
 
 }
