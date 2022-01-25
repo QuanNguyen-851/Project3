@@ -1,4 +1,4 @@
-create table s_sale
+create table v_voucher
 (
     id            bigserial
         constraint s_sale_pk primary key,

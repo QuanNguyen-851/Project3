@@ -28,6 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public CategoryEntity createCategory(CategoryEntity categoryEntity) {
     categoryEntity.setCreatedDate(LocalDateTime.now());
+    categoryEntity.setModifiedDate(LocalDateTime.now());
     categoryEntity.setStatus(DisableStatus.ENABLE.name());
     return categoryRepository.save(categoryEntity);
   }

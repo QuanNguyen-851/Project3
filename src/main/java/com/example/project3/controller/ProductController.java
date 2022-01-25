@@ -1,16 +1,11 @@
 package com.example.project3.controller;
 
 import com.example.project3.model.dto.ProductDTO;
-import com.example.project3.model.entity.CategoryEntity;
-import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductService;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,12 +47,12 @@ public class ProductController {
   }
 
   @PostMapping("/create")
-  private ResponseEntity<ResponseWrapper> create(@RequestBody ProductResponse request) {
+  private ResponseEntity<ResponseWrapper> create(@RequestBody ProductDTO request) {
     return new ResponseEntity<>(productService.create(request), HttpStatus.OK);
   }
 
   @PutMapping("/update")
-  private ResponseEntity<ResponseWrapper> update(@RequestBody ProductResponse request) {
+  private ResponseEntity<ResponseWrapper> update(@RequestBody ProductDTO request) {
     return new ResponseEntity<>(productService.update(request), HttpStatus.OK);
   }
 

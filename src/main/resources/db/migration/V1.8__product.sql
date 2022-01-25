@@ -14,5 +14,7 @@ create table p_product
     quantity bigint,
     status varchar (255),
     created_date  timestamp    default current_timestamp not null,
-    modified_date timestamp
+    modified_date timestamp,
+    created_by bigint,
+    modified_by bigint
 )

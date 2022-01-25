@@ -1,9 +1,9 @@
 package com.example.project3.controller;
 
-import com.example.project3.model.dto.SaleDTO;
-import com.example.project3.model.entity.SaleEntity;
+import com.example.project3.model.dto.VoucherDTO;
+import com.example.project3.model.entity.VoucherEntity;
 import com.example.project3.response.ResponseWrapper;
-import com.example.project3.service.SaleService;
+import com.example.project3.service.VoucherService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/sale")
-public class SaleController {
+@RequestMapping("/voucher")
+public class VoucherController {
 
   @Autowired
-  private SaleService service;
+  private VoucherService service;
   @GetMapping("/getall")
-  private ResponseEntity<List<SaleEntity>> getAll(
+  private ResponseEntity<List<VoucherEntity>> getAll(
 
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "key", required = false) String key,
@@ -33,12 +33,12 @@ public class SaleController {
   return new ResponseEntity<>(service.getAll(name, key, isPercent), HttpStatus.OK);
   }
   @PostMapping("/create")
-  private ResponseEntity<ResponseWrapper> create(@RequestBody SaleDTO saleDTO){
-    return new ResponseEntity<>(service.create(saleDTO), HttpStatus.OK);
+  private ResponseEntity<ResponseWrapper> create(@RequestBody VoucherDTO voucherDTO){
+    return new ResponseEntity<>(service.create(voucherDTO), HttpStatus.OK);
   }
   @PutMapping("/update")
-  private ResponseEntity<ResponseWrapper> update(@RequestBody SaleDTO saleDTO){
-    return new ResponseEntity<>(service.update(saleDTO), HttpStatus.OK);
+  private ResponseEntity<ResponseWrapper> update(@RequestBody VoucherDTO voucherDTO){
+    return new ResponseEntity<>(service.update(voucherDTO), HttpStatus.OK);
   }
   @DeleteMapping("/delete")
   private ResponseEntity<ResponseWrapper> delete(@RequestParam Long id){

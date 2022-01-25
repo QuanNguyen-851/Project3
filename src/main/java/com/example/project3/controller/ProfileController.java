@@ -43,6 +43,7 @@ public class ProfileController {
   private ResponseEntity<ResponseWrapper> authenticateUser(@RequestBody LoginDto loginDto) {
     LoginResponse res = service.findByPhoneAndPassword(loginDto.getPhone(), loginDto.getPassword());
     if(res!=null){
+
       return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
     }
     return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, res), HttpStatus.NOT_FOUND);
