@@ -6,6 +6,7 @@ import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProfileService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,10 @@ public class ProfileController {
       return new ResponseEntity<>(service.createProfile(profileEntity), HttpStatus.OK);
     }
     return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+  }
+  @GetMapping("/getall")
+  private ResponseEntity<List<ProfileEntity>>getAll(){
+    return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
   }
 
   @GetMapping("/getById")
