@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,11 @@ public class ProfileServiceImpl implements ProfileService {
 
   @Autowired
   private ProfileRepository repository;
+
+  @Override
+  public List<ProfileEntity> getAll() {
+    return repository.findAll();
+  }
 
   @Override
   public ProfileEntity getById(Long id) {

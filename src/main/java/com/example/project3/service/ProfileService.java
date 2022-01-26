@@ -3,8 +3,11 @@ package com.example.project3.service;
 import com.example.project3.model.dto.LoginResponse;
 import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.response.ResponseWrapper;
+import java.util.List;
 
 public interface ProfileService {
+
+  List<ProfileEntity> getAll();
 
   ProfileEntity getById(Long id);
 
