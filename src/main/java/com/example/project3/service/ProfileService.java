@@ -15,4 +15,11 @@ public interface ProfileService {
 
   LoginResponse findByPhoneAndPassword(String phone, String pass);
 
+  ProfileEntity resetPassword(String myRole, Long profileId);
+
+  ProfileEntity updateMyProfile(ProfileEntity myProfile);
+
+  ProfileEntity blockUser(Long id);
+
+  ProfileEntity changeMyPassword(String oldPass, String newPass, Long ProfileId);
 }

@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -70,4 +71,62 @@ public class ProfileServiceImpl implements ProfileService {
     }
     return null;
   }
+
+  @Override
+  public ProfileEntity resetPassword(String myRole, Long profileId) {
+    var profile= repository.findFirstById(profileId);
+    if(profile!=null && profile.getRole().equals(RoleEnum.SUPERADMIN.name())){
+      profile.setPassWord("123123");
+      return repository.save(profile);
+    }
+    return null;
+  }
+
+  @Override
+  public ProfileEntity updateMyProfile(ProfileEntity myProfile) {
+    var profile = repository.findFirstById(myProfile.getId());
+    if(profile!=null){
+      String role = profile.getRole();
+      myProfile.setCreatedDate(profile.getCreatedDate());
+      myProfile.setModifiedDate(LocalDateTime.now());
+      myProfile.setBlock(profile.getBlock());
+      myProfile.setPassWord(profile.getPassWord());
+      myProfile.setPhone(profile.getPhone());
+      if(role!=null && role.equals(RoleEnum.SUPERADMIN.name())){
+        myProfile.setRole(RoleEnum.SUPERADMIN.name());
+      }
+      return repository.save(myProfile);
+    }
+    return null;
+  }
+
+  @Override
+  public ProfileEntity blockUser(Long id) {
+    var profile = repository.findFirstById(id);
+    if(profile!=null){
+      String role = profile.getRole();
+      if(role!=null && role.equals(RoleEnum.SUPERADMIN.name())){
+        profile.setBlock(false);
+      }else{
+        if(profile.getBlock()!=null && profile.getBlock().equals(false)){
+          profile.setBlock(true);
+        }else{
+        profile.setBlock(false);
+        }
+      }
+      return repository.save(profile);
+    }
+    return null;
+  }
+
+  @Override
+  public ProfileEntity changeMyPassword(String oldPass,String newPass, Long ProfileId) {
+    var profile = repository.findFirstById(ProfileId);
+    if(profile!=null &&newPass!=null && profile.getPassWord().equals(oldPass)){
+      profile.setPassWord(newPass);
+      return repository.save(profile);
+    }
+    return null;
+  }
+
 }

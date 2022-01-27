@@ -30,7 +30,7 @@ public class ProfileEntity {
   private Long id;
   private String fistName;
   private String lastName;
-  private Long imageUrl;
+  private String imageUrl;
   private String phone;
   private String email;
   private LocalDate dateBirth;
