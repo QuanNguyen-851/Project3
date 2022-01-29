@@ -2,6 +2,7 @@ package com.example.project3.controller;
 
 import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.ProductResponse;
+import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductService;
 
@@ -31,7 +32,7 @@ public class ProductController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "idCate", required = false) Long idCate,
       @RequestParam(value = "idProduction", required = false) Long idProduction
-      ) {
+  ) {
     return new ResponseEntity<>(productService.getAll(
         status,
         code,
@@ -56,9 +57,22 @@ public class ProductController {
     return new ResponseEntity<>(productService.update(request), HttpStatus.OK);
   }
 
+  @PutMapping("/updateQuantity")
+  private ResponseEntity<ResponseWrapper> updateQuantity(
+      @RequestParam Long productId,
+      @RequestParam(value = "number", required = false) Long number,
+      @RequestParam String action
+  ) {
+    if (number != null && number <= 0) {
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, number), HttpStatus.OK);
+    }
+    return new ResponseEntity<>(productService.updateQuantity(productId, number, action), HttpStatus.OK);
+  }
+
   @DeleteMapping("/delete")
   private ResponseEntity<ResponseWrapper> deleteById(@RequestParam Long id) {
     return new ResponseEntity<>(productService.deleteById(id), HttpStatus.OK);
   }
+
 
 }

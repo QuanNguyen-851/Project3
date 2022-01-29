@@ -1,6 +1,8 @@
 package com.example.project3.Common;
 
+import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.dto.ProductDTO;
+import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.ProductEntity;
 
 public class Maper {
@@ -27,6 +29,24 @@ public class Maper {
         .discount(productEntity.getDiscount())
         .quantity(productEntity.getQuantity())
         .status(productEntity.getStatus())
+        .build();
+  }
+  public BillDTO BillEntityToBillDTO(BillEntity billEntity){
+    return BillDTO.builder()
+        .id(billEntity.getId())
+        .profileId(billEntity.getProfileId())
+        .voucherId(billEntity.getVoucherId())
+        .description(billEntity.getDescription())
+        .totalPrice(billEntity.getTotalPrice())
+        .discountPrice(billEntity.getDiscountPrice())
+        .ownerName(billEntity.getOwner_name())
+        .phone(billEntity.getPhone())
+        .email(billEntity.getEmail())
+        .address(billEntity.getAddress())
+        .status(billEntity.getStatus())
+        .type(billEntity.getType())
+        .createdDate(billEntity.getCreatedDate())
+        .modifiedDate(billEntity.getModifiedDate())
         .build();
   }
 }

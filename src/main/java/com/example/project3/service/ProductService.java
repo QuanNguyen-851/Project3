@@ -21,4 +21,6 @@ public interface ProductService {
   ResponseWrapper update(ProductDTO productDTO);
 
   ResponseWrapper deleteById(Long id);
+
+  ResponseWrapper updateQuantity(Long productId, Long number, String action);
 }
