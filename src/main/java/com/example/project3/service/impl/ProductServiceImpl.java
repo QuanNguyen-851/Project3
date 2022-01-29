@@ -66,8 +66,8 @@ public class ProductServiceImpl implements ProductService {
       var modifiedprofile = profileRepository.getById(product.getModifiedBy());
       product.setListInformation(productInformationRepository.findAllByProductId(id));
       product.setListImage(imageRepository.getProductImageByIdProduct(id));
-      product.setCreatedByName(createprofile.getFistName() +createprofile.getLastName());
-      product.setModifiedByName(modifiedprofile.getFistName() +modifiedprofile.getLastName());
+      product.setCreatedByName(createprofile.getFistName() + createprofile.getLastName());
+      product.setModifiedByName(modifiedprofile.getFistName() + modifiedprofile.getLastName());
 
       return product;
     } catch (Exception e) {
@@ -208,6 +208,27 @@ public class ProductServiceImpl implements ProductService {
         }
       }
       repository.deleteById(res.getId());
+      return new ResponseWrapper(EnumResponse.SUCCESS, res);
+    }
+    return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+  }
+
+  @Override
+  public ResponseWrapper updateQuantity(Long productId, Long number, String action) {
+    var produ = repository.findFirstById(productId);
+    if (number == null) {
+      number = 1L;
+    }
+    if (produ != null) {
+      if (action.equals("-") && produ.getQuantity() >= number) {
+        number = 0-number;
+      }else if(action.equals("-") && produ.getQuantity() < number){
+        var err = EnumResponse.FAIL;
+        err.setResponseMessage("số lượng trong kho không đủ");
+        return new ResponseWrapper(EnumResponse.FAIL, produ);
+      }
+      produ.setQuantity(produ.getQuantity()+ number);
+      var res = repository.save(produ);
       return new ResponseWrapper(EnumResponse.SUCCESS, res);
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);

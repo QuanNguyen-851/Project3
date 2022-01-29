@@ -3,7 +3,7 @@ create table b_bill
     id            bigserial
         constraint b_bill_pk primary key,
     profile_id    bigint not null,
-    sale_id       bigint,
+    voucher_id       bigint,
     description   text,
     total_price   bigint,
     discount_price bigint,

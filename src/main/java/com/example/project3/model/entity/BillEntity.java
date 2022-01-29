@@ -16,13 +16,24 @@ import lombok.Setter;
 @Entity
 @Table(name = "b_bill")
 public class BillEntity {
+  enum BillStatus{
+    VERIFYING,
+    VERIFIED,
+    CANCELLED,
+  }
+  enum BillType{
+    OFFLINE,
+    ONLINE
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private Long profileId;
-  private Long saleId;
+  private Long voucherId;
   private String description;
   private Long totalPrice;
+  private Long DiscountPrice;
   private String owner_name;
   private String phone;
   private String email;
