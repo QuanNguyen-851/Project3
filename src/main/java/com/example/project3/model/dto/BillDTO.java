@@ -24,7 +24,7 @@ public class BillDTO {
   private String status;
   private String type;
 
-  private List<BillDetailEntity> billDetail;
+  private List<BillDetailResponse> billDetail;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
 }
