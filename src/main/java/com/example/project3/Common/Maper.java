@@ -1,11 +1,14 @@
 package com.example.project3.Common;
 
 import com.example.project3.model.dto.BillDTO;
+import com.example.project3.model.dto.BillDetailResponse;
 import com.example.project3.model.dto.ProductDTO;
+import com.example.project3.model.entity.BillDetailEntity;
 import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.ProductEntity;
 
 public class Maper {
+
   private static final Maper INSTANCE = new Maper();
 
   // Private constructor to avoid client applications to use constructor
@@ -16,6 +19,7 @@ public class Maper {
   public static Maper getInstance() {
     return INSTANCE;
   }
+
   public ProductDTO ProductEntityToDTO(ProductEntity productEntity) {
     return ProductDTO.builder()
         .id(productEntity.getId())
@@ -31,7 +35,8 @@ public class Maper {
         .status(productEntity.getStatus())
         .build();
   }
-  public BillDTO BillEntityToBillDTO(BillEntity billEntity){
+
+  public BillDTO BillEntityToBillDTO(BillEntity billEntity) {
     return BillDTO.builder()
         .id(billEntity.getId())
         .profileId(billEntity.getProfileId())
@@ -47,6 +52,40 @@ public class Maper {
         .type(billEntity.getType())
         .createdDate(billEntity.getCreatedDate())
         .modifiedDate(billEntity.getModifiedDate())
+        .build();
+  }
+  public BillEntity BillDTOToBillEntity(BillDTO billDTO){
+    BillEntity billEntity = new BillEntity();
+    billEntity.setProfileId(billDTO.getProfileId());
+    billEntity.setVoucherId(billDTO.getVoucherId());
+    billEntity.setDescription(billDTO.getDescription());
+    billEntity.setTotalPrice(billDTO.getTotalPrice());
+    billEntity.setDiscountPrice(billDTO.getDiscountPrice());
+    billEntity.setOwner_name(billDTO.getOwnerName());
+    billEntity.setPhone(billDTO.getPhone());
+    billEntity.setEmail(billDTO.getEmail());
+    billEntity.setAddress(billDTO.getAddress());
+    billEntity.setStatus(billDTO.getStatus());
+    billEntity.setType(billDTO.getType());
+    billEntity.setCreatedDate(billDTO.getCreatedDate());
+    billEntity.setModifiedDate(billDTO.getModifiedDate());
+    return billEntity;
+  }
+  public BillDetailEntity ToBillDetailEntity(BillDetailResponse billDetailResponse){
+    BillDetailEntity billDetailEntity = new BillDetailEntity();
+    billDetailEntity.setBillId(billDetailResponse.getBillId());
+    billDetailEntity.setProductId(billDetailResponse.getProductId());
+    billDetailEntity.setQuantity(billDetailResponse.getQuantity());
+    billDetailEntity.setPrice(billDetailResponse.getPrice());
+    return billDetailEntity;
+  }
+
+  public BillDetailResponse DetailEntityToResponse(BillDetailEntity billDetailEntity) {
+    return BillDetailResponse.builder()
+        .billId(billDetailEntity.getBillId())
+        .productId(billDetailEntity.getProductId())
+        .quantity(billDetailEntity.getQuantity())
+        .price(billDetailEntity.getPrice())
         .build();
   }
 }

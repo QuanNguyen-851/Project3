@@ -16,12 +16,12 @@ import lombok.Setter;
 @Entity
 @Table(name = "b_bill")
 public class BillEntity {
-  enum BillStatus{
+  public enum BillStatusEnum{
     VERIFYING,
     VERIFIED,
     CANCELLED,
   }
-  enum BillType{
+  public enum BillTypeEnum{
     OFFLINE,
     ONLINE
   }
