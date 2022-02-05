@@ -11,4 +11,6 @@ public interface BillService {
   BillDTO getByProfileId(Long profileId);
 
   ResponseWrapper create(BillDTO billDTO);
+
+  ResponseWrapper updateStatus(Long billId, String status);
 }

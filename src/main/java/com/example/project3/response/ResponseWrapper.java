@@ -7,36 +7,44 @@ import lombok.Setter;
 
 //@Builder
 public class ResponseWrapper {
-    private String responseCode;
-    private String responseMessage;
-    private Object responseData=null;
-        public ResponseWrapper(EnumResponse response, Object data) {
-        this.responseCode = response.getResponseCode();
-        this.responseMessage = response.getResponseMessage();
-        this.responseData = data;
-    }
 
-    public String getResponseCode() {
-        return responseCode;
-    }
+  private String responseCode;
+  private String responseMessage;
+  private Object responseData = null;
 
-    public void setResponseCode(String responseCode) {
-        this.responseCode = responseCode;
-    }
+  public ResponseWrapper(EnumResponse response, Object data) {
+    this.responseCode = response.getResponseCode();
+    this.responseMessage = response.getResponseMessage();
+    this.responseData = data;
+  }
 
-    public String getResponseMessage() {
-        return responseMessage;
-    }
+  public ResponseWrapper(EnumResponse response, Object data, String responseMessage) {
+    this.responseCode = response.getResponseCode();
+    this.responseMessage = responseMessage;
+    this.responseData = data;
+  }
 
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
-    }
+  public String getResponseCode() {
+    return responseCode;
+  }
 
-    public Object getResponseData() {
-        return responseData;
-    }
+  public void setResponseCode(String responseCode) {
+    this.responseCode = responseCode;
+  }
 
-    public void setResponseData(Object responseData) {
-        this.responseData = responseData;
-    }
+  public String getResponseMessage() {
+    return responseMessage;
+  }
+
+  public void setResponseMessage(String responseMessage) {
+    this.responseMessage = responseMessage;
+  }
+
+  public Object getResponseData() {
+    return responseData;
+  }
+
+  public void setResponseData(Object responseData) {
+    this.responseData = responseData;
+  }
 }

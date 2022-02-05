@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,5 +44,13 @@ public class BillController {
       @RequestBody BillDTO billdto
   ){
     return new ResponseEntity<>(service.create(billdto), HttpStatus.OK);
+  }
+
+  @PutMapping("/updateStatus")
+  private ResponseEntity<ResponseWrapper> updateStatus(
+      @RequestParam Long billId,
+      @RequestParam String status
+  ){
+    return new ResponseEntity<>(service.updateStatus(billId,status), HttpStatus.OK);
   }
 }
