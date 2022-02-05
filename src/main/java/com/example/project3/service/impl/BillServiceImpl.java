@@ -102,6 +102,20 @@ public class BillServiceImpl implements BillService {
     return new ResponseWrapper(EnumResponse.SUCCESS, billResponse);
   }
 
+  @Override
+  public ResponseWrapper updateStatus(Long profileId, String status) {
+    var bill = repository.findFirstById(profileId);
+    if (bill != null) {
+      if(bill.getStatus().equals(BillStatusEnum.VERIFYING.name())){
+        bill.setStatus(status);
+        bill.setModifiedDate(LocalDateTime.now());
+        return new ResponseWrapper(EnumResponse.SUCCESS, repository.save(bill));
+      }
+      return new ResponseWrapper(EnumResponse.FAIL, bill, "tạm thời chỉ cập nhật được hóa đơn đang VERIFYING");
+    }
+    return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+  }
+
   private BillDetailResponse saveDetail(BillDetailResponse detailResponse) {
     var entity = Maper.getInstance().ToBillDetailEntity(detailResponse);
     var res = billDetailRepository.save(entity);
