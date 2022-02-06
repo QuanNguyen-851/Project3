@@ -22,6 +22,7 @@ public class ProfileEntity {
   public enum RoleEnum {
     SUPERADMIN,
     ADMIN,
+    EMPLOYEE,
     USER
   }
 
