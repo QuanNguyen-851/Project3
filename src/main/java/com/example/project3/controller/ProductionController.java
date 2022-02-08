@@ -42,7 +42,7 @@ public class ProductionController {
     if (productionService.getById(id) != null) {
       return new ResponseEntity<>(productionService.getById(id), HttpStatus.OK);
     }
-    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(null, HttpStatus.OK);
   }
   @DeleteMapping("/delete")
   private ResponseEntity<ResponseWrapper> deleteById(@RequestParam Long id) {
@@ -52,7 +52,7 @@ public class ProductionController {
         return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
       }
     }
-    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.OK);
   }
 
   @PutMapping("/updateStatus")
@@ -63,7 +63,7 @@ public class ProductionController {
         return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, re), HttpStatus.OK);
       }
     }
-    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.OK);
 
   }
 }

@@ -31,7 +31,7 @@ public class ProfileController {
     if (profileEntity != null) {
       return new ResponseEntity<>(service.createProfile(profileEntity), HttpStatus.OK);
     }
-    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(null, HttpStatus.OK);
   }
 
   @GetMapping("/getall")
@@ -44,7 +44,7 @@ public class ProfileController {
     if (id != null && service.getById(id) != null) {
       return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
     }
-    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(null, HttpStatus.OK);
   }
 
   @PostMapping("/signin")

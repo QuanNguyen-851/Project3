@@ -28,18 +28,18 @@ public class BillController {
       @RequestParam(value = "profileId", required = false) Long profileId,
       @RequestParam(value = "phone", required = false) String phone,
       @RequestParam(value = "status", required = false) String status,
-      @RequestParam(value = "type", required = false) String type
-  ) {
-    return new ResponseEntity<>(service.getAll(profileId, phone, status, type), HttpStatus.OK);
-  }
-
-  @GetMapping("/getByProfileId")
-  private ResponseEntity<BillDTO> getByProfileId(
-      @RequestParam Long profileId,
+      @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "startDate", required = false) Date startDate,
       @RequestParam(value = "endDate", required = false) Date endDate
+  ) {
+    return new ResponseEntity<>(service.getAll(profileId, phone, status, type, startDate, endDate), HttpStatus.OK);
+  }
+
+  @GetMapping("/getById")
+  private ResponseEntity<BillDTO> getById(
+      @RequestParam Long billId
       ) {
-    return new ResponseEntity<>(service.getByProfileId(profileId, startDate, endDate),HttpStatus.OK);
+    return new ResponseEntity<>(service.getById(billId),HttpStatus.OK);
   }
 
   @PostMapping("/create")
