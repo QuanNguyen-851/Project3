@@ -15,7 +15,9 @@ import com.example.project3.repository.custom.BillDetailRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,17 +41,28 @@ public class BillServiceImpl implements BillService {
 
 
   @Override
-  public List<BillDTO> getAll(Long profileId, String phone, String status, String type) {
+  public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate) {
+
+    LocalDateTime end =  LocalDateTime.now();
+    LocalDateTime start = end.minusMonths(5);
+    System.out.println( "1  :" + start +"|"+ end);
+    if(startDate !=null) {
+      start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+    if(endDate !=null){
+      end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+    System.out.println( "1  :" + start +"|"+ end);
     List<BillDTO> res = new ArrayList<>();
-    for (BillEntity bill : repository.getAll(profileId, phone, status, type)) {
+    for (BillEntity bill : repository.getAll(profileId, phone, status, type,  start,  end)) {
       res.add(Maper.getInstance().BillEntityToBillDTO(bill));
     }
     return res;
   }
 
   @Override
-  public BillDTO getByProfileId(Long profileId, Date startDate, Date endDate) {
-    var bill = repository.findFirstByProfileId(profileId);
+  public BillDTO getById(Long billId) {
+    var bill = repository.findFirstById(billId);
     List<BillDetailResponse> detailResponses = new ArrayList<>();
     if (bill != null) {
       List<BillDetailEntity> billdetails = billDetailRepository.findAllByBillId(bill.getId());
@@ -115,6 +128,12 @@ public class BillServiceImpl implements BillService {
       return new ResponseWrapper(EnumResponse.FAIL, bill, "tạm thời chỉ cập nhật được hóa đơn đang VERIFYING");
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+  }
+
+  @Override
+  public List<BillDTO> getByProfileId(Long profileId, Date startDate, Date endDate) {
+
+    return null;
   }
 
   private BillDetailResponse saveDetail(BillDetailResponse detailResponse) {

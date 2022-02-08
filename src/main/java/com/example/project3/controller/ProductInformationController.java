@@ -24,6 +24,6 @@ public class ProductInformationController {
     if(response!=null){
       return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS,response), HttpStatus.OK);
     }
-    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.OK);
   }
 }
