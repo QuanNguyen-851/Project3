@@ -84,7 +84,7 @@ public class ProfileController {
     return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.NOT_FOUND);
   }
 
-  @PutMapping("/blockProfile")
+  @GetMapping("/blockProfile")
   private ResponseEntity<ResponseWrapper> blockProfile(
       @RequestParam Long id
   ) {
@@ -101,7 +101,7 @@ public class ProfileController {
     return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.NOT_FOUND);
   }
 
-  @PutMapping("/changePass")
+  @GetMapping("/changePass")
   private ResponseEntity<ResponseWrapper> updatePass(
       @RequestParam String oldPass,
       @RequestParam String newPass,
