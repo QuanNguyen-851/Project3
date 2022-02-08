@@ -3,6 +3,7 @@ package com.example.project3.controller;
 import com.example.project3.model.dto.BillDTO;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,9 +35,11 @@ public class BillController {
 
   @GetMapping("/getByProfileId")
   private ResponseEntity<BillDTO> getByProfileId(
-      @RequestParam Long profileId
-  ) {
-    return new ResponseEntity<>(service.getByProfileId(profileId),HttpStatus.OK);
+      @RequestParam Long profileId,
+      @RequestParam(value = "startDate", required = false) Date startDate,
+      @RequestParam(value = "endDate", required = false) Date endDate
+      ) {
+    return new ResponseEntity<>(service.getByProfileId(profileId, startDate, endDate),HttpStatus.OK);
   }
 
   @PostMapping("/create")

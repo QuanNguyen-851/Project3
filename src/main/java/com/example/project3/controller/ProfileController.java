@@ -57,7 +57,7 @@ public class ProfileController {
     return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, res), HttpStatus.NOT_FOUND);
   }
 
-  @PutMapping("/resetPass")
+  @GetMapping("/resetPass")
   private ResponseEntity<ResponseWrapper> resetPassword(
       @RequestParam String myRole,
       @RequestParam Long profileId
@@ -113,7 +113,7 @@ public class ProfileController {
     }
     var err = EnumResponse.FAIL;
     err.setResponseMessage("Không không thể đổi mật khẩu !");
-    return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.OK);
 
   }
 }
