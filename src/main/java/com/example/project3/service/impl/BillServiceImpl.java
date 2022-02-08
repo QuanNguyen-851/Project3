@@ -17,6 +17,7 @@ import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class BillServiceImpl implements BillService {
   }
 
   @Override
-  public BillDTO getByProfileId(Long profileId) {
+  public BillDTO getByProfileId(Long profileId, Date startDate, Date endDate) {
     var bill = repository.findFirstByProfileId(profileId);
     List<BillDetailResponse> detailResponses = new ArrayList<>();
     if (bill != null) {
