@@ -1,7 +1,9 @@
 package com.example.project3.controller;
 
+import com.example.project3.model.dto.ChangePassRequest;
 import com.example.project3.model.dto.LoginDto;
 import com.example.project3.model.dto.LoginResponse;
+import com.example.project3.model.dto.ResetPassRequest;
 import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.response.EnumResponse;
@@ -31,7 +33,7 @@ public class ProfileController {
     if (profileEntity != null) {
       return new ResponseEntity<>(service.createProfile(profileEntity), HttpStatus.OK);
     }
-    return new ResponseEntity<>(null, HttpStatus.OK);
+    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
   }
 
   @GetMapping("/getall")
@@ -44,7 +46,7 @@ public class ProfileController {
     if (id != null && service.getById(id) != null) {
       return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
     }
-    return new ResponseEntity<>(null, HttpStatus.OK);
+    return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
   }
 
   @PostMapping("/signin")
@@ -57,12 +59,11 @@ public class ProfileController {
     return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, res), HttpStatus.NOT_FOUND);
   }
 
-  @PostMapping("/resetPass")
+  @PutMapping("/resetPass")
   private ResponseEntity<ResponseWrapper> resetPassword(
-      @RequestParam String myRole,
-      @RequestParam Long profileId
+      @RequestBody ResetPassRequest resetPassRequest
   ) {
-    var res = service.resetPassword(myRole, profileId);
+    var res = service.resetPassword(resetPassRequest.getMyRole(), resetPassRequest.getProfileId());
     if (res != null) {
       var succ = EnumResponse.SUCCESS;
       succ.setResponseMessage("Password mặc định là 123123! ");
@@ -70,7 +71,7 @@ public class ProfileController {
     }
     var err = EnumResponse.FAIL;
     err.setResponseMessage("Bạn không có quền hoặc không tìm thấy tài khoản này!");
-    return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.OK);
+    return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.BAD_REQUEST);
   }
 
   @PutMapping("/updateMyProfile")
@@ -84,7 +85,7 @@ public class ProfileController {
     return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.NOT_FOUND);
   }
 
-  @PostMapping("/blockProfile")
+  @GetMapping("/blockProfile")
   private ResponseEntity<ResponseWrapper> blockProfile(
       @RequestParam Long id
   ) {
@@ -93,7 +94,7 @@ public class ProfileController {
       if (res.getRole() != null && res.getRole().equals(RoleEnum.SUPERADMIN.name())) {
         var err = EnumResponse.FAIL;
         err.setResponseMessage("Không thể thực hiện hành động với quản lý!");
-        return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.BAD_REQUEST);
       } else {
         return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
       }
@@ -101,19 +102,17 @@ public class ProfileController {
     return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.NOT_FOUND);
   }
 
-  @PostMapping("/changePass")
+  @PutMapping("/changePass")
   private ResponseEntity<ResponseWrapper> updatePass(
-      @RequestParam String oldPass,
-      @RequestParam String newPass,
-      @RequestParam Long myId
+      @RequestBody ChangePassRequest changePassRequest
   ) {
-    var res = service.changeMyPassword(oldPass,newPass,myId);
+    var res = service.changeMyPassword(changePassRequest.getOldPass(), changePassRequest.getNewPass(), changePassRequest.getMyId());
     if(res!=null){
       return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
     }
     var err = EnumResponse.FAIL;
     err.setResponseMessage("Không không thể đổi mật khẩu !");
-    return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.OK);
+    return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.NOT_FOUND);
 
   }
 }
