@@ -1,6 +1,7 @@
 package com.example.project3.controller;
 
 import com.example.project3.model.dto.BillDTO;
+import com.example.project3.model.dto.UpdateSatusBill;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
 import java.util.Date;
@@ -39,7 +40,12 @@ public class BillController {
   private ResponseEntity<BillDTO> getById(
       @RequestParam Long billId
       ) {
-    return new ResponseEntity<>(service.getById(billId),HttpStatus.OK);
+    var res = service.getById(billId);
+    if(res!=null){
+      return new ResponseEntity<>(res,HttpStatus.OK);
+    }
+    return new ResponseEntity<>(res,HttpStatus.NOT_FOUND);
+
   }
 
   @PostMapping("/create")
@@ -51,9 +57,8 @@ public class BillController {
 
   @PutMapping("/updateStatus")
   private ResponseEntity<ResponseWrapper> updateStatus(
-      @RequestParam Long billId,
-      @RequestParam String status
+      @RequestBody UpdateSatusBill updateSatusBill
   ){
-    return new ResponseEntity<>(service.updateStatus(billId,status), HttpStatus.OK);
+    return new ResponseEntity<>(service.updateStatus(updateSatusBill.getBillId(), updateSatusBill.getStatus()), HttpStatus.OK);
   }
 }
