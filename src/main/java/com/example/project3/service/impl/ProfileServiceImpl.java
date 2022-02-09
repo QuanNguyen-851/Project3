@@ -77,7 +77,7 @@ public class ProfileServiceImpl implements ProfileService {
   @Override
   public ProfileEntity resetPassword(String myRole, Long profileId) {
     var profile= repository.findFirstById(profileId);
-    if(profile!=null && profile.getRole().equals(RoleEnum.SUPERADMIN.name())){
+    if(profile!=null && myRole.equals(RoleEnum.SUPERADMIN.name())){
       profile.setPassWord("123123");
       return repository.save(profile);
     }
