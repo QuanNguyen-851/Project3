@@ -64,7 +64,7 @@ public class ProductController {
       @RequestParam String action
   ) {
     if (number != null && number <= 0) {
-      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, number), HttpStatus.OK);
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, number), HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(productService.updateQuantity(productId, number, action), HttpStatus.OK);
   }

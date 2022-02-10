@@ -53,10 +53,13 @@ public class ProfileController {
   private ResponseEntity<ResponseWrapper> authenticateUser(@RequestBody LoginDto loginDto) {
     LoginResponse res = service.findByPhoneAndPassword(loginDto.getPhone(), loginDto.getPassword());
     if (res != null) {
+      if(res.getToken().equals("err")){
+        return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, res, "tài khoản đã bị khóa không thể đăng nhập!"), HttpStatus.BAD_REQUEST);
 
-      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
+      }
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res, "SUCCESS"), HttpStatus.OK);
     }
-    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, res), HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, res, "Sai tên đăng nhâp hoặc mật khẩu"), HttpStatus.NOT_FOUND);
   }
 
   @PutMapping("/resetPass")

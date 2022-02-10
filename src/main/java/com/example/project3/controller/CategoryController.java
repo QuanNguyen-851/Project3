@@ -55,7 +55,7 @@ public class CategoryController {
     if (categoryService.getById(id) != null) {
       return new ResponseEntity<>(categoryService.getById(id), HttpStatus.OK);
     }
-    return new ResponseEntity<>(null, HttpStatus.OK);
+    return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
   }
 
   @DeleteMapping("/delete")
@@ -66,7 +66,7 @@ public class CategoryController {
         return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
       }
     }
-    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.OK);
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.NOT_FOUND);
   }
 
   @PutMapping("/updateStatus")
@@ -77,7 +77,7 @@ public class CategoryController {
         return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, re), HttpStatus.OK);
       }
     }
-    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.OK);
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.NOT_FOUND);
 
   }
 }
