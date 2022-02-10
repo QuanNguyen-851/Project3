@@ -61,6 +61,10 @@ public class ProfileServiceImpl implements ProfileService {
   public LoginResponse findByPhoneAndPassword(String phone, String pass) {
     var res = repository.findFirstByPhoneAndPassWord(phone,pass);
     String token ;
+    if(res.getBlock().equals(true)){
+      return LoginResponse.builder()
+          .token("err").build();
+    }
     if(res!=null){
       var temp = res.getEmail() + res.getPhone()+ res.getPassWord();
       token = Token.convertHashToString(temp);
