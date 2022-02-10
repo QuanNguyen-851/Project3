@@ -12,7 +12,8 @@ public interface ProductService {
       String code,
       String name,
       Long idCate,
-      Long idProduction);
+      Long idProduction,
+      Boolean getAll);
 
   ProductResponse getDetail(Long id);
 

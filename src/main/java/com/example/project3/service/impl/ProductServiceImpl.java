@@ -47,14 +47,16 @@ public class ProductServiceImpl implements ProductService {
       String code,
       String name,
       Long idCate,
-      Long idProduction
+      Long idProduction,
+      Boolean getAll
   ) {
     return repository.getAllProduct(
         status,
         code,
         name,
         idCate,
-        idProduction
+        idProduction,
+        getAll
     );
   }
 
