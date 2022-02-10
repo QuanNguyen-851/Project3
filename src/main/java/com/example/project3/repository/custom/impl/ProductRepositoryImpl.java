@@ -37,7 +37,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
       String code,
       String name,
       Long idCate,
-      Long idProduction
+      Long idProduction,
+      Boolean getAll
   ) {
     StringBuilder sql = new StringBuilder();
     sql.append("select pp.*, cc.name as category, p.name as production "
@@ -61,8 +62,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     if (idProduction != null) {
       sql.append("and p.id = :idProduction ");
     }
-    sql.append("and cc.status != 'DISABLE' ");
-    sql.append("and p.status != 'DISABLE' ");
+    if(getAll.equals(false)) {
+      sql.append("and cc.status != 'DISABLE' ");
+      sql.append("and p.status != 'DISABLE' ");
+    }
     sql.append("ORDER BY pp.id DESC ");
     var query = entityManager.createNativeQuery(sql.toString(), ProductResponse.class);
     if (status != null) {

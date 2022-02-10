@@ -15,6 +15,7 @@ public interface ProductRepositoryCustom {
       String code,
       String name,
       Long idCate,
-      Long idProduction
+      Long idProduction,
+      Boolean getAll
   );
 }

@@ -31,14 +31,16 @@ public class ProductController {
       @RequestParam(value = "code", required = false) String code,
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "idCate", required = false) Long idCate,
-      @RequestParam(value = "idProduction", required = false) Long idProduction
+      @RequestParam(value = "idProduction", required = false) Long idProduction,
+      @RequestParam(value= "getall", required = false ) Boolean getall
   ) {
     return new ResponseEntity<>(productService.getAll(
         status,
         code,
         name,
         idCate,
-        idProduction
+        idProduction,
+        getall
     ), HttpStatus.OK);
   }
 
