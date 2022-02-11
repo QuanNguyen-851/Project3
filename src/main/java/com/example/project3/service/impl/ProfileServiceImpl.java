@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -131,6 +132,24 @@ public class ProfileServiceImpl implements ProfileService {
     if(profile!=null &&newPass!=null && profile.getPassWord().equals(oldPass)){
       profile.setPassWord(newPass);
       return repository.save(profile);
+    }
+    return null;
+  }
+
+  @Override
+  public ProfileEntity updateUserRole(ProfileEntity profileEntity) {
+    if(profileEntity.getRole().toUpperCase(Locale.ROOT).equals(RoleEnum.SUPERADMIN)){
+      profileEntity.setId(0L);
+      return profileEntity;
+    }
+    var pro = repository.findFirstById(profileEntity.getId());
+    if(pro!=null){
+      if(pro.getRole().equals(RoleEnum.SUPERADMIN.name())){
+        profileEntity.setId(0L);
+        return profileEntity;
+      }
+      pro.setRole(profileEntity.getRole().toUpperCase(Locale.ROOT));
+      return repository.save(pro);
     }
     return null;
   }

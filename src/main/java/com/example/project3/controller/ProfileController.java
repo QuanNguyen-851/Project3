@@ -53,7 +53,7 @@ public class ProfileController {
   private ResponseEntity<ResponseWrapper> authenticateUser(@RequestBody LoginDto loginDto) {
     LoginResponse res = service.findByPhoneAndPassword(loginDto.getPhone(), loginDto.getPassword());
     if (res != null) {
-      if(res.getToken().equals("err")){
+      if (res.getToken().equals("err")) {
         return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, res, "tài khoản đã bị khóa không thể đăng nhập!"), HttpStatus.BAD_REQUEST);
 
       }
@@ -110,12 +110,31 @@ public class ProfileController {
       @RequestBody ChangePassRequest changePassRequest
   ) {
     var res = service.changeMyPassword(changePassRequest.getOldPass(), changePassRequest.getNewPass(), changePassRequest.getMyId());
-    if(res!=null){
+    if (res != null) {
       return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
     }
     var err = EnumResponse.FAIL;
     err.setResponseMessage("Không không thể đổi mật khẩu !");
     return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.NOT_FOUND);
+
+  }
+
+  @PutMapping("/updateRole")
+  private ResponseEntity<ResponseWrapper> updateRole(
+      @RequestBody ProfileEntity profileEntity
+  ) {
+    if (profileEntity.getRole() == null || profileEntity.getId() == null) {
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, null), HttpStatus.BAD_REQUEST);
+    }
+    var res = service.updateUserRole(profileEntity);
+    if (res != null) {
+      if (res.getId().equals(0L)) {
+        return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, "không thể update SUPERADMIN role"), HttpStatus.OK);
+      }
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
+    }
+
+    return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.NOT_FOUND);
 
   }
 }
