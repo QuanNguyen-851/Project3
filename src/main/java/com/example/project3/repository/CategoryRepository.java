@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long>, CategoryRepositoryCustom {
 
   CategoryEntity findFirstById(Long id);
+  CategoryEntity findFirstBySortName(String sortName);
 }

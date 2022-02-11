@@ -29,10 +29,17 @@ public class CategoryController {
 
   @PostMapping("/create")
   private ResponseEntity<ResponseWrapper> createCategory(@RequestBody @Validated CategoryEntity categoryEntity) {
-
+    var res = categoryService.createCategory(categoryEntity);
+    if (res == null) {
+      return new ResponseEntity<>(new ResponseWrapper(
+          EnumResponse.EXIST,
+          res,
+          "Đã tồn tại sort name!"
+      ), HttpStatus.BAD_REQUEST);
+    }
     return new ResponseEntity<>(new ResponseWrapper(
         EnumResponse.SUCCESS,
-        categoryService.createCategory(categoryEntity)
+        res
     ), HttpStatus.OK);
   }
 
