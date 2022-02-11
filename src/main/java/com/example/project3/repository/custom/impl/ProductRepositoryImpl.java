@@ -62,7 +62,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     if (idProduction != null) {
       sql.append("and p.id = :idProduction ");
     }
-    if(getAll.equals(false)) {
+    if(getAll!=null && getAll.equals(true) ) {
+
+    }else{
       sql.append("and cc.status != 'DISABLE' ");
       sql.append("and p.status != 'DISABLE' ");
     }

@@ -32,7 +32,7 @@ public class ProductController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "idCate", required = false) Long idCate,
       @RequestParam(value = "idProduction", required = false) Long idProduction,
-      @RequestParam(value= "getall", required = false ) Boolean getall
+      @RequestParam(value = "getall", required = false ) Boolean getall
   ) {
     return new ResponseEntity<>(productService.getAll(
         status,
