@@ -15,5 +15,4 @@ public interface BillService {
 
   ResponseWrapper updateStatus(Long billId, String status);
 
-  List<BillDTO> getByProfileId(Long profileId, Date startDate, Date endDate);
 }

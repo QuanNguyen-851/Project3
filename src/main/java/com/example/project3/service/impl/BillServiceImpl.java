@@ -96,10 +96,17 @@ public class BillServiceImpl implements BillService {
       er.setResponseMessage("không có sản phẩm nào trong giỏ hàng à? ");
       return new ResponseWrapper(er, billDTO);
     }
+
     var profile = profileRepository.findFirstById(billDTO.getProfileId());
     if (!profile.getRole().equals(RoleEnum.USER.name())) {
       billDTO.setType(BillTypeEnum.OFFLINE.name());
       billDTO.setStatus(BillStatusEnum.VERIFIED.name());
+    }
+    for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
+      var prod= productRepository.findFirstById(billDetail.getProductId());
+      if(prod ==null){
+        return new ResponseWrapper(EnumResponse.NOT_FOUND, billDetail, "sản phẩm này hiện không còn tồn tại trong hệ thống!");
+      }
     }
     billDTO.setCreatedDate(LocalDateTime.now());
     billDTO.setModifiedDate(LocalDateTime.now());
@@ -130,11 +137,6 @@ public class BillServiceImpl implements BillService {
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
   }
 
-  @Override
-  public List<BillDTO> getByProfileId(Long profileId, Date startDate, Date endDate) {
-
-    return null;
-  }
 
   private BillDetailResponse saveDetail(BillDetailResponse detailResponse) {
     var entity = Maper.getInstance().ToBillDetailEntity(detailResponse);

@@ -22,4 +22,6 @@ public interface ProfileService {
   ProfileEntity blockUser(Long id);
 
   ProfileEntity changeMyPassword(String oldPass, String newPass, Long ProfileId);
+
+  ProfileEntity updateUserRole(ProfileEntity profileEntity);
 }

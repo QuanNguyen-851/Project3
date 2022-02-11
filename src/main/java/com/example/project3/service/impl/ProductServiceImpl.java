@@ -21,6 +21,7 @@ import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -223,17 +224,30 @@ public class ProductServiceImpl implements ProductService {
     }
     if (produ != null) {
       if (action.equals("-") && produ.getQuantity() >= number) {
-        number = 0-number;
-      }else if(action.equals("-") && produ.getQuantity() < number){
+        number = 0 - number;
+      } else if (action.equals("-") && produ.getQuantity() < number) {
         var err = EnumResponse.FAIL;
         err.setResponseMessage("số lượng trong kho không đủ");
         return new ResponseWrapper(EnumResponse.FAIL, produ);
       }
-      produ.setQuantity(produ.getQuantity()+ number);
+      produ.setQuantity(produ.getQuantity() + number);
       var res = repository.save(produ);
       return new ResponseWrapper(EnumResponse.SUCCESS, res);
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+  }
+
+  @Override
+  public ResponseWrapper updateStatus(ProductResponse productResponse) {
+    if (productResponse.getId() == null || productResponse.getStatus() == null) {
+      return new ResponseWrapper(EnumResponse.FAIL, null);
+    }
+    var prod = repository.findFirstById(productResponse.getId());
+    if (prod == null) {
+      return new ResponseWrapper(EnumResponse.NOT_FOUND, "not found", "không tìm thấy sản phẩm mày");
+    }
+    prod.setStatus(productResponse.getStatus().toUpperCase(Locale.ROOT));
+    return new ResponseWrapper(EnumResponse.SUCCESS, repository.save(prod), "thành công!");
   }
 
 

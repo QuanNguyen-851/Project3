@@ -2,6 +2,7 @@ package com.example.project3.controller;
 
 import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.ProductResponse;
+import com.example.project3.model.entity.UpdateQuantityRequest;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductService;
@@ -61,14 +62,15 @@ public class ProductController {
 
   @PutMapping("/updateQuantity")
   private ResponseEntity<ResponseWrapper> updateQuantity(
-      @RequestParam Long productId,
-      @RequestParam(value = "number", required = false) Long number,
-      @RequestParam String action
+      @RequestBody UpdateQuantityRequest updateQuantityRequest
   ) {
-    if (number != null && number <= 0) {
-      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, number), HttpStatus.BAD_REQUEST);
+    if(updateQuantityRequest.getProductId()==null || updateQuantityRequest.getAction()==null){
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, null), HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity<>(productService.updateQuantity(productId, number, action), HttpStatus.OK);
+    if (updateQuantityRequest.getNumber() != null && updateQuantityRequest.getNumber() <= 0) {
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, updateQuantityRequest.getNumber()), HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(productService.updateQuantity(updateQuantityRequest.getProductId(), updateQuantityRequest.getNumber(), updateQuantityRequest.getAction()), HttpStatus.OK);
   }
 
   @DeleteMapping("/delete")
@@ -76,5 +78,17 @@ public class ProductController {
     return new ResponseEntity<>(productService.deleteById(id), HttpStatus.OK);
   }
 
-
+  @PutMapping("/updateStatus")
+  private ResponseEntity<ResponseWrapper> updateStatus(
+      @RequestBody ProductResponse productResponse
+  ){
+    var res = productService.updateStatus(productResponse);
+    if(res.getResponseData()==null){
+      return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+    }
+    if(res.getResponseData().equals("not found")){
+      return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+    }
+    return new ResponseEntity<>(res, HttpStatus.OK);
+  }
 }
