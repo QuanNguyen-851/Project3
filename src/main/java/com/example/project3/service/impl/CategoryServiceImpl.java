@@ -8,6 +8,7 @@ import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.CategoryService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,11 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public CategoryEntity createCategory(CategoryEntity categoryEntity) {
+    categoryEntity.setSortName(categoryEntity.getSortName().toUpperCase(Locale.ROOT));
+    var cate = categoryRepository.findFirstBySortName(categoryEntity.getSortName());
+    if(categoryEntity!=null){
+      return null;
+    }
     categoryEntity.setCreatedDate(LocalDateTime.now());
     categoryEntity.setModifiedDate(LocalDateTime.now());
     categoryEntity.setStatus(DisableStatus.ENABLE.name());
