@@ -1,4 +1,4 @@
-package com.example.project3.repository.custom;
+package com.example.project3.repository;
 
 import com.example.project3.model.entity.BillDetailEntity;
 import java.util.List;

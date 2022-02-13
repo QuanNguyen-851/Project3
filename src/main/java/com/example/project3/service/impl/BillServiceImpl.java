@@ -11,11 +11,12 @@ import com.example.project3.model.entity.BillEntity.BillTypeEnum;
 import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
+import com.example.project3.model.entity.TopEmployee;
 import com.example.project3.model.entity.TurnoverEntity;
 import com.example.project3.repository.BillRepository;
 import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProfileRepository;
-import com.example.project3.repository.custom.BillDetailRepository;
+import com.example.project3.repository.BillDetailRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
@@ -46,18 +47,18 @@ public class BillServiceImpl implements BillService {
   @Override
   public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate) {
 
-    LocalDateTime end =  LocalDateTime.now();
+    LocalDateTime end = LocalDateTime.now();
     LocalDateTime start = end.minusMonths(5);
-    System.out.println( "1  :" + start +"|"+ end);
-    if(startDate !=null) {
+    System.out.println("1  :" + start + "|" + end);
+    if (startDate != null) {
       start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
-    if(endDate !=null){
+    if (endDate != null) {
       end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
-    System.out.println( "1  :" + start +"|"+ end);
+    System.out.println("1  :" + start + "|" + end);
     List<BillDTO> res = new ArrayList<>();
-    for (BillEntity bill : repository.getAll(profileId, phone, status, type,  start,  end)) {
+    for (BillEntity bill : repository.getAll(profileId, phone, status, type, start, end)) {
       res.add(Maper.getInstance().BillEntityToBillDTO(bill));
     }
     return res;
@@ -106,8 +107,8 @@ public class BillServiceImpl implements BillService {
       billDTO.setStatus(BillStatusEnum.VERIFIED.name());
     }
     for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
-      var prod= productRepository.findFirstById(billDetail.getProductId());
-      if(prod ==null){
+      var prod = productRepository.findFirstById(billDetail.getProductId());
+      if (prod == null) {
         return new ResponseWrapper(EnumResponse.NOT_FOUND, billDetail, "sản phẩm này hiện không còn tồn tại trong hệ thống!");
       }
     }
@@ -130,7 +131,7 @@ public class BillServiceImpl implements BillService {
   public ResponseWrapper updateStatus(Long profileId, String status) {
     var bill = repository.findFirstById(profileId);
     if (bill != null) {
-      if(bill.getStatus().equals(BillStatusEnum.VERIFYING.name())){
+      if (bill.getStatus().equals(BillStatusEnum.VERIFYING.name())) {
         bill.setStatus(status);
         bill.setModifiedDate(LocalDateTime.now());
         return new ResponseWrapper(EnumResponse.SUCCESS, repository.save(bill));
@@ -146,7 +147,7 @@ public class BillServiceImpl implements BillService {
     Long count = repository.countByStatusAndMonth(status, type, thismonth);
     var entities = repository.getNewBill(status, type, thismonth);
     List<BillDTO> data = new ArrayList<>();
-    for (BillEntity item: entities) {
+    for (BillEntity item : entities) {
       data.add(Maper.getInstance().BillEntityToBillDTO(item));
     }
 
@@ -160,13 +161,13 @@ public class BillServiceImpl implements BillService {
   public TurnoverEntity getTurnover(String status, String type) {
     var thismonth = FormatDate.getThisMonth();
     Long turnover = 0L;
-    Long importPrice= 0L;
+    Long importPrice = 0L;
     var entities = repository.getNewBill(status, type, thismonth);
     var prod = productRepository.getNewProd(thismonth, null);
     for (BillEntity item : entities) {
       turnover += item.getTotalPrice();
     }
-    for(ProductResponse item : prod){
+    for (ProductResponse item : prod) {
       importPrice += item.getImportPrice();
     }
     return TurnoverEntity.builder()
@@ -174,6 +175,19 @@ public class BillServiceImpl implements BillService {
         .importPrice(importPrice)
         .interestRate(turnover - importPrice)
         .build();
+  }
+
+  @Override
+  public List<TopEmployee> getTopEmployee(Long limit, String profileRole) {
+    var thismonth = FormatDate.getThisMonth();
+    var list = repository.getTopEmployee(limit, thismonth, profileRole);
+    for (TopEmployee item : list) {
+      var profile = profileRepository.findFirstById(item.getProfileId());
+      if(profile!=null){
+        item.setProfileEntity(profile);
+      }
+    }
+    return list;
   }
 
 

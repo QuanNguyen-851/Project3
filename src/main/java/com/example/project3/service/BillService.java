@@ -2,6 +2,7 @@ package com.example.project3.service;
 
 import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.entity.NewBillResponse;
+import com.example.project3.model.entity.TopEmployee;
 import com.example.project3.model.entity.TurnoverEntity;
 import com.example.project3.response.ResponseWrapper;
 import java.util.Date;
@@ -20,4 +21,6 @@ public interface BillService {
   NewBillResponse countNewBill(String status , String type);
 
   TurnoverEntity getTurnover(String status , String type);
+
+  List<TopEmployee> getTopEmployee(Long limit, String profileRole);
 }
