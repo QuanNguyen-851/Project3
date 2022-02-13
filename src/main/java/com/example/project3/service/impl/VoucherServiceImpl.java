@@ -8,6 +8,7 @@ import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.VoucherService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class VoucherServiceImpl implements VoucherService {
         return new ResponseWrapper(EnumResponse.EXIST, key);
       }
       VoucherEntity voucherEntity = new VoucherEntity();
-      voucherEntity.setKey(voucherDTO.getKey());
+      voucherEntity.setKey(voucherDTO.getKey().toUpperCase(Locale.ROOT));
       voucherEntity.setName(voucherDTO.getName());
       voucherEntity.setCreatedDate(LocalDateTime.now());
       voucherEntity.setModifiedDate(LocalDateTime.now());

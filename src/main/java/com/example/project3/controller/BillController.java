@@ -2,6 +2,8 @@ package com.example.project3.controller;
 
 import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.dto.UpdateSatusBill;
+import com.example.project3.model.entity.NewBillResponse;
+import com.example.project3.model.entity.TurnoverEntity;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
 import java.util.Date;
@@ -60,5 +62,19 @@ public class BillController {
       @RequestBody UpdateSatusBill updateSatusBill
   ){
     return new ResponseEntity<>(service.updateStatus(updateSatusBill.getBillId(), updateSatusBill.getStatus()), HttpStatus.OK);
+  }
+  @GetMapping("/countNewBill")
+  private ResponseEntity<NewBillResponse> countBill(
+      @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "type", required = false) String type
+  ){
+    return new  ResponseEntity<>(service.countNewBill(status,type), HttpStatus.OK) ;
+  }
+  @GetMapping("/getTurnover")
+  private ResponseEntity<TurnoverEntity> getTurnover(
+      @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "type", required = false) String type
+  ){
+    return new ResponseEntity<>(service.getTurnover(status,type), HttpStatus.OK);
   }
 }

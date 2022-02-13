@@ -1,6 +1,8 @@
 package com.example.project3.service;
 
 import com.example.project3.model.dto.BillDTO;
+import com.example.project3.model.entity.NewBillResponse;
+import com.example.project3.model.entity.TurnoverEntity;
 import com.example.project3.response.ResponseWrapper;
 import java.util.Date;
 import java.util.List;
@@ -15,4 +17,7 @@ public interface BillService {
 
   ResponseWrapper updateStatus(Long billId, String status);
 
+  NewBillResponse countNewBill(String status , String type);
+
+  TurnoverEntity getTurnover(String status , String type);
 }

@@ -1,5 +1,6 @@
 package com.example.project3.repository.custom.impl;
 
+import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.repository.custom.ProductRepositoryCustom;
@@ -24,7 +25,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     StringBuilder sql = new StringBuilder();
     sql.append("select pp.*, cc.name as category, p.name as production from p_product pp\n"
         + "left join c_category cc on pp.category_id = cc.id\n"
-        + "left join p_production p on p.id = pp.production_id where pp.id = :id");
+        + "left join p_production p on p.id = pp.production_id"
+        + " where pp.id = :id");
     var query = entityManager.createNativeQuery(sql.toString(), ProductResponse.class);
     query.setParameter("id", id);
     ProductResponse value = (ProductResponse) query.getSingleResult();
@@ -62,7 +64,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     if (idProduction != null) {
       sql.append("and p.id = :idProduction ");
     }
-    if(getAll!=null && getAll.equals(true) ) {
+    if(getAll==null || getAll.equals(true) ) {
 
     }else{
       sql.append("and cc.status != 'DISABLE' ");
@@ -88,5 +90,36 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     List<ProductResponse> list = query.getResultList();
     System.out.println(sql.toString());
     return list;
+  }
+
+  @Override
+  public Long countNewProd(String month) {
+    var sql = new StringBuilder();
+    sql.append("select count(*) from p_product "
+        + "where to_char(created_date, 'MM-YYYY') = :month");
+    var query = entityManager.createNativeQuery(sql.toString());
+      query.setParameter("month", month);
+    return Long.parseLong(query.getSingleResult().toString());
+  }
+
+  @Override
+  public List<ProductResponse> getNewProd(String month,  Long limit) {
+    var sql = new StringBuilder();
+    sql.append("select pp.*, cc.name as category, p.name as production "
+        + ",pp.created_by, pp.modified_by "
+        + " from p_product pp\n"
+        + "left join c_category cc on pp.category_id = cc.id\n"
+        + "left join p_production p on p.id = pp.production_id\n"
+        + "where to_char(pp.created_date, 'MM-YYYY') = :month"
+        + " ORDER BY id DESC");
+    if(limit!=null){
+      sql.append(" LIMIT :limit");
+    }
+    var query = entityManager.createNativeQuery(sql.toString(), ProductResponse.class);
+    query.setParameter("month", month);
+    if(limit!=null){
+      query.setParameter("limit", limit);
+    }
+    return query.getResultList();
   }
 }

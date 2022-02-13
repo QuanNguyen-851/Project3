@@ -9,5 +9,7 @@ import java.util.List;
 public interface BillRepositoryCustom {
 
   List<BillEntity> getAll(Long profileId,String phone,String status,String type, LocalDateTime startDate, LocalDateTime endDate);
+  Long countByStatusAndMonth(String status,String type, String month);
 
+  List<BillEntity> getNewBill(String status,String type, String month);
 }

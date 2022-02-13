@@ -1,6 +1,8 @@
 package com.example.project3.service;
 
 import com.example.project3.model.dto.ProductDTO;
+import com.example.project3.model.entity.NewBillResponse;
+import com.example.project3.model.entity.NewProdResponse;
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.response.ResponseWrapper;
 import java.util.List;
@@ -26,4 +28,6 @@ public interface ProductService {
   ResponseWrapper updateQuantity(Long productId, Long number, String action);
 
   ResponseWrapper updateStatus(ProductResponse productResponse);
+
+  NewProdResponse countNewProd( Long limit);
 }

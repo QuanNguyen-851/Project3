@@ -1,7 +1,9 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.Common.FormatDate;
 import com.example.project3.Common.Token;
 import com.example.project3.model.dto.LoginResponse;
+import com.example.project3.model.entity.NewProfileResponse;
 import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.repository.ProfileRepository;
@@ -12,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +155,17 @@ public class ProfileServiceImpl implements ProfileService {
       return repository.save(pro);
     }
     return null;
+  }
+
+  @Override
+  public NewProfileResponse countNewProfile(String role, Long limit) {
+    var thismonth = FormatDate.getThisMonth();
+    var count = repository.countNewProfile(role,thismonth);
+    var prof = repository.getNewProfile(role, thismonth, limit);
+    return NewProfileResponse.builder()
+        .count(count)
+        .data(prof)
+        .build();
   }
 
 }
