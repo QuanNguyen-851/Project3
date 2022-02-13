@@ -1,6 +1,8 @@
 package com.example.project3.controller;
 
 import com.example.project3.model.dto.ProductDTO;
+import com.example.project3.model.entity.NewBillResponse;
+import com.example.project3.model.entity.NewProdResponse;
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.model.entity.UpdateQuantityRequest;
 import com.example.project3.response.EnumResponse;
@@ -90,5 +92,12 @@ public class ProductController {
       return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
     }
     return new ResponseEntity<>(res, HttpStatus.OK);
+  }
+
+  @GetMapping("/CountNewProd")
+  private ResponseEntity<NewProdResponse> countNewProd(
+      @RequestParam(value = "limit", required = false) Long limit
+  ){
+   return new ResponseEntity<>(productService.countNewProd( limit), HttpStatus.OK);
   }
 }

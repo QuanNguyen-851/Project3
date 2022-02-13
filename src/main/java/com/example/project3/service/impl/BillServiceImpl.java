@@ -1,5 +1,6 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.Common.FormatDate;
 import com.example.project3.Common.Maper;
 import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.dto.BillDetailResponse;
@@ -7,7 +8,10 @@ import com.example.project3.model.entity.BillDetailEntity;
 import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.BillEntity.BillStatusEnum;
 import com.example.project3.model.entity.BillEntity.BillTypeEnum;
+import com.example.project3.model.entity.NewBillResponse;
+import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
+import com.example.project3.model.entity.TurnoverEntity;
 import com.example.project3.repository.BillRepository;
 import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProfileRepository;
@@ -15,7 +19,6 @@ import com.example.project3.repository.custom.BillDetailRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -135,6 +138,42 @@ public class BillServiceImpl implements BillService {
       return new ResponseWrapper(EnumResponse.FAIL, bill, "tạm thời chỉ cập nhật được hóa đơn đang VERIFYING");
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+  }
+
+  @Override
+  public NewBillResponse countNewBill(String status, String type) {
+    var thismonth = FormatDate.getThisMonth();
+    Long count = repository.countByStatusAndMonth(status, type, thismonth);
+    var entities = repository.getNewBill(status, type, thismonth);
+    List<BillDTO> data = new ArrayList<>();
+    for (BillEntity item: entities) {
+      data.add(Maper.getInstance().BillEntityToBillDTO(item));
+    }
+
+    return NewBillResponse.builder()
+        .count(count)
+        .data(data)
+        .build();
+  }
+
+  @Override
+  public TurnoverEntity getTurnover(String status, String type) {
+    var thismonth = FormatDate.getThisMonth();
+    Long turnover = 0L;
+    Long importPrice= 0L;
+    var entities = repository.getNewBill(status, type, thismonth);
+    var prod = productRepository.getNewProd(thismonth, null);
+    for (BillEntity item : entities) {
+      turnover += item.getTotalPrice();
+    }
+    for(ProductResponse item : prod){
+      importPrice += item.getImportPrice();
+    }
+    return TurnoverEntity.builder()
+        .turnover(turnover)
+        .importPrice(importPrice)
+        .interestRate(turnover - importPrice)
+        .build();
   }
 
 

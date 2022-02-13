@@ -53,4 +53,52 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     List<BillEntity> list = query.getResultList();
     return list;
   }
+
+  @Override
+  public Long countByStatusAndMonth(String status,String type, String month) {
+    var sql = new StringBuilder();
+    sql.append("select count(*) "
+        + "from b_bill where "
+        + "to_char(created_date, 'MM-YYYY') = :month ");
+        if(status !=null) {
+          sql.append("and status = :status ");
+        }
+    if(type !=null) {
+      sql.append("and type = :type ");
+    }
+    var query = entityManager.createNativeQuery(sql.toString());
+    if (status != null) {
+      query.setParameter("status", status);
+    }
+    if (type != null) {
+      query.setParameter("type", type);
+    }
+    query.setParameter("month", month);
+    return  Long.parseLong(query.getSingleResult().toString());
+  }
+
+  @Override
+  public List<BillEntity> getNewBill(String status, String type, String month) {
+    var sql = new StringBuilder();
+    sql.append("select * "
+        + "from b_bill where "
+        + "to_char(created_date, 'MM-YYYY') = :month ");
+
+    if(status !=null) {
+      sql.append("and status = :status ");
+    }
+    if(type !=null) {
+      sql.append("and type = :type ");
+    }
+    sql.append(" ORDER BY id DESC");
+    var query = entityManager.createNativeQuery(sql.toString(), BillEntity.class);
+    if (status != null) {
+      query.setParameter("status", status);
+    }
+    if (type != null) {
+      query.setParameter("type", type);
+    }
+    query.setParameter("month", month);
+    return  query.getResultList();
+  }
 }

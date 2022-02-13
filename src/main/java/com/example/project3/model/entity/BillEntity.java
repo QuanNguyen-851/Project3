@@ -19,7 +19,7 @@ public class BillEntity {
   public enum BillStatusEnum{
     VERIFYING,
     VERIFIED,
-    CANCELLED,
+    CANCELED,
   }
   public enum BillTypeEnum{
     OFFLINE,

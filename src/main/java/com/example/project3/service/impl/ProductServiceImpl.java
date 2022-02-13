@@ -1,20 +1,21 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.Common.FormatDate;
 import com.example.project3.model.dto.ProductDTO;
+import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.ImageEntity;
+import com.example.project3.model.entity.NewProdResponse;
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.entity.ProductEntity.ProductEnum;
 import com.example.project3.model.entity.ProductImageEntity;
 import com.example.project3.model.entity.ProductInformationEntity;
 import com.example.project3.model.entity.ProductResponse;
-import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.model.enumpk.ImageType;
 import com.example.project3.repository.CategoryRepository;
 import com.example.project3.repository.ImageRepository;
 import com.example.project3.repository.ProductImageRepository;
 import com.example.project3.repository.ProductInformationRepository;
 import com.example.project3.repository.ProductRepository;
-import com.example.project3.repository.ProductionRepository;
 import com.example.project3.repository.ProfileRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
@@ -248,6 +249,17 @@ public class ProductServiceImpl implements ProductService {
     }
     prod.setStatus(productResponse.getStatus().toUpperCase(Locale.ROOT));
     return new ResponseWrapper(EnumResponse.SUCCESS, repository.save(prod), "thành công!");
+  }
+
+  @Override
+  public NewProdResponse countNewProd( Long limit) {
+    var thisMonth = FormatDate.getThisMonth();
+    var count = repository.countNewProd(thisMonth);
+    var prod = repository.getNewProd(thisMonth, limit);
+    return NewProdResponse.builder()
+        .count(count)
+        .data(prod)
+        .build();
   }
 
 

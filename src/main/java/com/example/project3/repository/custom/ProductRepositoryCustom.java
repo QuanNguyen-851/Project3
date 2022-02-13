@@ -18,4 +18,9 @@ public interface ProductRepositoryCustom {
       Long idProduction,
       Boolean getAll
   );
+
+  Long countNewProd(String moth);
+  List<ProductResponse> getNewProd(String moth,  Long limit);
+
+
 }

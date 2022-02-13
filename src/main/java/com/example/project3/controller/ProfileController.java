@@ -4,6 +4,7 @@ import com.example.project3.model.dto.ChangePassRequest;
 import com.example.project3.model.dto.LoginDto;
 import com.example.project3.model.dto.LoginResponse;
 import com.example.project3.model.dto.ResetPassRequest;
+import com.example.project3.model.entity.NewProfileResponse;
 import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.response.EnumResponse;
@@ -137,4 +138,13 @@ public class ProfileController {
     return new ResponseEntity<>(new ResponseWrapper(EnumResponse.NOT_FOUND, null), HttpStatus.NOT_FOUND);
 
   }
+  @GetMapping("/countNewProfile")
+  private ResponseEntity<NewProfileResponse> countNewProfile(
+      @RequestParam(value = "role", required = false) String role,
+      @RequestParam(value = "limit", required = false) Long limit
+  ){
+    return new ResponseEntity<>(service.countNewProfile(role,limit),HttpStatus.OK);
+  }
+
+
 }
