@@ -3,6 +3,7 @@ package com.example.project3.controller;
 import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.dto.UpdateSatusBill;
 import com.example.project3.model.entity.NewBillResponse;
+import com.example.project3.model.entity.TopEmployee;
 import com.example.project3.model.entity.TurnoverEntity;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
@@ -76,5 +77,12 @@ public class BillController {
       @RequestParam(value = "type", required = false) String type
   ){
     return new ResponseEntity<>(service.getTurnover(status,type), HttpStatus.OK);
+  }
+  @GetMapping("/getTopEmployee")
+  private ResponseEntity<List<TopEmployee>> getTopEmployee(
+      @RequestParam(value = "limit", required = false) Long limit,
+      @RequestParam(value = "profileRole", required = false) String profileRole
+  ){
+    return new ResponseEntity<>(service.getTopEmployee(limit,profileRole), HttpStatus.OK);
   }
 }
