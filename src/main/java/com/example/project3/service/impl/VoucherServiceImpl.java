@@ -63,7 +63,7 @@ public class VoucherServiceImpl implements VoucherService {
         return new ResponseWrapper(EnumResponse.EXIST, key);
       }
       var saleExist = repository.getById(voucherDTO.getId());
-      if(saleExist ==null){
+      if (saleExist == null) {
         return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
       }
       VoucherEntity voucherEntity = new VoucherEntity();
@@ -91,10 +91,28 @@ public class VoucherServiceImpl implements VoucherService {
   @Override
   public ResponseWrapper delete(Long id) {
     var sale = repository.findFirstById(id);
-    if(sale!=null){
+    if (sale != null) {
       repository.deleteById(id);
       return new ResponseWrapper(EnumResponse.SUCCESS, sale);
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+  }
+
+  @Override
+  public VoucherEntity findById(Long id) {
+    var item = repository.findFirstById(id);
+    if (item != null) {
+      return item;
+    }
+    return null;
+  }
+
+  @Override
+  public VoucherEntity findByKey(String key) {
+    var item = repository.findFirstByKey(key.toUpperCase(Locale.ROOT));
+    if (item != null) {
+      return item;
+    }
+    return null;
   }
 }

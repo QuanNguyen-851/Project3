@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface VoucherService {
 
-  List<VoucherEntity> getAll(String name, String key, Boolean isPercent );
+  List<VoucherEntity> getAll(String name, String key, Boolean isPercent);
 
   ResponseWrapper create(VoucherDTO saleEntity);
 
@@ -15,4 +15,7 @@ public interface VoucherService {
 
   ResponseWrapper delete(Long id);
 
+  VoucherEntity findById(Long id);
+
+  VoucherEntity findByKey(String key);
 }
