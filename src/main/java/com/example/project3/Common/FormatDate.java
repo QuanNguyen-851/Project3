@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class FormatDate {
-  public static Date convertLocalDateTimeToDateUsingTimestamp(LocalDateTime dateToConvert) {
+  public static Date convertToDate(LocalDateTime dateToConvert) {
     return java.sql.Timestamp.valueOf(dateToConvert);
   }
   public static String getThisMonth(){

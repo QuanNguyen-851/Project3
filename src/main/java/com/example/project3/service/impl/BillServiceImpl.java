@@ -20,6 +20,7 @@ import com.example.project3.repository.BillDetailRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
+import com.example.project3.service.ProdSoldService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -42,6 +43,9 @@ public class BillServiceImpl implements BillService {
 
   @Autowired
   private ProfileRepository profileRepository;
+
+  @Autowired
+  private ProdSoldService prodSoldService;
 
 
   @Override
@@ -120,6 +124,7 @@ public class BillServiceImpl implements BillService {
       for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
         billDetail.setBillId(billres.getId());
         detailResponseList.add(this.saveDetail(billDetail));
+        prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());
       }
     }
     var billResponse = Maper.getInstance().BillEntityToBillDTO(billres);
