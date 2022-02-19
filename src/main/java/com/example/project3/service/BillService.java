@@ -20,7 +20,7 @@ public interface BillService {
 
   NewBillResponse countNewBill(String status , String type);
 
-  TurnoverEntity getTurnover(String status , String type);
+  TurnoverEntity getTurnover(String status , String type, String month);
 
   List<TopEmployee> getTopEmployee(Long limit, String profileRole);
 }

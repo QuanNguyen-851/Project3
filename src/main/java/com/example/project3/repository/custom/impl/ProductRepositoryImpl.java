@@ -122,4 +122,18 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
     return query.getResultList();
   }
+
+  @Override
+  public Long countByStatus(String status) {
+    var sql = new StringBuilder();
+    sql.append("select count(*) from p_product pp ");
+    if (status != null) {
+      sql.append("where pp.status = :status  ");
+    }
+    var query = entityManager.createNativeQuery(sql.toString());
+    if (status != null) {
+      query.setParameter("status", status);
+    }
+    return Long.parseLong(query.getSingleResult().toString());
+  }
 }

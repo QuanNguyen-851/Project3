@@ -53,4 +53,14 @@ public class ProdSoldServiceImpl implements ProdSoldService {
   public List<ProductSoldResponse> listProductSold(Long productId, String month, Long limit) {
     return repository.listProductSold(productId, month, limit);
   }
+
+  @Override
+  public Long countProdSold(String month) {
+    Long count =0L;
+    var list = this.listProductSold(null, month, null);
+    for (ProductSoldResponse prodSold: list) {
+      count += prodSold.getSold();
+    }
+    return count;
+  }
 }

@@ -22,5 +22,7 @@ public interface ProductRepositoryCustom {
   Long countNewProd(String moth);
   List<ProductResponse> getNewProd(String moth,  Long limit);
 
+  Long countByStatus(String status);
+
 
 }

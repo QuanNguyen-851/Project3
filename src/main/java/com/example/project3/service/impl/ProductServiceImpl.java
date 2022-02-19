@@ -2,6 +2,7 @@ package com.example.project3.service.impl;
 
 import com.example.project3.Common.FormatDate;
 import com.example.project3.model.dto.ProductDTO;
+import com.example.project3.model.entity.ImportProductEntity;
 import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.ImageEntity;
 import com.example.project3.model.entity.NewProdResponse;
@@ -19,6 +20,7 @@ import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProfileRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
+import com.example.project3.service.ImportProductService;
 import com.example.project3.service.ProductService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,6 +44,8 @@ public class ProductServiceImpl implements ProductService {
   private ProfileRepository profileRepository;
   @Autowired
   private ImageRepository imageRepository;
+  @Autowired
+  private ImportProductService importProductService;
 
   @Override
   public List<ProductResponse> getAll(
@@ -102,7 +106,13 @@ public class ProductServiceImpl implements ProductService {
 //    ProductEntity newProduct = repository.getNewProduct();
     ProductEntity newProduct = repository.save(productEntity);
     newProduct.setCode(sortName + newProduct.getId());
-    repository.save(newProduct);
+    var saved= repository.save(newProduct);
+    ImportProductEntity importProductEntity = new ImportProductEntity();
+    importProductEntity.setProductId(saved.getId());
+    importProductEntity.setImportQuantity(saved.getQuantity());
+    importProductEntity.setImportTotal(saved.getImportPrice() * saved.getQuantity() );
+    importProductEntity.setCreatedBy(saved.getCreatedBy());
+    importProductService.save(importProductEntity);
     if (productDTO.getListInformation() != null) {
       for (ProductInformationEntity item : productDTO.getListInformation()) {
         this.setProductInfor(item, newProduct.getId());
@@ -143,7 +153,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ResponseWrapper update(ProductDTO request) {
     if (request.getId() != null) {
-      try {
+//      try {
         ProductEntity productResponse = repository.getById(request.getId());
         ProductEntity productupdate = new ProductEntity();
         productupdate.setId(request.getId());
@@ -162,6 +172,7 @@ public class ProductServiceImpl implements ProductService {
         productupdate.setModifiedDate(LocalDateTime.now());
         productupdate.setCreatedBy(productResponse.getCreatedBy());
         productupdate.setModifiedBy(request.getModifiedBy());
+        importProductService.update(productResponse.getId(), request.getImportPrice(),request.getQuantity(), request.getModifiedBy());
         repository.save(productupdate);
         for (ProductInformationEntity itemUpdate : request.getListInformation()) {
           this.updateProductInfor(itemUpdate, request.getId());
@@ -170,9 +181,9 @@ public class ProductServiceImpl implements ProductService {
           this.updateImage(imageUpdate, request.getId(), imageUpdate.getId());
         }
         return new ResponseWrapper(EnumResponse.SUCCESS, request);
-      } catch (Exception e) {
-        return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
-      }
+//      } catch (Exception e) {
+//        return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
+//      }
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
   }
@@ -231,28 +242,35 @@ public class ProductServiceImpl implements ProductService {
         err.setResponseMessage("số lượng trong kho không đủ");
         return new ResponseWrapper(EnumResponse.FAIL, produ);
       }
-      produ.setQuantity(produ.getQuantity() + number);
+      Long newQuantity = produ.getQuantity() + number;
+      if(newQuantity==0){
+        this.updateStatus(productId, ProductEnum.EMPTY.name());
+      }
+      produ.setQuantity(newQuantity);
       var res = repository.save(produ);
+      if(res!=null && res.getQuantity()>0){
+        this.updateStatus(productId, ProductEnum.ACTIVE.name());
+      }
       return new ResponseWrapper(EnumResponse.SUCCESS, res);
     }
     return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
   }
 
   @Override
-  public ResponseWrapper updateStatus(ProductResponse productResponse) {
-    if (productResponse.getId() == null || productResponse.getStatus() == null) {
+  public ResponseWrapper updateStatus(Long id, String status) {
+    if (id == null || status == null) {
       return new ResponseWrapper(EnumResponse.FAIL, null);
     }
-    var prod = repository.findFirstById(productResponse.getId());
+    var prod = repository.findFirstById(id);
     if (prod == null) {
       return new ResponseWrapper(EnumResponse.NOT_FOUND, "not found", "không tìm thấy sản phẩm mày");
     }
-    prod.setStatus(productResponse.getStatus().toUpperCase(Locale.ROOT));
+    prod.setStatus(status.toUpperCase(Locale.ROOT));
     return new ResponseWrapper(EnumResponse.SUCCESS, repository.save(prod), "thành công!");
   }
 
   @Override
-  public NewProdResponse countNewProd( Long limit) {
+  public NewProdResponse countNewProd(Long limit) {
     var thisMonth = FormatDate.getThisMonth();
     var count = repository.countNewProd(thisMonth);
     var prod = repository.getNewProd(thisMonth, limit);
@@ -260,6 +278,11 @@ public class ProductServiceImpl implements ProductService {
         .count(count)
         .data(prod)
         .build();
+  }
+
+  @Override
+  public Long countByStatus(String status) {
+    return repository.countByStatus(status);
   }
 
 

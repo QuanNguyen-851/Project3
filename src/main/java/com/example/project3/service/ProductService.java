@@ -27,7 +27,9 @@ public interface ProductService {
 
   ResponseWrapper updateQuantity(Long productId, Long number, String action);
 
-  ResponseWrapper updateStatus(ProductResponse productResponse);
+  ResponseWrapper updateStatus(Long id, String status);
 
   NewProdResponse countNewProd( Long limit);
+
+  Long countByStatus(String status);
 }

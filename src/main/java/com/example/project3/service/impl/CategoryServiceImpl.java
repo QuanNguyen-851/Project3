@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
   public CategoryEntity createCategory(CategoryEntity categoryEntity) {
     categoryEntity.setSortName(categoryEntity.getSortName().toUpperCase(Locale.ROOT));
     var cate = categoryRepository.findFirstBySortName(categoryEntity.getSortName());
-    if(categoryEntity!=null){
+    if(cate!=null){
       return null;
     }
     categoryEntity.setCreatedDate(LocalDateTime.now());

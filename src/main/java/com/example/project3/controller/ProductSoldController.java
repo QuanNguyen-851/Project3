@@ -17,16 +17,25 @@ public class ProductSoldController {
 
   @Autowired
   private ProdSoldService service;
+
   @GetMapping("/getAll")
   private ResponseEntity<List<ProductSoldResponse>> getAll(
       @RequestParam(value = "productId", required = false) Long productId,
       @RequestParam(value = "month", required = false) String month,
       @RequestParam(value = "limit", required = false) Long limit
-      ){
+  ) {
     var res = service.listProductSold(productId, month, limit);
-    if(res!=null){
+    if (res != null) {
       return new ResponseEntity<>(res, HttpStatus.OK);
     }
     return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
   }
+
+  @GetMapping("/countProdSold")
+  private ResponseEntity<Long> countProdSold(
+      @RequestParam(value = "month", required = false) String month
+  ) {
+    return new ResponseEntity<>(service.countProdSold(month), HttpStatus.OK);
+  }
+
 }

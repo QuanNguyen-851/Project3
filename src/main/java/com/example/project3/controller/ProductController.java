@@ -84,7 +84,7 @@ public class ProductController {
   private ResponseEntity<ResponseWrapper> updateStatus(
       @RequestBody ProductResponse productResponse
   ){
-    var res = productService.updateStatus(productResponse);
+    var res = productService.updateStatus(productResponse.getId(), productResponse.getStatus());
     if(res.getResponseData()==null){
       return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
     }
@@ -100,4 +100,12 @@ public class ProductController {
   ){
    return new ResponseEntity<>(productService.countNewProd( limit), HttpStatus.OK);
   }
+
+  @GetMapping("/CountProd")
+  private ResponseEntity<Long> countByStatus(
+      @RequestParam(value = "status", required = false) String status
+  ){
+    return new ResponseEntity<>(productService.countByStatus(status), HttpStatus.OK);
+  }
+
 }

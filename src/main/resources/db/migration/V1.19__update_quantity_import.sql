@@ -1,0 +1,2 @@
+alter table ip_import_product
+add column import_quantity bigint

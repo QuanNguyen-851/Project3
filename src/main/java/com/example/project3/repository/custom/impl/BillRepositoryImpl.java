@@ -59,8 +59,10 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
   public Long countByStatusAndMonth(String status, String type, String month) {
     var sql = new StringBuilder();
     sql.append("select count(*) "
-        + "from b_bill where "
-        + "to_char(created_date, 'MM-YYYY') = :month ");
+        + "from b_bill where id>0 ");
+    if (month != null) {
+      sql.append("and to_char(created_date, 'MM-YYYY') = :month ");
+    }
     if (status != null) {
       sql.append("and status = :status ");
     }
@@ -74,7 +76,9 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     if (type != null) {
       query.setParameter("type", type);
     }
-    query.setParameter("month", month);
+    if(month!=null) {
+      query.setParameter("month", month);
+    }
     return Long.parseLong(query.getSingleResult().toString());
   }
 

@@ -8,12 +8,14 @@ import com.example.project3.model.entity.BillDetailEntity;
 import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.BillEntity.BillStatusEnum;
 import com.example.project3.model.entity.BillEntity.BillTypeEnum;
+import com.example.project3.model.entity.ImportProductResponse;
 import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.model.entity.TopEmployee;
 import com.example.project3.model.entity.TurnoverEntity;
 import com.example.project3.repository.BillRepository;
+import com.example.project3.repository.ImportProductRepository;
 import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProfileRepository;
 import com.example.project3.repository.BillDetailRepository;
@@ -46,7 +48,8 @@ public class BillServiceImpl implements BillService {
 
   @Autowired
   private ProdSoldService prodSoldService;
-
+  @Autowired
+  private ImportProductRepository importProductRepository;
 
   @Override
   public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate) {
@@ -124,6 +127,7 @@ public class BillServiceImpl implements BillService {
       for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
         billDetail.setBillId(billres.getId());
         detailResponseList.add(this.saveDetail(billDetail));
+        //lưu lại số lượng sản phẩm đã bán
         prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());
       }
     }
@@ -155,7 +159,6 @@ public class BillServiceImpl implements BillService {
     for (BillEntity item : entities) {
       data.add(Maper.getInstance().BillEntityToBillDTO(item));
     }
-
     return NewBillResponse.builder()
         .count(count)
         .data(data)
@@ -163,17 +166,17 @@ public class BillServiceImpl implements BillService {
   }
 
   @Override
-  public TurnoverEntity getTurnover(String status, String type) {
-    var thismonth = FormatDate.getThisMonth();
-    Long turnover = 0L;
-    Long importPrice = 0L;
+  public TurnoverEntity getTurnover(String status, String type, String month) {
+    var thismonth = month==null?FormatDate.getThisMonth(): month;
+    Long turnover = 0L; // số tiền thu được từ bill
+    Long importPrice = 0L; // số tiền bỏ ra
     var entities = repository.getNewBill(status, type, thismonth);
-    var prod = productRepository.getNewProd(thismonth, null);
     for (BillEntity item : entities) {
       turnover += item.getTotalPrice();
     }
-    for (ProductResponse item : prod) {
-      importPrice += item.getImportPrice();
+    var importProductResponseList = importProductRepository.getByProductIdAndDate(null, thismonth, null);
+    for (ImportProductResponse importRes : importProductResponseList) {
+      importPrice += importRes.getImportTotal();
     }
     return TurnoverEntity.builder()
         .turnover(turnover)
@@ -188,7 +191,7 @@ public class BillServiceImpl implements BillService {
     var list = repository.getTopEmployee(limit, thismonth, profileRole);
     for (TopEmployee item : list) {
       var profile = profileRepository.findFirstById(item.getProfileId());
-      if(profile!=null){
+      if (profile != null) {
         item.setProfileEntity(profile);
       }
     }
