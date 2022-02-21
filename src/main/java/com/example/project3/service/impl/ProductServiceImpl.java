@@ -18,6 +18,7 @@ import com.example.project3.repository.ProductImageRepository;
 import com.example.project3.repository.ProductInformationRepository;
 import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProfileRepository;
+import com.example.project3.repository.SaleRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ImportProductService;
@@ -46,6 +47,8 @@ public class ProductServiceImpl implements ProductService {
   private ImageRepository imageRepository;
   @Autowired
   private ImportProductService importProductService;
+  @Autowired
+  private SaleRepository saleRepository;
 
   @Override
   public List<ProductResponse> getAll(
@@ -56,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
       Long idProduction,
       Boolean getAll
   ) {
-    return repository.getAllProduct(
+    var res = repository.getAllProduct(
         status,
         code,
         name,
@@ -64,6 +67,17 @@ public class ProductServiceImpl implements ProductService {
         idProduction,
         getAll
     );
+
+    for (ProductResponse item: res
+    ) {
+      var sale = saleRepository.findFirstByProductId(item.getId());
+      var now = LocalDateTime.now();
+      if( sale!=null&& now.isAfter(sale.getStartDate())&& now.isBefore(sale.getEndDate())){
+        item.setSaleEntity(sale);
+      }
+    }
+    return res;
+
   }
 
   @Override
@@ -72,6 +86,11 @@ public class ProductServiceImpl implements ProductService {
       var product = repository.getProductById(id);
       var createprofile = profileRepository.getById(product.getCreatedBy());
       var modifiedprofile = profileRepository.getById(product.getModifiedBy());
+      var sale = saleRepository.findFirstByProductId(id);
+      var now = LocalDateTime.now();
+      if( sale!=null&& now.isAfter(sale.getStartDate())&& now.isBefore(sale.getEndDate())){
+        product.setSaleEntity(sale);
+      }
       product.setListInformation(productInformationRepository.findAllByProductId(id));
       product.setListImage(imageRepository.getProductImageByIdProduct(id));
       product.setCreatedByName(createprofile.getFistName() + createprofile.getLastName());

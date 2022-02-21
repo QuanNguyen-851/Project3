@@ -39,6 +39,8 @@ public class ProductResponse {
   private List<ProductInformationEntity> listInformation;
   @Transient
   private List<ImageEntity> listImage;
+  @Transient
+  private SaleEntity saleEntity;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
   private Long createdBy;
