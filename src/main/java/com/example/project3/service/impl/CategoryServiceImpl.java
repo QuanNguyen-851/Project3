@@ -3,6 +3,7 @@ package com.example.project3.service.impl;
 import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.repository.CategoryRepository;
+import com.example.project3.repository.ProductRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.CategoryService;
@@ -20,10 +21,18 @@ public class CategoryServiceImpl implements CategoryService {
   @Autowired
   private CategoryRepository categoryRepository;
 
+  @Autowired
+  private ProductRepository productRepository;
+
   @Override
   public List<CategoryEntity> getAllCategory(String status, String name)
   {
-    return categoryRepository.getAll(status, name);
+
+    var res = categoryRepository.getAll(status, name);
+    for (CategoryEntity cate: res) {
+     cate.setCountProd(productRepository.countAllByCategoryId(cate.getId()));
+    }
+    return res;
   }
 
   @Override
@@ -58,7 +67,10 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public CategoryEntity getById(Long id) {
     if(id!=null){
-    return categoryRepository.findFirstById(id);}
+    var res= categoryRepository.findFirstById(id);
+    res.setCountProd(productRepository.countAllByCategoryId(id));
+    return res;
+    }
     return null;
   }
 

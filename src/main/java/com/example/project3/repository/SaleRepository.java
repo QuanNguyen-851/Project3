@@ -5,5 +5,9 @@ import com.example.project3.repository.custom.SaleRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SaleRepository extends JpaRepository<SaleEntity, Long>, SaleRepositoryCustom {
-SaleEntity findFirstByProductId(Long productId);
+
+  SaleEntity findFirstByProductId(Long productId);
+
+  SaleEntity findFirstById(Long id);
+
 }

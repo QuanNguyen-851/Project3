@@ -4,6 +4,8 @@ import com.example.project3.model.dto.SaleDTO;
 import com.example.project3.model.entity.SaleEntity;
 import com.example.project3.model.entity.SaleResponse;
 import com.example.project3.repository.SaleRepository;
+import com.example.project3.response.EnumResponse;
+import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.SaleService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +22,7 @@ private SaleRepository repository;
     SaleEntity saleEntity = new SaleEntity();
     if(exist!=null){
       //có rồi thì update lại
+      saleEntity.setId(exist.getId());
       saleEntity.setProductId(exist.getProductId());
       saleEntity.setSale(saleDTO.getSale());
       saleEntity.setStartDate(saleDTO.getStartDate().atStartOfDay());
@@ -47,5 +50,15 @@ private SaleRepository repository;
   @Override
   public SaleResponse getDetail(Long id, Long productId) {
     return repository.getDetail(id, productId);
+  }
+
+  @Override
+  public ResponseWrapper delete(Long id) {
+    var exist = repository.findFirstById(id);
+        if(exist == null){
+          return new ResponseWrapper(EnumResponse.NOT_FOUND, id, "không tìm thấy!");
+        }
+        repository.deleteById(exist.getId());
+    return new ResponseWrapper(EnumResponse.SUCCESS, exist);
   }
 }

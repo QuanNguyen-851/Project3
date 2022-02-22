@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,5 +29,7 @@ public class CategoryEntity {
   private String status;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
+  @Transient
+  private Long countProd;
 
 }

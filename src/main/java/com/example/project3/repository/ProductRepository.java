@@ -19,5 +19,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 
   ProductEntity findFirstById(Long id);
 
+  Long countAllByCategoryId(Long id);
+  Long countAllByProductionId(Long id);
+
 
 }

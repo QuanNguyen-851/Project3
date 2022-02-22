@@ -3,6 +3,7 @@ package com.example.project3.service.impl;
 import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.ProductionEntity;
 import com.example.project3.repository.CategoryRepository;
+import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProductionRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
@@ -17,13 +18,18 @@ public class ProductionServiceImpl implements ProductionService {
 
   @Autowired
   private ProductionRepository productionRepository;
-
+  @Autowired
+  private ProductRepository productRepository;
   @Override
   public List<ProductionEntity> getAll(
       String status,
       String name
   ) {
-    return productionRepository.getAll(status, name);
+    var res= productionRepository.getAll(status, name);
+    for (ProductionEntity production: res) {
+      production.setCountProd(productRepository.countAllByProductionId(production.getId()));
+    }
+    return res;
   }
 
   @Override
@@ -52,7 +58,10 @@ public class ProductionServiceImpl implements ProductionService {
   @Override
   public ProductionEntity getById(Long id) {
     if(id!=null){
-      return productionRepository.findFirstById(id);}
+      var res = productionRepository.findFirstById(id);
+      res.setCountProd(productRepository.countAllByProductionId(id));
+      return res;
+    }
     return null;
   }
 

@@ -11,4 +11,5 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long>,
 
   CategoryEntity findFirstById(Long id);
   CategoryEntity findFirstBySortName(String sortName);
+
 }
