@@ -1,5 +1,6 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.ProductionEntity;
 import com.example.project3.repository.CategoryRepository;
@@ -27,7 +28,11 @@ public class ProductionServiceImpl implements ProductionService {
   ) {
     var res= productionRepository.getAll(status, name);
     for (ProductionEntity production: res) {
-      production.setCountProd(productRepository.countAllByProductionId(production.getId()));
+      var count = 0L;
+      for (ProductEntity prodEntity : productRepository.findAllByProductionId(production.getId())) {
+        count += prodEntity.getQuantity();
+      }
+      production.setCountProd(count);
     }
     return res;
   }
@@ -59,7 +64,11 @@ public class ProductionServiceImpl implements ProductionService {
   public ProductionEntity getById(Long id) {
     if(id!=null){
       var res = productionRepository.findFirstById(id);
-      res.setCountProd(productRepository.countAllByProductionId(id));
+      var count = 0L;
+      for (ProductEntity prodEntity : productRepository.findAllByProductionId(res.getId())) {
+        count += prodEntity.getQuantity();
+      }
+      res.setCountProd(count);
       return res;
     }
     return null;

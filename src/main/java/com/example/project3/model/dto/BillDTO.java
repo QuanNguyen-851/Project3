@@ -1,6 +1,7 @@
 package com.example.project3.model.dto;
 
 import com.example.project3.model.entity.BillDetailEntity;
+import com.example.project3.model.entity.ProfileEntity;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -23,7 +24,7 @@ public class BillDTO {
   private String address;
   private String status;
   private String type;
-
+  private ProfileEntity createBy;
   private List<BillDetailResponse> billDetail;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;

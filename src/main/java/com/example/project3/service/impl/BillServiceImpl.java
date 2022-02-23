@@ -56,17 +56,17 @@ public class BillServiceImpl implements BillService {
 
     LocalDateTime end = LocalDateTime.now();
     LocalDateTime start = end.minusMonths(5);
-    System.out.println("1  :" + start + "|" + end);
     if (startDate != null) {
       start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
     if (endDate != null) {
       end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
-    System.out.println("1  :" + start + "|" + end);
     List<BillDTO> res = new ArrayList<>();
     for (BillEntity bill : repository.getAll(profileId, phone, status, type, start, end)) {
-      res.add(Maper.getInstance().BillEntityToBillDTO(bill));
+      var dto = Maper.getInstance().BillEntityToBillDTO(bill);
+      dto.setCreateBy(profileRepository.findFirstById(dto.getProfileId()));
+      res.add(dto);
     }
     return res;
   }
@@ -89,6 +89,7 @@ public class BillServiceImpl implements BillService {
       }
       BillDTO billDTO = Maper.getInstance().BillEntityToBillDTO(bill);
       billDTO.setBillDetail(detailResponses);
+      billDTO.setCreateBy(profileRepository.findFirstById(billDTO.getProfileId()));
       return billDTO;
     }
     return null;

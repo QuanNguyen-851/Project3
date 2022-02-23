@@ -1,5 +1,6 @@
 package com.example.project3.service.impl;
 
+import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.repository.CategoryRepository;
@@ -25,12 +26,15 @@ public class CategoryServiceImpl implements CategoryService {
   private ProductRepository productRepository;
 
   @Override
-  public List<CategoryEntity> getAllCategory(String status, String name)
-  {
+  public List<CategoryEntity> getAllCategory(String status, String name) {
 
     var res = categoryRepository.getAll(status, name);
-    for (CategoryEntity cate: res) {
-     cate.setCountProd(productRepository.countAllByCategoryId(cate.getId()));
+    for (CategoryEntity cate : res) {
+      var count = 0L;
+      for (ProductEntity prodEntity : productRepository.findAllByCategoryId(cate.getId())) {
+        count += prodEntity.getQuantity();
+      }
+      cate.setCountProd(count);
     }
     return res;
   }
@@ -39,7 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
   public CategoryEntity createCategory(CategoryEntity categoryEntity) {
     categoryEntity.setSortName(categoryEntity.getSortName().toUpperCase(Locale.ROOT));
     var cate = categoryRepository.findFirstBySortName(categoryEntity.getSortName());
-    if(cate!=null){
+    if (cate != null) {
       return null;
     }
     categoryEntity.setCreatedDate(LocalDateTime.now());
@@ -66,17 +70,21 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public CategoryEntity getById(Long id) {
-    if(id!=null){
-    var res= categoryRepository.findFirstById(id);
-    res.setCountProd(productRepository.countAllByCategoryId(id));
-    return res;
+    if (id != null) {
+      var res = categoryRepository.findFirstById(id);
+      var count = 0L;
+      for (ProductEntity prodEntity : productRepository.findAllByCategoryId(res.getId())) {
+        count += prodEntity.getQuantity();
+      }
+      res.setCountProd(count);
+      return res;
     }
     return null;
   }
 
   @Override
   public CategoryEntity deleteById(Long id) {
-    if(id!=null && categoryRepository.findFirstById(id)!=null){
+    if (id != null && categoryRepository.findFirstById(id) != null) {
       var res = categoryRepository.findFirstById(id);
       categoryRepository.deleteById(id);
       return res;
@@ -86,12 +94,12 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public CategoryEntity updateStatus(Long id, DisableStatus disableStatus) {
-    var re = categoryRepository.findFirstById( id);
-    if(re!=null){
+    var re = categoryRepository.findFirstById(id);
+    if (re != null) {
       re.setStatus(disableStatus.name());
       re.setModifiedDate(LocalDateTime.now());
       categoryRepository.save(re);
-      return  re;
+      return re;
     }
     return null;
   }

@@ -2,6 +2,7 @@ package com.example.project3.repository;
 
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.repository.custom.ProductRepositoryCustom;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 
   Long countAllByCategoryId(Long id);
   Long countAllByProductionId(Long id);
+  List<ProductEntity> findAllByCategoryId(Long id);
+  List<ProductEntity> findAllByProductionId(Long id);
 
 
 }
