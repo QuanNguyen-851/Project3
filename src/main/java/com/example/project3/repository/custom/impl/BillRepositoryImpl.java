@@ -132,4 +132,17 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     query.setParameter("thisMonth", thisMonth);
     return query.getResultList();
   }
+
+  @Override
+  public Long countByDay(String day) {
+    var sql = new StringBuilder();
+    sql.append("select count(*) "
+        + "from b_bill where id>0 ");
+    if (day != null) {
+      sql.append("and to_char(created_date, 'dd-MM-YYYY') = :day ");
+    }
+    var query = entityManager.createNativeQuery(sql.toString());
+    query.setParameter("day", day);
+    return Long.parseLong(query.getSingleResult().toString());
+  }
 }

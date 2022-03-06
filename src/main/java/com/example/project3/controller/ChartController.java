@@ -1,5 +1,6 @@
 package com.example.project3.controller;
 
+import com.example.project3.model.dto.BillDayOfMonth;
 import com.example.project3.model.dto.ChartResponse;
 import com.example.project3.model.entity.ImportProductResponse;
 import com.example.project3.service.ChartService;
@@ -23,5 +24,10 @@ public class ChartController {
   private ResponseEntity<List<ChartResponse>> getAll(
   ) {
     return new ResponseEntity<>(service.linechart(), HttpStatus.OK);
+  }
+
+  @GetMapping("/dayOfMonth")
+  private ResponseEntity<List<BillDayOfMonth>> getBillOfMonth(){
+    return new ResponseEntity<>(service.daychart(), HttpStatus.OK);
   }
 }

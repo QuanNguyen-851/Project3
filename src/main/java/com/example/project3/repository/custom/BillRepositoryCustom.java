@@ -15,4 +15,6 @@ public interface BillRepositoryCustom {
   List<BillEntity> getNewBill(String status,String type, String month);
 
   List<TopEmployee> getTopEmployee(Long limit, String thismonth, String profileRole);
+
+  Long countByDay(String day);
 }
