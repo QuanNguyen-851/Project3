@@ -57,7 +57,7 @@ public class VoucherServiceImpl implements VoucherService {
   public ResponseWrapper update(VoucherDTO voucherDTO) {
     var key = repository.findFirstByKey(voucherDTO.getKey());
     if (voucherDTO.getIsPercent() != null && voucherDTO.getId() != null && voucherDTO.getKey() != null) {
-      if (key != null) {
+      if (key != null && !key.getId().equals(voucherDTO.getId())) {
         var err = EnumResponse.EXIST;
         err.setResponseMessage("Key này đã tồn tại");
         return new ResponseWrapper(EnumResponse.EXIST, key);
