@@ -76,6 +76,7 @@ public class Maper {
     billDetailEntity.setBillId(billDetailResponse.getBillId());
     billDetailEntity.setProductId(billDetailResponse.getProductId());
     billDetailEntity.setQuantity(billDetailResponse.getQuantity());
+    billDetailEntity.setWarrantyEndDate(billDetailResponse.getWarrantyEndDate());
     billDetailEntity.setPrice(billDetailResponse.getPrice());
     return billDetailEntity;
   }
@@ -86,6 +87,7 @@ public class Maper {
         .productId(billDetailEntity.getProductId())
         .quantity(billDetailEntity.getQuantity())
         .price(billDetailEntity.getPrice())
+        .warrantyEndDate(billDetailEntity.getWarrantyEndDate())
         .build();
   }
 }

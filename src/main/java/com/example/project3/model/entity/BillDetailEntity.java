@@ -1,5 +1,6 @@
 package com.example.project3.model.entity;
 
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,4 +23,5 @@ public class BillDetailEntity {
   private Long productId;
   private Long quantity;
   private Long price;
+  private LocalDateTime warrantyEndDate;
 }

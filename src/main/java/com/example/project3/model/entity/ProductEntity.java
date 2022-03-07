@@ -39,6 +39,7 @@ public class ProductEntity {
   private Float discount;
   private Long quantity;
   private String status;
+  private Long warranty;
   private String avatarUrl;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;

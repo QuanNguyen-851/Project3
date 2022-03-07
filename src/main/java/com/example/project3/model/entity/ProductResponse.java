@@ -30,6 +30,7 @@ public class ProductResponse {
   private Long salePrice;
   private Long importPrice;
   private Float discount;
+  private Long warranty;
   private Long quantity;
   private String status;
   private String category;

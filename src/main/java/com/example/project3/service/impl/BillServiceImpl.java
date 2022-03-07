@@ -127,6 +127,10 @@ public class BillServiceImpl implements BillService {
     if (billres.getId() != null) {
       for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
         billDetail.setBillId(billres.getId());
+        var prod = productRepository.findFirstById(billDetail.getProductId());
+        if(prod.getWarranty()!=null && prod.getWarranty()>0){
+          billDetail.setWarrantyEndDate(LocalDateTime.now().plusMonths(prod.getWarranty()));
+        }
         detailResponseList.add(this.saveDetail(billDetail));
         //lưu lại số lượng sản phẩm đã bán
         prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());

@@ -23,6 +23,7 @@ public class ProductDTO {
   private Long productionId;
   private Long salePrice;
   private Long importPrice;
+  private Long warranty;
   private Float discount;
   private Long quantity;
   private String status;

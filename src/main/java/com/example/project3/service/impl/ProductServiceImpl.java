@@ -110,6 +110,7 @@ public class ProductServiceImpl implements ProductService {
     productEntity.setDescription(productDTO.getDescription());
     productEntity.setCategoryId(productDTO.getCategoryId());
     productEntity.setProductionId(productDTO.getProductionId());
+    productEntity.setWarranty(productDTO.getWarranty());
     productEntity.setSalePrice(productDTO.getSalePrice());
     productEntity.setImportPrice(productDTO.getImportPrice());
     productEntity.setDiscount(productDTO.getDiscount());
@@ -185,6 +186,7 @@ public class ProductServiceImpl implements ProductService {
         productupdate.setImportPrice(request.getImportPrice());
         productupdate.setDiscount(request.getDiscount());
         productupdate.setQuantity(request.getQuantity());
+        productupdate.setWarranty(request.getWarranty());
         productupdate.setStatus(request.getStatus());
         productupdate.setAvatarUrl(request.getAvatarUrl());
         productupdate.setCreatedDate(productResponse.getCreatedDate());

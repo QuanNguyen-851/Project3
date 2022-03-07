@@ -1,5 +1,6 @@
 package com.example.project3.model.dto;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,8 @@ public class BillDetailResponse {
   private String productCode;
   private String productName;
   private String productAvatar;
-//  private Long salePrice;
+  private LocalDateTime warrantyEndDate;
+  //  private Long salePrice;
   private Long quantity;
   private Long price;
 }
