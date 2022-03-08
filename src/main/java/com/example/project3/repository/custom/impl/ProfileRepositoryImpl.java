@@ -2,6 +2,7 @@ package com.example.project3.repository.custom.impl;
 
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.model.entity.ProfileEntity;
+import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.repository.custom.ProductRepositoryCustom;
 import com.example.project3.repository.custom.ProfileRepositoryCustom;
 import java.util.List;
@@ -18,7 +19,7 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
     var sql = new StringBuilder();
     sql.append("select count(*) from p_profile "
         + "where to_char(created_date, 'MM-YYYY') = :month ");
-    if (role != null) {
+    if (role != null && !role.equals(RoleEnum.SUPERADMIN.name())) {
       sql.append("and role = :role ");
     }
     var query = entityManager.createNativeQuery(sql.toString());
