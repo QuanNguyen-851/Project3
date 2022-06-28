@@ -1,5 +1,6 @@
 package com.example.project3.controller;
 
+import com.example.project3.Common.Token;
 import com.example.project3.model.dto.ChangePassRequest;
 import com.example.project3.model.dto.LoginDto;
 import com.example.project3.model.dto.LoginResponse;
@@ -10,7 +11,9 @@ import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProfileService;
+import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +30,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProfileController {
 
   @Autowired
+  private Token tokenMapper;
+  @Autowired
+  private HttpServletRequest request;
+
+  @Autowired
   private ProfileService service;
 
   @PostMapping("/create")
   private ResponseEntity<ResponseWrapper> createProfile(@RequestBody ProfileEntity profileEntity) {
+    Boolean isModerator = tokenMapper.isAccess(
+        request,
+        new ArrayList<>(List.of(RoleEnum.ADMIN,RoleEnum.EMPLOYEE,RoleEnum.SUPERADMIN))
+    );
     if (profileEntity != null) {
+      if(!isModerator){
+        profileEntity.setRole(RoleEnum.USER.name());
+      }
       return new ResponseEntity<>(service.createProfile(profileEntity), HttpStatus.OK);
     }
     return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

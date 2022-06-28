@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class ProfileServiceImpl implements ProfileService {
   @Autowired
   private ProfileRepository repository;
 
+  @Autowired
+  private Token tokenMapper;
+
   @Override
   public List<ProfileEntity> getAll() {
     return repository.findAll();
@@ -34,8 +38,6 @@ public class ProfileServiceImpl implements ProfileService {
 
   @Override
   public ProfileEntity getById(Long id) {
-    var re = repository.findFirstById(id);
-
     return repository.findFirstById(id);
   }
 
@@ -70,8 +72,8 @@ public class ProfileServiceImpl implements ProfileService {
           .token("err").build();
     }
     if(res!=null){
-      var temp = res.getEmail() + res.getPhone()+ res.getPassWord();
-      token = Token.convertHashToString(temp);
+      var temp = res.getEmail() +"&" + res.getPhone()+"&"+ res.getPassWord();
+      token = tokenMapper.convertHashToString(temp);
 
       return LoginResponse.builder()
           .token(token)
