@@ -130,7 +130,7 @@ public class ProfileController {
       return new ResponseEntity<>(new ResponseWrapper(EnumResponse.SUCCESS, res), HttpStatus.OK);
     }
     var err = EnumResponse.FAIL;
-    err.setResponseMessage("Không không thể đổi mật khẩu !");
+    err.setResponseMessage("Không thể đổi mật khẩu !");
     return new ResponseEntity<>(new ResponseWrapper(err, res), HttpStatus.NOT_FOUND);
 
   }
@@ -139,6 +139,12 @@ public class ProfileController {
   private ResponseEntity<ResponseWrapper> updateRole(
       @RequestBody ProfileEntity profileEntity
   ) {
+    Boolean isModerator = tokenMapper.isAccess(request,
+        new ArrayList<>(List.of(RoleEnum.SUPERADMIN))
+    );
+    if(!isModerator){
+      return new ResponseEntity<>(new ResponseWrapper(EnumResponse.ACCESSDENIED, null), HttpStatus.UNAUTHORIZED);
+    }
     if (profileEntity.getRole() == null || profileEntity.getId() == null) {
       return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, null), HttpStatus.BAD_REQUEST);
     }

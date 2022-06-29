@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 
 public enum EnumResponse {
+  ACCESSDENIED("403","NEED ACCESS PERMISSION"),
   SUCCESS("200", "SUCCESS"),
   NOT_FOUND("404", "NOT FOUND"),
   FAIL("400", "SOME_THING_WRONG"),
