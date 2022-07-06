@@ -52,9 +52,15 @@ public class ProfileController {
     return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
   }
 
+  @PostMapping("user/register")
+  private ResponseEntity<ResponseWrapper> userCreateProfile(@RequestBody ProfileEntity profileEntity) {
+    return new ResponseEntity<>(service.userCreateProfile(profileEntity), HttpStatus.OK);
+  }
   @GetMapping("/getall")
-  private ResponseEntity<List<ProfileEntity>> getAll() {
-    return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+  private ResponseEntity<List<ProfileEntity>> getAll(
+      @RequestParam(value = "roles", required = false) List<RoleEnum> roles
+      ) {
+    return new ResponseEntity<>(service.getAll(roles), HttpStatus.OK);
   }
 
   @GetMapping("/getById")

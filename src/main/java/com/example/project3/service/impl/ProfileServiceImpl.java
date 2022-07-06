@@ -32,8 +32,8 @@ public class ProfileServiceImpl implements ProfileService {
   private Token tokenMapper;
 
   @Override
-  public List<ProfileEntity> getAll() {
-    return repository.findAll();
+  public List<ProfileEntity> getAll(List<RoleEnum> roles) {
+    return repository.getAllProfileByRoles(roles);
   }
 
   @Override
@@ -62,6 +62,26 @@ public class ProfileServiceImpl implements ProfileService {
     }
     return new ResponseWrapper(EnumResponse.FAIL, profileEntity);
   }
+
+  @Override
+  public ResponseWrapper userCreateProfile(ProfileEntity profileEntity) {
+    if (profileEntity.getPhone() != null && profileEntity.getEmail() != null) {
+      String phone = profileEntity.getPhone();
+      String email = profileEntity.getEmail();
+      if (repository.findFirstByPhone(phone) != null) {
+        return new ResponseWrapper(EnumResponse.PHONEXIST, profileEntity);
+      } else if (repository.findFirstByEmail(email) != null) {
+        return new ResponseWrapper(EnumResponse.EMAILEXIST, profileEntity);
+      }
+      profileEntity.setBlock(Boolean.FALSE);
+      profileEntity.setRole(RoleEnum.USER.name());
+      profileEntity.setCreatedDate(LocalDateTime.now());
+      profileEntity.setModifiedDate(LocalDateTime.now());
+      var sa = repository.save(profileEntity);
+      return new ResponseWrapper(EnumResponse.SUCCESS, sa);
+
+    }
+    return new ResponseWrapper(EnumResponse.FAIL, profileEntity);   }
 
   @Override
   public LoginResponse findByPhoneAndPassword(String phone, String pass) {
