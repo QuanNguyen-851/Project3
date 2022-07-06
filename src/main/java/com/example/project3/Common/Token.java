@@ -5,6 +5,7 @@ import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.repository.ProfileRepository;
 import com.example.project3.service.ProfileService;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class Token {
 
   @Autowired
   private ProfileRepository profileRepository;
+
+  @Autowired
+  private HttpServletRequest request;
 
   public String convertHashToString(String text) {
     String token = Base64.getEncoder().encodeToString(text.getBytes());
@@ -46,5 +50,18 @@ public class Token {
       }
     };
     return false;
+  }
+
+  public String sub(String key){
+    String token = decodeBase64(request.getHeader("Accept-Token"));
+    if (StringUtils.isEmpty(token)) {
+      return null;
+    }
+    List<String> properties = List.of(token.split("&"));
+    HashMap<String, String> params = new HashMap<>();
+    params.put("email", properties.get(0));
+    params.put("phone", properties.get(1));
+    params.put("id", properties.get(2));
+    return  params.get(key);
   }
 }

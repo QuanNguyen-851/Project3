@@ -1,6 +1,7 @@
 package com.example.project3.service.impl;
 
 import com.example.project3.Common.FormatDate;
+import com.example.project3.Common.Token;
 import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.ImportProductEntity;
 import com.example.project3.model.entity.NewBillResponse;
@@ -49,6 +50,8 @@ public class ProductServiceImpl implements ProductService {
   private ImportProductService importProductService;
   @Autowired
   private SaleRepository saleRepository;
+  @Autowired
+  private Token token;
 
   @Override
   public List<ProductResponse> getAll(
@@ -82,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductResponse getDetail(Long id) {
-    try {
+//    try {
       var product = repository.getProductById(id);
       var createprofile = profileRepository.getById(product.getCreatedBy());
       var modifiedprofile = profileRepository.getById(product.getModifiedBy());
@@ -97,9 +100,9 @@ public class ProductServiceImpl implements ProductService {
       product.setModifiedByName(modifiedprofile.getFistName() + modifiedprofile.getLastName());
 
       return product;
-    } catch (Exception e) {
-      return new ProductResponse();
-    }
+//    } catch (Exception e) {
+//      return new ProductResponse();
+//    }
 
   }
 
@@ -119,8 +122,8 @@ public class ProductServiceImpl implements ProductService {
     productEntity.setAvatarUrl(productDTO.getAvatarUrl());
     productEntity.setCreatedDate(LocalDateTime.now());
     productEntity.setModifiedDate(LocalDateTime.now());
-    productEntity.setCreatedBy(productDTO.getCreatedBy());
-    productEntity.setModifiedBy(productDTO.getCreatedBy());
+    productEntity.setCreatedBy(Long.parseLong(token.sub("id")));
+    productEntity.setModifiedBy(Long.parseLong(token.sub("id")));
 //    repository.save(productEntity);
     String sortName = categoryRepository.getById(productDTO.getCategoryId()).getSortName();
 //    ProductEntity newProduct = repository.getNewProduct();
@@ -192,7 +195,7 @@ public class ProductServiceImpl implements ProductService {
         productupdate.setCreatedDate(productResponse.getCreatedDate());
         productupdate.setModifiedDate(LocalDateTime.now());
         productupdate.setCreatedBy(productResponse.getCreatedBy());
-        productupdate.setModifiedBy(request.getModifiedBy());
+        productupdate.setModifiedBy(Long.parseLong(token.sub("id")));
         importProductService.update(productResponse.getId(), request.getImportPrice(),request.getQuantity(), request.getModifiedBy());
         repository.save(productupdate);
         for (ProductInformationEntity itemUpdate : request.getListInformation()) {

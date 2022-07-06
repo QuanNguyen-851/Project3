@@ -72,7 +72,7 @@ public class ProfileServiceImpl implements ProfileService {
           .token("err").build();
     }
     if(res!=null){
-      var temp = res.getEmail() +"&" + res.getPhone()+"&"+ res.getPassWord();
+      var temp = res.getEmail() +"&" + res.getPhone()+"&"+ res.getId();
       token = tokenMapper.convertHashToString(temp);
 
       return LoginResponse.builder()
