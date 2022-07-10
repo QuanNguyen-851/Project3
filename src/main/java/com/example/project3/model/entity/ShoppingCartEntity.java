@@ -25,7 +25,8 @@ public class ShoppingCartEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private Long profileId;
-  private Long totalPrice;
+  private Long productId;
+  private Long quantity;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
   private Long createdBy;
