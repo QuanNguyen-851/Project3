@@ -58,6 +58,13 @@ public class BillController {
     return new ResponseEntity<>(service.create(billdto), HttpStatus.OK);
   }
 
+  @PostMapping("/user/create")
+  private ResponseEntity<ResponseWrapper> createByUser(
+      @RequestBody BillDTO billdto
+  ){
+    return new ResponseEntity<>(service.createByUser(billdto), HttpStatus.OK);
+  }
+
   @PutMapping("/updateStatus")
   private ResponseEntity<ResponseWrapper> updateStatus(
       @RequestBody UpdateSatusBill updateSatusBill

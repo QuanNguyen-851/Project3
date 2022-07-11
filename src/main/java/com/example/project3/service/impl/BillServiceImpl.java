@@ -2,6 +2,7 @@ package com.example.project3.service.impl;
 
 import com.example.project3.Common.FormatDate;
 import com.example.project3.Common.Maper;
+import com.example.project3.Common.Token;
 import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.dto.BillDetailResponse;
 import com.example.project3.model.entity.BillDetailEntity;
@@ -19,6 +20,7 @@ import com.example.project3.repository.ImportProductRepository;
 import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProfileRepository;
 import com.example.project3.repository.BillDetailRepository;
+import com.example.project3.repository.ShoppingCartRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
@@ -28,6 +30,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +53,11 @@ public class BillServiceImpl implements BillService {
   private ProdSoldService prodSoldService;
   @Autowired
   private ImportProductRepository importProductRepository;
+  @Autowired
+  private ShoppingCartRepository shoppingCartRepository;
+
+  @Autowired
+  private Token token;
 
   @Override
   public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate) {
@@ -112,7 +120,7 @@ public class BillServiceImpl implements BillService {
     var profile = profileRepository.findFirstById(billDTO.getProfileId());
     if (!profile.getRole().equals(RoleEnum.USER.name())) {
       billDTO.setType(BillTypeEnum.OFFLINE.name());
-      billDTO.setStatus(BillStatusEnum.VERIFIED.name());
+      billDTO.setStatus(BillStatusEnum.COMPLETED.name());
     }
     for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
       var prod = productRepository.findFirstById(billDetail.getProductId());
@@ -139,6 +147,72 @@ public class BillServiceImpl implements BillService {
     var billResponse = Maper.getInstance().BillEntityToBillDTO(billres);
     billResponse.setBillDetail(detailResponseList);
     return new ResponseWrapper(EnumResponse.SUCCESS, billResponse);
+  }
+
+  @Override
+  public ResponseWrapper createByUser(BillDTO billDTO) {
+    var er = EnumResponse.FAIL;
+    if (billDTO.getId() != null) {
+      if (billDTO.getProfileId() == null) {
+        er.setResponseMessage("không có profile id");
+        return new ResponseWrapper(er, billDTO);
+      }
+    }
+    if (billDTO.getBillDetail().isEmpty() || billDTO.getBillDetail() == null) {
+      er.setResponseMessage("không có sản phẩm nào trong giỏ hàng à? ");
+      return new ResponseWrapper(er, billDTO);
+    }
+
+    var profile = profileRepository.findFirstById(Long.parseLong(token.sub("id")));
+    billDTO.setProfileId(profile.getId());
+      billDTO.setType(billDTO.getType());
+      if(billDTO.getType().equals(BillTypeEnum.COD.name())) {
+        billDTO.setStatus(BillStatusEnum.VERIFYING.name());
+      }else if(billDTO.getType().equals(BillTypeEnum.ONLINE.name())){
+        billDTO.setStatus(BillStatusEnum.VERIFIED.name());
+      }else{
+        billDTO.setStatus(BillStatusEnum.COMPLETED.name());
+      }
+
+    for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
+      var prod = productRepository.findFirstById(billDetail.getProductId());
+      if (prod == null) {
+        return new ResponseWrapper(EnumResponse.NOT_FOUND, billDetail, "sản phẩm này hiện không còn tồn tại trong hệ thống!");
+      }
+    }
+    billDTO.setCreatedDate(LocalDateTime.now());
+    billDTO.setModifiedDate(LocalDateTime.now());
+    var billres = repository.save(Maper.getInstance().BillDTOToBillEntity(billDTO));
+    clearShoppingCartByProduct(billDTO.getBillDetail());
+    List<BillDetailResponse> detailResponseList = new ArrayList<>();
+    if (billres.getId() != null) {
+      for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
+        billDetail.setBillId(billres.getId());
+        var prod = productRepository.findFirstById(billDetail.getProductId());
+        if(prod.getWarranty()!=null && prod.getWarranty()>0){
+          billDetail.setWarrantyEndDate(LocalDateTime.now().plusMonths(prod.getWarranty()));
+        }
+        detailResponseList.add(this.saveDetail(billDetail));
+        //lưu lại số lượng sản phẩm đã bán
+        prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());
+      }
+    }
+    var billResponse = Maper.getInstance().BillEntityToBillDTO(billres);
+    billResponse.setBillDetail(detailResponseList);
+    return new ResponseWrapper(EnumResponse.SUCCESS, billResponse);  }
+
+  private List<Long> clearShoppingCartByProduct(List<BillDetailResponse> products){
+    return products.stream()
+        .map(BillDetailResponse::getProductId)
+        .map(productId->{
+         var cartEntity= shoppingCartRepository.findFirstByProfileIdAndProductId(Long.parseLong(token.sub("id")), productId);
+         if(cartEntity!=null){
+           shoppingCartRepository.deleteById(cartEntity.getId());
+           return productId;
+         }
+         return productId;
+        })
+        .collect(Collectors.toList());
   }
 
   @Override

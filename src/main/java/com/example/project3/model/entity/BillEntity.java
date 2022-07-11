@@ -17,13 +17,16 @@ import lombok.Setter;
 @Table(name = "b_bill")
 public class BillEntity {
   public enum BillStatusEnum{
-    VERIFYING,
-    VERIFIED,
-    CANCELED,
+    VERIFYING, // đang chờ duyệt
+    VERIFIED,  // Đã xác nhận
+    CANCELED,  // Đã hủy
+    COMPLETED, // Đã giao hàng thành công
+    INPROGRES, // Đơn hàng đang được vận chuyển
   }
   public enum BillTypeEnum{
     OFFLINE,
-    ONLINE
+    ONLINE,
+    COD
   }
 
   @Id

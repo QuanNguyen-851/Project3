@@ -16,6 +16,8 @@ public interface BillService {
 
   ResponseWrapper create(BillDTO billDTO);
 
+  ResponseWrapper createByUser(BillDTO billDTO);
+
   ResponseWrapper updateStatus(Long billId, String status);
 
   NewBillResponse countNewBill(String status , String type);
