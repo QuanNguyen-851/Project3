@@ -5,14 +5,17 @@ import com.example.project3.Common.Maper;
 import com.example.project3.Common.Token;
 import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.dto.BillDetailResponse;
+import com.example.project3.model.dto.NotificationRequest;
 import com.example.project3.model.entity.BillDetailEntity;
 import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.BillEntity.BillStatusEnum;
 import com.example.project3.model.entity.BillEntity.BillTypeEnum;
 import com.example.project3.model.entity.ImportProductResponse;
 import com.example.project3.model.entity.NewBillResponse;
+import com.example.project3.model.entity.NotificationEntity.RedirectEnum;
 import com.example.project3.model.entity.ProductEntity.ProductEnum;
 import com.example.project3.model.entity.ProductResponse;
+import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.model.entity.TopEmployee;
 import com.example.project3.model.entity.TurnoverEntity;
@@ -25,7 +28,9 @@ import com.example.project3.repository.ShoppingCartRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
+import com.example.project3.service.NotificationService;
 import com.example.project3.service.ProdSoldService;
+import com.google.gson.JsonObject;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -59,6 +64,9 @@ public class BillServiceImpl implements BillService {
 
   @Autowired
   private Token token;
+
+  @Autowired
+  private NotificationService notificationService;
 
   @Override
   public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate) {
@@ -157,12 +165,6 @@ public class BillServiceImpl implements BillService {
   @Override
   public ResponseWrapper createByUser(BillDTO billDTO) {
     var er = EnumResponse.FAIL;
-//    if (billDTO.getId() != null) {
-//      if (billDTO.getProfileId() == null) {
-//        er.setResponseMessage("không có profile id");
-//        return new ResponseWrapper(er, billDTO);
-//      }
-//    }
     if (billDTO.getBillDetail().isEmpty() || billDTO.getBillDetail() == null) {
       er.setResponseMessage("không có sản phẩm nào trong giỏ hàng à? ");
       return new ResponseWrapper(er, billDTO);
@@ -222,9 +224,20 @@ public class BillServiceImpl implements BillService {
           prod.setQuantity(newQuantity);
         }
         productRepository.save(prod);
-//        //lưu lại số lượng sản phẩm đã bán
-//        prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());
       }
+      //        //gửi thông báo tới toàn bộ adminUser
+      List<ProfileEntity> moderators = profileRepository.getAllProfileByRoles(
+          new ArrayList<>(List.of(RoleEnum.ADMIN,RoleEnum.EMPLOYEE,RoleEnum.SUPERADMIN)));
+
+      JsonObject params = new JsonObject();
+      params.addProperty("Redirect", RedirectEnum.lIST_BILL_PAGE.name());
+      notificationService.createNotification(NotificationRequest.builder()
+          .senderId(profile.getId())
+          .profileId(moderators.stream().map(ProfileEntity::getId).collect(Collectors.toList()))
+          .body(String.format("%s đã tạo một đơn hàng mới! ", profile.getFistName()+profile.getLastName()))
+          .params(params)
+          .title("Vừa có một đơn hàng mới !")
+          .build());
     }
     var billResponse = Maper.getInstance().BillEntityToBillDTO(billres);
     billResponse.setBillDetail(detailResponseList);
@@ -264,7 +277,35 @@ public class BillServiceImpl implements BillService {
               prod.setStatus(ProductEnum.ACTIVE.name());
             }
             prod.setQuantity(newQuantity);
-            productRepository.save(prod);          }
+            productRepository.save(prod);
+          }
+          if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+            //        //gửi thông báo tới user đặt hàng
+            JsonObject params = new JsonObject();
+            params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+            params.addProperty("billId", bill.getId());
+            notificationService.createNotification(NotificationRequest.builder()
+                .senderId(Long.parseLong(token.sub("id")))
+                .profileId(List.of(bill.getProfileId()))
+                .body("Đơn hàng của bạn đã bị hủy!")
+                .params(params)
+                .title("Tên cửa hàng!")
+                .build());
+          }
+        }else if(status.equals(BillStatusEnum.INPROGRESS.name())){
+          if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+            //        //gửi thông báo tới user đặt hàng
+            JsonObject params = new JsonObject();
+            params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+            params.addProperty("billId", bill.getId());
+            notificationService.createNotification(NotificationRequest.builder()
+                .senderId(Long.parseLong(token.sub("id")))
+                .profileId(List.of(bill.getProfileId()))
+                .body("Đơn hàng của bạn đang được xử lý!")
+                .params(params)
+                .title("Tên cửa hàng!")
+                .build());
+          }
         }
         bill.setStatus(status);
         bill.setModifiedDate(LocalDateTime.now());

@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
           .senderId(request.getSenderId())
           .profileId(profileId)
           .title(request.getTitle())
-          .body(request.getTitle())
+          .body(request.getBody())
           .isRead(Boolean.FALSE)
           .params(param)
           .createdBy(Long.parseLong(token.sub("id")))
