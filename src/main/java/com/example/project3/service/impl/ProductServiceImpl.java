@@ -7,6 +7,7 @@ import com.example.project3.model.entity.ImportProductEntity;
 import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.ImageEntity;
 import com.example.project3.model.entity.NewProdResponse;
+import com.example.project3.model.entity.NotificationEntity;
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.entity.ProductEntity.ProductEnum;
 import com.example.project3.model.entity.ProductImageEntity;
@@ -23,6 +24,7 @@ import com.example.project3.repository.SaleRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ImportProductService;
+import com.example.project3.service.NotificationService;
 import com.example.project3.service.ProductService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,6 +54,8 @@ public class ProductServiceImpl implements ProductService {
   private SaleRepository saleRepository;
   @Autowired
   private Token token;
+  @Autowired
+  private NotificationService notificationService;
 
   @Override
   public List<ProductResponse> getAll(

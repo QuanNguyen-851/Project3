@@ -4,14 +4,17 @@ import com.example.project3.Common.Token;
 import com.example.project3.model.dto.ShoppingCartRequest;
 import com.example.project3.model.dto.ShoppingCartResponse;
 import com.example.project3.model.dto.ShoppingCartResponsePage;
+import com.example.project3.model.entity.ProductEntity.ProductEnum;
 import com.example.project3.model.entity.ShoppingCartDetailEntity;
 import com.example.project3.model.entity.ShoppingCartEntity;
+import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ShoppingCartDetailRepository;
 import com.example.project3.repository.ShoppingCartRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductService;
 import com.example.project3.service.ShoppingCartService;
+import com.google.gson.JsonObject;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,14 +34,28 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
   @Autowired
   private Token token;
 
+  @Autowired
+  private ProductRepository productRepository;
+
   @Override
   public ResponseWrapper createOrUpdate(Long productId, Long quantity) {
     Long profileId = Long.parseLong(token.sub("id"));
     if (profileId == null) {
       return new ResponseWrapper(EnumResponse.ACCESSDENIED, null);
     }
+    var prod = productRepository.findFirstById(productId);
+    if(prod.getStatus().equals(ProductEnum.PAUSE.name())){
+      return new ResponseWrapper(EnumResponse.FAIL, productId, "sản phẩm này hiện đã ngừng kinh doanh!");
+    }else{
+
+    }
+
     var item = shoppingCartRepository.findFirstByProfileIdAndProductId(profileId, productId);
     if (item == null) {
+      if(quantity>prod.getQuantity()){
+        return new ResponseWrapper(EnumResponse.FAIL, productId,
+            String.format("Sản phẩm này trong kho chỉ còn %d ", prod.getQuantity()));
+      }
       var res = shoppingCartRepository.save(ShoppingCartEntity.builder()
           .profileId(profileId)
           .productId(productId)
@@ -54,6 +71,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     if (num <= 0) {
       shoppingCartRepository.deleteById(item.getId());
       return new ResponseWrapper(EnumResponse.SUCCESS, null);
+    }
+    if(num>prod.getQuantity()){
+      return new ResponseWrapper(EnumResponse.FAIL, productId,
+          String.format("Sản phẩm này trong kho chỉ còn %d ", prod.getQuantity()));
     }
     var res = shoppingCartRepository.save(ShoppingCartEntity.builder()
         .id(item.getId())

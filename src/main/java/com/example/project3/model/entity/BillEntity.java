@@ -19,9 +19,10 @@ public class BillEntity {
   public enum BillStatusEnum{
     VERIFYING, // đang chờ duyệt
     VERIFIED,  // Đã xác nhận
-    CANCELED,  // Đã hủy
     COMPLETED, // Đã giao hàng thành công
-    INPROGRES, // Đơn hàng đang được vận chuyển
+    INPROGRESS , // Đơn hàng đang được vận chuyển
+    CANCELED  // Đã hủy
+
   }
   public enum BillTypeEnum{
     OFFLINE,
