@@ -1,11 +1,17 @@
 package com.example.project3.model.entity;
 
+import com.example.project3.model.dto.NotificationResponse;
 import com.google.gson.JsonObject;
 import java.time.LocalDateTime;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.FieldResult;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
