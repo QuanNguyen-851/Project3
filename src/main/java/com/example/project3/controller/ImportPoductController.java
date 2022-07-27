@@ -22,8 +22,9 @@ public class ImportPoductController {
   @GetMapping("/getAll")
   private ResponseEntity<List<ImportProductResponse>> getAll(
       @RequestParam(value = "productId", required = false) Long productId
-      , @RequestParam(value = "limit", required = false) Long limit
+      , @RequestParam(value = "limit", required = false) Long limit,
+      @RequestParam(value = "month", required = false) String month
       ) {
-    return new ResponseEntity<>(importProductService.getAll(productId, limit), HttpStatus.OK);
+    return new ResponseEntity<>(importProductService.getAll(productId,month , limit), HttpStatus.OK);
   }
 }

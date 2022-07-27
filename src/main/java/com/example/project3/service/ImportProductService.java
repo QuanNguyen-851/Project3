@@ -13,5 +13,5 @@ public interface ImportProductService {
       Long quantity,
       Long createBy
   );
-  List<ImportProductResponse> getAll(Long productId, Long limit);
+  List<ImportProductResponse> getAll(Long productId, String month ,Long limit);
 }

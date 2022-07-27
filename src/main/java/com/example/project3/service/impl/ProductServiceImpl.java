@@ -137,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
     ImportProductEntity importProductEntity = new ImportProductEntity();
     importProductEntity.setProductId(saved.getId());
     importProductEntity.setImportQuantity(saved.getQuantity());
-    importProductEntity.setImportTotal(saved.getImportPrice() * saved.getQuantity() );
+    importProductEntity.setImportTotal(saved.getImportPrice() * saved.getQuantity());
     importProductEntity.setCreatedBy(saved.getCreatedBy());
     importProductService.save(importProductEntity);
     if (productDTO.getListInformation() != null) {

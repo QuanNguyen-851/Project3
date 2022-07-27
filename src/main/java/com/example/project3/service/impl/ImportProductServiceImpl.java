@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 @Service
 public class ImportProductServiceImpl implements ImportProductService {
@@ -48,8 +49,12 @@ public class ImportProductServiceImpl implements ImportProductService {
   }
 
   @Override
-  public List<ImportProductResponse> getAll(Long productId, Long limit) {
+  public List<ImportProductResponse> getAll(Long productId,String month, Long limit) {
    var thismonth = FormatDate.getThisMonth();
+   if(!StringUtils.isEmpty(month)){
+     thismonth = month;
+   }
+    System.out.println(thismonth);
     return repository.getByProductIdAndDate(productId,thismonth,limit);
   }
 
