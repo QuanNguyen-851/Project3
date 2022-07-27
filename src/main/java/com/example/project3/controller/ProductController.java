@@ -1,6 +1,7 @@
 package com.example.project3.controller;
 
 import com.example.project3.Common.Token;
+import com.example.project3.model.dto.CategoryProductResponse;
 import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.NewProdResponse;
@@ -45,9 +46,17 @@ public class ProductController {
         name,
         idCate,
         idProduction,
-        getall
+        getall,
+        null
     ), HttpStatus.OK);
   }
+  @GetMapping("user/getall")
+  private ResponseEntity<Iterable<CategoryProductResponse>> userGetAll(
+  ) {
+    return new ResponseEntity<>(productService.userGetAll(), HttpStatus.OK);
+  }
+
+
 
   @GetMapping("/getdetail")
   private ResponseEntity<ProductResponse> getDetail(@RequestParam Long id) {

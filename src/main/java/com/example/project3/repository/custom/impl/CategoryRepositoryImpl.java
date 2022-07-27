@@ -38,4 +38,16 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
     List<CategoryEntity> list = query.getResultList();
     return list;
   }
+
+  @Override
+  public List<CategoryEntity> getALlCateHasProd() {
+    StringBuilder sql = new StringBuilder();
+    sql.append("select distinct cc.* from p_product pp ");
+    sql.append("inner join c_category cc on cc.id = pp.category_id ");
+    sql.append("where pp.status = 'ACTIVE'");
+    sql.append(" order by cc.name ASC , cc.id DESC ");
+    var query = entityManager.createNativeQuery(sql.toString(), CategoryEntity.class);
+    List<CategoryEntity> list = query.getResultList();
+    return list;
+  }
 }

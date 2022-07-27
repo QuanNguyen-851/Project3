@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface CategoryRepositoryCustom {
   List<CategoryEntity>getAll(String status, String name);
+
+  List<CategoryEntity>getALlCateHasProd();
 }

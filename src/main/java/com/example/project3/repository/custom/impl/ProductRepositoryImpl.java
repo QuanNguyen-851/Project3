@@ -40,7 +40,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
       String name,
       Long idCate,
       Long idProduction,
-      Boolean getAll
+      Boolean getAll,
+      Long limit
   ) {
     StringBuilder sql = new StringBuilder();
     sql.append("select pp.*, cc.name as category, p.name as production "
@@ -71,6 +72,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
       sql.append("and p.status != 'DISABLE' ");
     }
     sql.append("ORDER BY pp.id DESC ");
+    if(limit!=null){
+      sql.append("LIMIT :limit ");
+    }
     var query = entityManager.createNativeQuery(sql.toString(), ProductResponse.class);
     if (status != null) {
       query.setParameter("status", status);
@@ -86,6 +90,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
     if (idProduction != null) {
       query.setParameter("idProduction", idProduction);
+    }
+    if(limit!=null){
+      query.setParameter("limit", limit);
     }
     List<ProductResponse> list = query.getResultList();
     System.out.println(sql.toString());

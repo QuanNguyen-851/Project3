@@ -2,6 +2,7 @@ package com.example.project3.service.impl;
 
 import com.example.project3.Common.FormatDate;
 import com.example.project3.Common.Token;
+import com.example.project3.model.dto.CategoryProductResponse;
 import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.ImportProductEntity;
 import com.example.project3.model.entity.NewBillResponse;
@@ -27,10 +28,13 @@ import com.example.project3.service.ImportProductService;
 import com.example.project3.service.NotificationService;
 import com.example.project3.service.ProductService;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 
 @Service
@@ -64,7 +68,8 @@ public class ProductServiceImpl implements ProductService {
       String name,
       Long idCate,
       Long idProduction,
-      Boolean getAll
+      Boolean getAll,
+      Long limit
   ) {
     var res = repository.getAllProduct(
         status,
@@ -72,7 +77,8 @@ public class ProductServiceImpl implements ProductService {
         name,
         idCate,
         idProduction,
-        getAll
+        getAll,
+        limit
     );
 
     for (ProductResponse item: res
@@ -85,6 +91,25 @@ public class ProductServiceImpl implements ProductService {
     }
     return res;
 
+  }
+
+  @Override
+  public List<CategoryProductResponse> userGetAll() {
+    var listCate = categoryRepository.getALlCateHasProd();
+    if(CollectionUtils.isEmpty(listCate)){
+      return new ArrayList<>();
+    }
+    return listCate.stream()
+        .map(categoryEntity -> {
+          var listProd = getAll(ProductEnum.ACTIVE.name(), null, null, categoryEntity.getId(), null,null, 10L);
+          return CategoryProductResponse.builder()
+              .categoryId(categoryEntity.getId())
+              .categoryName(categoryEntity.getName())
+              .title(categoryEntity.getTitle())
+              .products(listProd)
+              .total(listProd.size())
+              .build();
+        }).collect(Collectors.toList());
   }
 
   @Override

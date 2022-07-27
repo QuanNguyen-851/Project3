@@ -1,5 +1,6 @@
 package com.example.project3.service;
 
+import com.example.project3.model.dto.CategoryProductResponse;
 import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.NewProdResponse;
@@ -15,7 +16,11 @@ public interface ProductService {
       String name,
       Long idCate,
       Long idProduction,
-      Boolean getAll);
+      Boolean getAll,
+      Long limit
+  );
+
+  List<CategoryProductResponse> userGetAll();
 
   ProductResponse getDetail(Long id);
 

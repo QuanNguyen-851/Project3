@@ -16,7 +16,8 @@ public interface ProductRepositoryCustom {
       String name,
       Long idCate,
       Long idProduction,
-      Boolean getAll
+      Boolean getAll,
+      Long limit
   );
 
   Long countNewProd(String moth);
