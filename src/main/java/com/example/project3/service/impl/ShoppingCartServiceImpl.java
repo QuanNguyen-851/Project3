@@ -119,7 +119,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         && saleEntity.getStartDate().isBefore(LocalDateTime.now())
         && saleEntity.getEndDate().isAfter(LocalDateTime.now())){
         Float floatPrice =( totalPrice - (totalPrice * saleEntity.getSale() /100 ));
-        totalPrice = floatPrice.longValue();
+        totalPrice = (floatPrice.longValue()<=0L)?0L:floatPrice.longValue();
     }
     return totalPrice;
 
