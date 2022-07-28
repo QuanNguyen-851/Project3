@@ -5,6 +5,7 @@ import com.example.project3.model.dto.ShoppingCartRequest;
 import com.example.project3.model.dto.ShoppingCartResponse;
 import com.example.project3.model.dto.ShoppingCartResponsePage;
 import com.example.project3.model.entity.ProductEntity.ProductEnum;
+import com.example.project3.model.entity.SaleEntity;
 import com.example.project3.model.entity.ShoppingCartDetailEntity;
 import com.example.project3.model.entity.ShoppingCartEntity;
 import com.example.project3.repository.ProductRepository;
@@ -98,15 +99,30 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
       return ShoppingCartResponsePage.builder().total(0L).build();
     }
     var list = myCart.stream()
-        .map(cart-> ShoppingCartResponse.builder()
+        .map(cart->{
+          var prod = productService.getDetail(cart.getProductId());
+          return ShoppingCartResponse.builder()
             .createDate(cart.getCreatedDate())
             .quantity(cart.getQuantity())
-            .product(productService.getDetail(cart.getProductId()))
-            .build()).collect(Collectors.toList());
+            .price(salePrice(prod.getSalePrice(), cart.getQuantity(), prod.getSaleEntity()))
+            .product(prod)
+            .build();
+        }).collect(Collectors.toList());
     return ShoppingCartResponsePage.builder()
         .products(list)
         .total((long) list.size())
         .build();
+  }
+  public Long salePrice(Long price, Long quantity, SaleEntity saleEntity){
+    Long totalPrice = price * quantity;
+    if(saleEntity!=null
+        && saleEntity.getStartDate().isBefore(LocalDateTime.now())
+        && saleEntity.getEndDate().isAfter(LocalDateTime.now())){
+        Float floatPrice =( totalPrice - (totalPrice * saleEntity.getSale() /100 ));
+        totalPrice = floatPrice.longValue();
+    }
+    return totalPrice;
+
   }
 
   @Override

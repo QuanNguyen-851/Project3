@@ -13,4 +13,5 @@ public class ShoppingCartResponse {
   public Long quantity;
   public ProductResponse product;
   public LocalDateTime createDate;
+  public Long price;
 }
