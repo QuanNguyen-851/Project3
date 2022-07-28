@@ -86,9 +86,13 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
   public List<BillEntity> getNewBill(String status, String type, String month) {
     var sql = new StringBuilder();
     sql.append("select * "
-        + "from b_bill where "
-        + "to_char(created_date, 'MM-YYYY') = :month ");
-
+        + "from b_bill where ");
+    if(month.startsWith("00")){
+     month = month.substring(month.lastIndexOf("-")+1);
+      sql.append("to_char(created_date, 'YYYY') = :month ");
+    }else {
+      sql.append("to_char(created_date, 'MM-YYYY') = :month ");
+    }
     if (status != null) {
       sql.append("and status = :status ");
     }

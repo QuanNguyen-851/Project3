@@ -8,7 +8,9 @@ import lombok.Setter;
 @Setter
 @Builder
 public class TurnoverEntity {
-Long turnover;
-Long importPrice;
-Long interestRate;
+
+  private int billCount;
+  private Long turnover;
+  private Long importPrice;
+  private Long interestRate;
 }

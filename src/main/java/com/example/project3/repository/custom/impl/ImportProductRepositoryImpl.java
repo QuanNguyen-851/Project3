@@ -25,7 +25,12 @@ public class ImportProductRepositoryImpl implements ImportProductRepositoryCusto
       sql.append("and product_id = :prodId ");
     }
     if (date != null) {
-      sql.append("and to_char(ip.created_date, 'MM-YYYY') = :date ");
+      if(date.startsWith("00-")){
+       date =  date.substring(date.lastIndexOf("-")+1);
+        sql.append("and to_char(ip.created_date, 'YYYY') = :date ");
+      }else {
+        sql.append("and to_char(ip.created_date, 'MM-YYYY') = :date ");
+      }
     }
     sql.append("Order By ip.id DESC ");
     if (limit != null) {

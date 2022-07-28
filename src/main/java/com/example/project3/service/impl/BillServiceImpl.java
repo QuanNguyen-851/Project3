@@ -346,6 +346,7 @@ public class BillServiceImpl implements BillService {
     }
     return TurnoverEntity.builder()
         .turnover(turnover)
+        .billCount(entities.size())
         .importPrice(importPrice)
         .interestRate(turnover - importPrice)
         .build();

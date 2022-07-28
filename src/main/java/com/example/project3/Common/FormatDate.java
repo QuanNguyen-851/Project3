@@ -12,4 +12,8 @@ public class FormatDate {
     var now = LocalDateTime.now();
     return DateTimeFormatter.ofPattern("MM-yyyy").format(now);
   }
+  public static String getThisYear(){
+    var now = LocalDateTime.now();
+    return DateTimeFormatter.ofPattern("yyyy").format(now);
+  }
 }

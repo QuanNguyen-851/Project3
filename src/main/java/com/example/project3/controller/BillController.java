@@ -81,9 +81,10 @@ public class BillController {
   @GetMapping("/getTurnover")
   private ResponseEntity<TurnoverEntity> getTurnover(
       @RequestParam(value = "status", required = false) String status,
-      @RequestParam(value = "type", required = false) String type
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "month", required = false) String month
   ){
-    return new ResponseEntity<>(service.getTurnover(status,type, null), HttpStatus.OK);
+    return new ResponseEntity<>(service.getTurnover(status,type, month), HttpStatus.OK);
   }
   @GetMapping("/getTopEmployee")
   private ResponseEntity<List<TopEmployee>> getTopEmployee(

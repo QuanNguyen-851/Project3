@@ -56,8 +56,6 @@ public class ProductController {
     return new ResponseEntity<>(productService.userGetAll(), HttpStatus.OK);
   }
 
-
-
   @GetMapping("/getdetail")
   private ResponseEntity<ProductResponse> getDetail(@RequestParam Long id) {
     return new ResponseEntity<>(productService.getDetail(id), HttpStatus.OK);
