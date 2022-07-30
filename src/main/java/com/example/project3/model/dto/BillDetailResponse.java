@@ -1,6 +1,7 @@
 package com.example.project3.model.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,4 +20,5 @@ public class BillDetailResponse {
   //  private Long salePrice;
   private Long quantity;
   private Long price;
+  private List<String> imei;
 }

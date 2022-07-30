@@ -83,6 +83,7 @@ public class Maper {
 
   public BillDetailResponse DetailEntityToResponse(BillDetailEntity billDetailEntity) {
     return BillDetailResponse.builder()
+        .id(billDetailEntity.getId())
         .billId(billDetailEntity.getBillId())
         .productId(billDetailEntity.getProductId())
         .quantity(billDetailEntity.getQuantity())

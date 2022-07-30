@@ -19,6 +19,7 @@ import com.example.project3.model.entity.ProfileEntity;
 import com.example.project3.model.entity.ProfileEntity.RoleEnum;
 import com.example.project3.model.entity.TopEmployee;
 import com.example.project3.model.entity.TurnoverEntity;
+import com.example.project3.repository.BillDetailImeiRepository;
 import com.example.project3.repository.BillRepository;
 import com.example.project3.repository.ImportProductRepository;
 import com.example.project3.repository.ProductRepository;
@@ -68,6 +69,9 @@ public class BillServiceImpl implements BillService {
   @Autowired
   private NotificationService notificationService;
 
+  @Autowired
+  private BillDetailImeiRepository billDetailImeiRepository;
+
   @Override
   public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate) {
 
@@ -97,8 +101,10 @@ public class BillServiceImpl implements BillService {
       for (BillDetailEntity detail : billdetails) {
         var product = productRepository.findFirstById(detail.getProductId());
         var detailres = Maper.getInstance().DetailEntityToResponse(detail);
+        var imei = billDetailImeiRepository.findAllByBillDetailIdOrderByIdAsc(detailres.getId());
         detailres.setProductCode(product.getCode());
         detailres.setProductName(product.getName());
+        detailres.setImei(imei.stream().map(entity->entity.getImei()).collect(Collectors.toList()));
         if (product.getAvatarUrl() != null) {
           detailres.setProductAvatar(product.getAvatarUrl());
         }

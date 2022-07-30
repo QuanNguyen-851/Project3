@@ -64,4 +64,10 @@ public class Token {
     params.put("id", properties.get(2));
     return  params.get(key);
   }
+  public Boolean isAnonymous(){
+    if(StringUtils.isEmpty(decodeBase64(request.getHeader("Accept-Token")))){
+      return true;
+    }
+    return false;
+  }
 }
