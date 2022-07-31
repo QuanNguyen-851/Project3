@@ -2,6 +2,8 @@ package com.example.project3.repository.custom;
 
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.entity.ProductResponse;
+import com.example.project3.model.enumpk.OrderEnum;
+import com.example.project3.model.enumpk.SortByEnum;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +19,11 @@ public interface ProductRepositoryCustom {
       Long idCate,
       Long idProduction,
       Boolean getAll,
-      Long limit
+      Long limit,
+      SortByEnum sortByEnum,
+      OrderEnum orderEnum,
+      Long minPrice,
+      Long maxPrice
   );
 
   Long countNewProd(String moth);

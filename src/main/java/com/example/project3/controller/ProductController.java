@@ -7,10 +7,13 @@ import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.NewProdResponse;
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.model.entity.UpdateQuantityRequest;
+import com.example.project3.model.enumpk.OrderEnum;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductService;
 
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +41,13 @@ public class ProductController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "idCate", required = false) Long idCate,
       @RequestParam(value = "idProduction", required = false) Long idProduction,
-      @RequestParam(value = "getall", required = false ) Boolean getall
-  ) {
+      @RequestParam(value = "getall", required = false) Boolean getall,
+      @RequestParam(value = "sortBy", required = false) SortByEnum sortByEnum,
+      @RequestParam(value = "order", required = false) OrderEnum orderEnum,
+      @RequestParam(value = "minPrice", required = false) Long minPrice,
+      @RequestParam(value = "maxPrice", required = false) Long maxPrice
+
+      ) {
     return new ResponseEntity<>(productService.getAll(
         status,
         code,
@@ -47,9 +55,10 @@ public class ProductController {
         idCate,
         idProduction,
         getall,
-        null
+        null, sortByEnum, orderEnum, minPrice, maxPrice
     ), HttpStatus.OK);
   }
+
   @GetMapping("user/getall")
   private ResponseEntity<Iterable<CategoryProductResponse>> userGetAll(
   ) {
@@ -75,13 +84,15 @@ public class ProductController {
   private ResponseEntity<ResponseWrapper> updateQuantity(
       @RequestBody UpdateQuantityRequest updateQuantityRequest
   ) {
-    if(updateQuantityRequest.getProductId()==null || updateQuantityRequest.getAction()==null){
+    if (updateQuantityRequest.getProductId() == null || updateQuantityRequest.getAction() == null) {
       return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, null), HttpStatus.BAD_REQUEST);
     }
     if (updateQuantityRequest.getNumber() != null && updateQuantityRequest.getNumber() <= 0) {
       return new ResponseEntity<>(new ResponseWrapper(EnumResponse.FAIL, updateQuantityRequest.getNumber()), HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity<>(productService.updateQuantity(updateQuantityRequest.getProductId(), updateQuantityRequest.getNumber(), updateQuantityRequest.getAction()), HttpStatus.OK);
+    return new ResponseEntity<>(
+        productService.updateQuantity(updateQuantityRequest.getProductId(), updateQuantityRequest.getNumber(), updateQuantityRequest.getAction()),
+        HttpStatus.OK);
   }
 
   @DeleteMapping("/delete")
@@ -92,12 +103,12 @@ public class ProductController {
   @PutMapping("/updateStatus")
   private ResponseEntity<ResponseWrapper> updateStatus(
       @RequestBody ProductResponse productResponse
-  ){
+  ) {
     var res = productService.updateStatus(productResponse.getId(), productResponse.getStatus());
-    if(res.getResponseData()==null){
+    if (res.getResponseData() == null) {
       return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
     }
-    if(res.getResponseData().equals("not found")){
+    if (res.getResponseData().equals("not found")) {
       return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
     }
     return new ResponseEntity<>(res, HttpStatus.OK);
@@ -106,14 +117,14 @@ public class ProductController {
   @GetMapping("/CountNewProd")
   private ResponseEntity<NewProdResponse> countNewProd(
       @RequestParam(value = "limit", required = false) Long limit
-  ){
-   return new ResponseEntity<>(productService.countNewProd( limit), HttpStatus.OK);
+  ) {
+    return new ResponseEntity<>(productService.countNewProd(limit), HttpStatus.OK);
   }
 
   @GetMapping("/CountProd")
   private ResponseEntity<Long> countByStatus(
       @RequestParam(value = "status", required = false) String status
-  ){
+  ) {
     return new ResponseEntity<>(productService.countByStatus(status), HttpStatus.OK);
   }
 

@@ -3,7 +3,10 @@ package com.example.project3.repository.custom.impl;
 import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.entity.ProductResponse;
+import com.example.project3.model.enumpk.OrderEnum;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.repository.custom.ProductRepositoryCustom;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.EntityManager;
@@ -41,8 +44,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
       Long idCate,
       Long idProduction,
       Boolean getAll,
-      Long limit
+      Long limit,
+      SortByEnum sortByEnum,
+      OrderEnum orderEnum,
+      Long minPrice,
+      Long maxPrice
   ) {
+    HashMap<String, Object> params = new HashMap<>();
     StringBuilder sql = new StringBuilder();
     sql.append("select pp.*, cc.name as category, p.name as production "
         + ",pp.created_by, pp.modified_by "
@@ -71,9 +79,32 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
       sql.append("and cc.status != 'DISABLE' ");
       sql.append("and p.status != 'DISABLE' ");
     }
-    sql.append("ORDER BY pp.id DESC ");
+
+    if(minPrice!=null){
+      sql.append("and pp.sale_price >= :minPrice ");
+      params.put("minPrice", minPrice);
+    }
+    if(maxPrice!=null){
+      sql.append("and pp.sale_price <= :maxPrice ");
+      params.put("maxPrice", maxPrice);
+    }
+    if(sortByEnum !=null&& orderEnum!=null){
+      switch (sortByEnum){
+        case DATE:
+          sql.append("ORDER BY pp.id "+ orderEnum);
+          break;
+        case SALEPRICE:
+          sql.append("ORDER BY pp.import_price "+orderEnum+" , pp.id  "+orderEnum+" ");
+          break;
+        case IMPORTPRICE:
+          sql.append("ORDER BY pp.sale_price "+orderEnum+" , pp.id "+orderEnum+" ");
+          break;
+      }
+    }else{
+      sql.append("ORDER BY pp.id DESC ");
+    }
     if(limit!=null){
-      sql.append("LIMIT :limit ");
+      sql.append(" LIMIT :limit ");
     }
     var query = entityManager.createNativeQuery(sql.toString(), ProductResponse.class);
     if (status != null) {
@@ -94,6 +125,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     if(limit!=null){
       query.setParameter("limit", limit);
     }
+    for (var paramKey : params.keySet()) {
+      query.setParameter(paramKey, params.get(paramKey));
+    }
+//    if(sortByEnum !=null|| orderEnum!=null){
+//      query.setParameter("order", orderEnum.name());
+//    }
     List<ProductResponse> list = query.getResultList();
     System.out.println(sql.toString());
     return list;

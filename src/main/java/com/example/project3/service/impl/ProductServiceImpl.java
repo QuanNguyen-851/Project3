@@ -15,6 +15,8 @@ import com.example.project3.model.entity.ProductImageEntity;
 import com.example.project3.model.entity.ProductInformationEntity;
 import com.example.project3.model.entity.ProductResponse;
 import com.example.project3.model.enumpk.ImageType;
+import com.example.project3.model.enumpk.OrderEnum;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.repository.CategoryRepository;
 import com.example.project3.repository.ImageRepository;
 import com.example.project3.repository.ProductImageRepository;
@@ -69,7 +71,11 @@ public class ProductServiceImpl implements ProductService {
       Long idCate,
       Long idProduction,
       Boolean getAll,
-      Long limit
+      Long limit,
+      SortByEnum sortByEnum,
+      OrderEnum orderEnum,
+      Long minPrice,
+      Long maxPrice
   ) {
     var res = repository.getAllProduct(
         status,
@@ -78,7 +84,11 @@ public class ProductServiceImpl implements ProductService {
         idCate,
         idProduction,
         getAll,
-        limit
+        limit,
+        sortByEnum,
+        orderEnum,
+        minPrice,
+        maxPrice
     );
 
     for (ProductResponse item: res
@@ -101,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
     }
     return listCate.stream()
         .map(categoryEntity -> {
-          var listProd = getAll(ProductEnum.ACTIVE.name(), null, null, categoryEntity.getId(), null,null, 10L);
+          var listProd = getAll(ProductEnum.ACTIVE.name(), null, null, categoryEntity.getId(), null,null, 10L, null, null, null, null);
           return CategoryProductResponse.builder()
               .categoryId(categoryEntity.getId())
               .categoryName(categoryEntity.getName())

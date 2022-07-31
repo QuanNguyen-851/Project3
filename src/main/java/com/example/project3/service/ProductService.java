@@ -5,7 +5,10 @@ import com.example.project3.model.dto.ProductDTO;
 import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.NewProdResponse;
 import com.example.project3.model.entity.ProductResponse;
+import com.example.project3.model.enumpk.OrderEnum;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.response.ResponseWrapper;
+import java.util.Date;
 import java.util.List;
 
 public interface ProductService {
@@ -17,7 +20,11 @@ public interface ProductService {
       Long idCate,
       Long idProduction,
       Boolean getAll,
-      Long limit
+      Long limit,
+      SortByEnum sortByEnum,
+      OrderEnum orderEnum,
+      Long startDate,
+      Long endDate
   );
 
   List<CategoryProductResponse> userGetAll();
