@@ -94,10 +94,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
           sql.append("ORDER BY pp.id "+ orderEnum);
           break;
         case SALEPRICE:
-          sql.append("ORDER BY pp.import_price "+orderEnum+" , pp.id  "+orderEnum+" ");
+          sql.append("ORDER BY pp.sale_price "+orderEnum+" , pp.id  "+orderEnum+" ");
           break;
         case IMPORTPRICE:
-          sql.append("ORDER BY pp.sale_price "+orderEnum+" , pp.id "+orderEnum+" ");
+          sql.append("ORDER BY pp.import_price "+orderEnum+" , pp.id "+orderEnum+" ");
           break;
       }
     }else{
