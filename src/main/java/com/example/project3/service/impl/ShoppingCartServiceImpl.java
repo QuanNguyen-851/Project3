@@ -9,6 +9,7 @@ import com.example.project3.model.entity.SaleEntity;
 import com.example.project3.model.entity.ShoppingCartDetailEntity;
 import com.example.project3.model.entity.ShoppingCartEntity;
 import com.example.project3.repository.ProductRepository;
+import com.example.project3.repository.ProfileRepository;
 import com.example.project3.repository.ShoppingCartDetailRepository;
 import com.example.project3.repository.ShoppingCartRepository;
 import com.example.project3.response.EnumResponse;
@@ -37,6 +38,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
   @Autowired
   private ProductRepository productRepository;
+
+  @Autowired
+  private ProfileRepository profileRepository;
 
   @Override
   public ResponseWrapper createOrUpdate(Long productId, Long quantity) {
@@ -94,7 +98,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
   @Override
   public ShoppingCartResponsePage getDetailShoppingCart() {
     Long myId = Long.parseLong(token.sub("id"));
-    var myCart = shoppingCartRepository.findAllByProfileId(myId);
+    var myCart = shoppingCartRepository.findAllByProfileIdOrderByIdDesc(myId);
     if (CollectionUtils.isEmpty(myCart)) {
       return ShoppingCartResponsePage.builder().total(0L).build();
     }

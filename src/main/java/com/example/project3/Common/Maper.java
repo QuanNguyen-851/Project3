@@ -3,9 +3,14 @@ package com.example.project3.Common;
 import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.dto.BillDetailResponse;
 import com.example.project3.model.dto.ProductDTO;
+import com.example.project3.model.dto.WarrantyHistoryResponse;
 import com.example.project3.model.entity.BillDetailEntity;
 import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.ProductEntity;
+import com.example.project3.model.entity.ProductResponse;
+import com.example.project3.model.entity.ProfileEntity;
+import com.example.project3.model.entity.WarrantyHistoryEntity;
+import com.example.project3.model.entity.WarrantyHistoryEntity.WarrantyHistoryStatus;
 
 public class Maper {
 
@@ -89,6 +94,23 @@ public class Maper {
         .quantity(billDetailEntity.getQuantity())
         .price(billDetailEntity.getPrice())
         .warrantyEndDate(billDetailEntity.getWarrantyEndDate())
+        .build();
+  }
+
+  public WarrantyHistoryResponse toWarrantyHistoryResponse(WarrantyHistoryEntity entity){
+    ProductResponse prod = new ProductResponse();
+    prod.setId(entity.getProductId());
+    ProfileEntity profile = new ProfileEntity();
+    profile.setId(entity.getUserId());
+    return WarrantyHistoryResponse.builder()
+        .id(entity.getId())
+        .imei(entity.getImei())
+        .product(prod)
+        .profile(profile)
+        .status(WarrantyHistoryStatus.valueOf(entity.getStatus()))
+        .surcharge(entity.getSurcharge())
+        .createdDate(entity.getCreatedDate())
+        .productCondition(entity.getProductCondition())
         .build();
   }
 }
