@@ -50,7 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   public List<NotificationResponse> getAllNotification(Boolean isRead) {
-    return notificationRepository.getNotification(false, 1L)
+    return notificationRepository.getNotification(isRead, 1L)
         .stream().map(val->NotificationResponse.builder()
             .id(val.getId())
             .body(val.getBody())
