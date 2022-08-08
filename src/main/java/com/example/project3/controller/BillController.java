@@ -69,7 +69,7 @@ public class BillController {
   private ResponseEntity<ResponseWrapper> updateStatus(
       @RequestBody UpdateSatusBill updateSatusBill
   ){
-    return new ResponseEntity<>(service.updateStatus(updateSatusBill.getBillId(), updateSatusBill.getStatus()), HttpStatus.OK);
+    return new ResponseEntity<>(service.updateStatus(updateSatusBill.getBillId(), updateSatusBill.getStatus(), updateSatusBill.getReason()), HttpStatus.OK);
   }
   @GetMapping("/countNewBill")
   private ResponseEntity<NewBillResponse> countBill(

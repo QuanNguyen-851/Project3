@@ -18,7 +18,7 @@ public class NotificationResponse {
   private String title;
   private String body;
   private Boolean isRead;
-  private JsonObject params;
+  private String params;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
   private Long createdBy;

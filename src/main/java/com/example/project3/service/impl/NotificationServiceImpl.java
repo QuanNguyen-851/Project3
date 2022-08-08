@@ -58,8 +58,8 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   public List<NotificationResponse> getAllNotification(Boolean isRead) {
     Long id = Long.parseLong(token.sub("id"));
-    ProfileEntity profile = profileRepository.findFirstById(id );
-    if(Objects.isNull(profile)){
+    ProfileEntity profile = profileRepository.findFirstById(id);
+    if (Objects.isNull(profile)) {
       return new ArrayList<>();
     }
     return notificationRepository.getNotification(isRead, profile.getId())
@@ -71,7 +71,7 @@ public class NotificationServiceImpl implements NotificationService {
             .createdDate(val.getCreatedDate())
             .modifiedBy(val.getModifiedBy())
             .modifiedDate(val.getModifiedDate())
-            .params(new JsonObject().getAsJsonObject(val.getParams()))
+            .params(val.getParams())
             .title(val.getTitle())
             .profileId(val.getProfileId())
             .senderId(val.getSenderId())

@@ -28,4 +28,6 @@ public class BillDTO {
   private List<BillDetailResponse> billDetail;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
+  private String reason;
+  private ProfileEntity modifiedBy;
 }

@@ -57,6 +57,8 @@ public class Maper {
         .type(billEntity.getType())
         .createdDate(billEntity.getCreatedDate())
         .modifiedDate(billEntity.getModifiedDate())
+        .reason(billEntity.getReason())
+        .modifiedBy(ProfileEntity.builder().id(billEntity.getModifiedBy()).build())
         .build();
   }
   public BillEntity BillDTOToBillEntity(BillDTO billDTO){
@@ -74,6 +76,7 @@ public class Maper {
     billEntity.setType(billDTO.getType());
     billEntity.setCreatedDate(billDTO.getCreatedDate());
     billEntity.setModifiedDate(billDTO.getModifiedDate());
+    billEntity.setModifiedBy(billDTO.getModifiedBy().getId());
     return billEntity;
   }
   public BillDetailEntity ToBillDetailEntity(BillDetailResponse billDetailResponse){

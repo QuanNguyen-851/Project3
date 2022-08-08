@@ -1,6 +1,7 @@
 package com.example.project3.service;
 
 import com.example.project3.model.dto.BillDTO;
+import com.example.project3.model.entity.BillEntity.BillStatusEnum;
 import com.example.project3.model.entity.NewBillResponse;
 import com.example.project3.model.entity.TopEmployee;
 import com.example.project3.model.entity.TurnoverEntity;
@@ -18,7 +19,7 @@ public interface BillService {
 
   ResponseWrapper createByUser(BillDTO billDTO);
 
-  ResponseWrapper updateStatus(Long billId, String status);
+  ResponseWrapper updateStatus(Long billId, String status, String reason);
 
   NewBillResponse countNewBill(String status , String type);
 

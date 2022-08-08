@@ -21,7 +21,8 @@ public class BillEntity {
     VERIFIED,  // Đã xác nhận
     COMPLETED, // Đã giao hàng thành công
     INPROGRESS , // Đơn hàng đang được vận chuyển
-    CANCELED  // Đã hủy
+    CANCELED,  // Đã hủy
+    CANCELED_REQUEST //user yêu cầu hủy đơn hàng
 
   }
   public enum BillTypeEnum{
@@ -46,5 +47,7 @@ public class BillEntity {
   private String type;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
+  private String reason;
+  private Long modifiedBy;
 
 }

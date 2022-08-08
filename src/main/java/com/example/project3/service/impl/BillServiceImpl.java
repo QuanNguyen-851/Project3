@@ -37,6 +37,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,8 +111,13 @@ public class BillServiceImpl implements BillService {
         }
         detailResponses.add(detailres);
       }
+      ProfileEntity modifiedBy = new ProfileEntity();
+      if(bill.getModifiedBy()!=null){
+       modifiedBy = profileRepository.findFirstById(bill.getModifiedBy());
+      }
       BillDTO billDTO = Maper.getInstance().BillEntityToBillDTO(bill);
       billDTO.setBillDetail(detailResponses);
+      billDTO.setModifiedBy(modifiedBy);
       billDTO.setCreateBy(profileRepository.findFirstById(billDTO.getProfileId()));
       return billDTO;
     }
@@ -121,12 +127,6 @@ public class BillServiceImpl implements BillService {
   @Override
   public ResponseWrapper create(BillDTO billDTO) {
     var er = EnumResponse.FAIL;
-//    if (billDTO.getId() != null) {
-//      if (billDTO.getProfileId() == null) {
-//        er.setResponseMessage("không có profile id");
-//        return new ResponseWrapper(er, billDTO);
-//      }
-//    }
     if (billDTO.getBillDetail().isEmpty() || billDTO.getBillDetail() == null) {
       er.setResponseMessage("không có sản phẩm nào trong giỏ hàng à? ");
       return new ResponseWrapper(er, billDTO);
@@ -149,6 +149,7 @@ public class BillServiceImpl implements BillService {
     billDTO.setProfileId(Long.parseLong(token.sub("id")));
     billDTO.setCreatedDate(LocalDateTime.now());
     billDTO.setModifiedDate(LocalDateTime.now());
+    billDTO.setModifiedBy(ProfileEntity.builder().id(profile.getId()).build());
     var billres = repository.save(Maper.getInstance().BillDTOToBillEntity(billDTO));
     List<BillDetailResponse> detailResponseList = new ArrayList<>();
     if (billres.getId() != null) {
@@ -210,6 +211,7 @@ public class BillServiceImpl implements BillService {
     }
     billDTO.setCreatedDate(LocalDateTime.now());
     billDTO.setModifiedDate(LocalDateTime.now());
+    billDTO.setModifiedBy(ProfileEntity.builder().id(profile.getId()).build());
     var billres = repository.save(Maper.getInstance().BillDTOToBillEntity(billDTO));
     clearShoppingCartByProduct(billDTO.getBillDetail());
     List<BillDetailResponse> detailResponseList = new ArrayList<>();
@@ -236,11 +238,12 @@ public class BillServiceImpl implements BillService {
           new ArrayList<>(List.of(RoleEnum.ADMIN,RoleEnum.EMPLOYEE,RoleEnum.SUPERADMIN)));
 
       JsonObject params = new JsonObject();
-      params.addProperty("Redirect", RedirectEnum.lIST_BILL_PAGE.name());
+      params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+      params.addProperty("billId", billres.getId());
       notificationService.createNotification(NotificationRequest.builder()
           .senderId(profile.getId())
           .profileId(moderators.stream().map(ProfileEntity::getId).collect(Collectors.toList()))
-          .body(String.format("%s đã tạo một đơn hàng mới! ", profile.getFistName()+profile.getLastName()))
+          .body(String.format("%s đã tạo một đơn hàng mới! ", profile.getFistName()+" "+profile.getLastName()))
           .params(params)
           .title("Vừa có một đơn hàng mới !")
           .build());
@@ -265,55 +268,112 @@ public class BillServiceImpl implements BillService {
   }
 
   @Override
-  public ResponseWrapper updateStatus(Long billId, String status) {
+  public ResponseWrapper updateStatus(Long billId, String status, String reason) {
+    var requestProfile = profileRepository.findFirstById(Long.parseLong(token.sub("id")));
+    if(Objects.isNull(requestProfile)){
+      return new ResponseWrapper(EnumResponse.NOT_FOUND, Long.parseLong(token.sub("id")), "Không thể tìm thấy user này!");
+    }
     var bill = repository.findFirstById(billId);
     if (bill != null) {
       if (!bill.getStatus().equals(BillStatusEnum.COMPLETED.name()) && !bill.getStatus().equals(BillStatusEnum.CANCELED.name())) {
         List<BillDetailEntity> list = billDetailRepository.findAllByBillId(bill.getId());
-        if(status.equals(BillStatusEnum.COMPLETED.name())){
-          //lưu lại số lượng sản phẩm đã bán
-          for (BillDetailEntity billDetail : list) {
-            prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());
-          }
-        }else if(status.equals(BillStatusEnum.CANCELED.name())){
-          for (BillDetailEntity billDetail : list) {
-            var prod = productRepository.findFirstById(billDetail.getProductId());
-            Long newQuantity= prod.getQuantity() + billDetail.getQuantity();
-            if(newQuantity>0){
-              prod.setStatus(ProductEnum.ACTIVE.name());
+        switch (BillStatusEnum.valueOf(status)){
+          case VERIFIED:
+            //bắn thông báo cho user
+            if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+              //        //gửi thông báo tới user đặt hàng
+              JsonObject params = new JsonObject();
+              params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+              params.addProperty("billId", bill.getId());
+              notificationService.createNotification(NotificationRequest.builder()
+                  .senderId(Long.parseLong(token.sub("id")))
+                  .profileId(List.of(bill.getProfileId()))
+                  .body(String.format("Đơn hàng %s đã được xác nhận!", bill.getId()))
+                  .params(params)
+                  .title("Tên cửa hàng!")
+                  .build());
             }
-            prod.setQuantity(newQuantity);
-            productRepository.save(prod);
-          }
-          if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
-            //        //gửi thông báo tới user đặt hàng
+            break;
+          case INPROGRESS:
+            if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+              //        //gửi thông báo tới user đặt hàng
+              JsonObject params = new JsonObject();
+              params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+              params.addProperty("billId", bill.getId());
+              notificationService.createNotification(NotificationRequest.builder()
+                  .senderId(Long.parseLong(token.sub("id")))
+                  .profileId(List.of(bill.getProfileId()))
+                  .body(String.format("Đơn hàng %s đang được giao!", bill.getId()))
+                  .params(params)
+                  .title("Tên cửa hàng!")
+                  .build());
+            }
+            break;
+          case COMPLETED:
+            //lưu lại số lượng sản phẩm đã bán
+            for (BillDetailEntity billDetail : list) {
+              prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());
+            }
+            //bắn thông báo cho user
+            if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+              //        //gửi thông báo tới user đặt hàng
+              JsonObject params = new JsonObject();
+              params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+              params.addProperty("billId", bill.getId());
+              notificationService.createNotification(NotificationRequest.builder()
+                  .senderId(Long.parseLong(token.sub("id")))
+                  .profileId(List.of(bill.getProfileId()))
+                  .body(String.format("Đơn hàng %s đã được giao thành công!", bill.getId()))
+                  .params(params)
+                  .title("Tên cửa hàng!")
+                  .build());
+            }
+            break;
+          case CANCELED:
+            for (BillDetailEntity billDetail : list) {
+              var prod = productRepository.findFirstById(billDetail.getProductId());
+              Long newQuantity= prod.getQuantity() + billDetail.getQuantity();
+              if(newQuantity>0){
+                prod.setStatus(ProductEnum.ACTIVE.name());
+              }
+              prod.setQuantity(newQuantity);
+              productRepository.save(prod);
+            }
+            if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+              //        gửi thông báo tới user đặt hàng
+              JsonObject params = new JsonObject();
+              params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+              params.addProperty("billId", bill.getId());
+              notificationService.createNotification(NotificationRequest.builder()
+                  .senderId(Long.parseLong(token.sub("id")))
+                  .profileId(List.of(bill.getProfileId()))
+                  .body(String.format("Đơn hàng %s đã bị hủy!", bill.getId()))
+                  .params(params)
+                  .title("Tên cửa hàng!")
+                  .build());
+            }
+            break;
+          case CANCELED_REQUEST:
+            List<ProfileEntity> moderators = profileRepository.getAllProfileByRoles(
+                new ArrayList<>(List.of(RoleEnum.ADMIN,RoleEnum.EMPLOYEE,RoleEnum.SUPERADMIN)));
+            ProfileEntity profile = profileRepository.findFirstById(Long.parseLong(token.sub("id")));
             JsonObject params = new JsonObject();
             params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
             params.addProperty("billId", bill.getId());
             notificationService.createNotification(NotificationRequest.builder()
-                .senderId(Long.parseLong(token.sub("id")))
-                .profileId(List.of(bill.getProfileId()))
-                .body("Đơn hàng của bạn đã bị hủy!")
+                .senderId(profile.getId())
+                .profileId(moderators.stream().map(ProfileEntity::getId).collect(Collectors.toList()))
+                .body(String.format("%s đã yêu cầu hủy đơn hàng %s! ", profile.getFistName()+" "+profile.getLastName(), billId))
                 .params(params)
-                .title("Tên cửa hàng!")
+                .title("Vừa có một yêu cầu hủy đơn !")
                 .build());
-          }
-        }else if(status.equals(BillStatusEnum.INPROGRESS.name())){
-          if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
-            //        //gửi thông báo tới user đặt hàng
-            JsonObject params = new JsonObject();
-            params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
-            params.addProperty("billId", bill.getId());
-            notificationService.createNotification(NotificationRequest.builder()
-                .senderId(Long.parseLong(token.sub("id")))
-                .profileId(List.of(bill.getProfileId()))
-                .body("Đơn hàng của bạn đang được xử lý!")
-                .params(params)
-                .title("Tên cửa hàng!")
-                .build());
-          }
+            break;
+          default:
+            break;
         }
         bill.setStatus(status);
+        bill.setReason(reason);
+        bill.setModifiedBy(requestProfile.getId());
         bill.setModifiedDate(LocalDateTime.now());
         return new ResponseWrapper(EnumResponse.SUCCESS, repository.save(bill));
       }
