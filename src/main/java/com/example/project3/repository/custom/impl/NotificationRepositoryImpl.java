@@ -24,6 +24,7 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
     if (isRead != null) {
       sql.append("and is_read = :isRead ");
     }
+    sql.append("order by n.id DESC ");
     var query = entityManager.createNativeQuery(sql.toString(), NotificationEntity.class);
 
     query.setParameter("profileId", profileId);
