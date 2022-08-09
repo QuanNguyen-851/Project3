@@ -30,4 +30,5 @@ public class BillDTO {
   private LocalDateTime modifiedDate;
   private String reason;
   private ProfileEntity modifiedBy;
+  private String code;
 }

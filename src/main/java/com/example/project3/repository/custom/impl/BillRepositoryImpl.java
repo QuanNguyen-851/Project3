@@ -17,7 +17,7 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
 
   @Override
   public List<BillEntity> getAll(Long profileId, String phone, String status,
-      String type, LocalDateTime startDate, LocalDateTime endDate) {
+      String type, LocalDateTime startDate, LocalDateTime endDate, String code) {
     var sql = new StringBuilder();
     sql.append("select * from b_bill \n"
         + "where id > 0\n");
@@ -32,6 +32,9 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     }
     if (type != null) {
       sql.append("and type = :type\n");
+    }
+    if (code != null) {
+      sql.append("and code = :code\n");
     }
     sql.append(" and (created_date <= :endDate  and created_date>= :startDate ) ");
     sql.append("ORDER BY id DESC");
@@ -48,6 +51,9 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     }
     if (type != null) {
       query.setParameter("type", type);
+    }
+    if (code != null) {
+      query.setParameter("code", code);
     }
     query.setParameter("endDate", endDate);
     query.setParameter("startDate", startDate);

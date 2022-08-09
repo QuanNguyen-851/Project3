@@ -7,6 +7,7 @@ import com.example.project3.model.dto.BillDTO;
 import com.example.project3.model.dto.BillDetailResponse;
 import com.example.project3.model.dto.NotificationRequest;
 import com.example.project3.model.entity.BillDetailEntity;
+import com.example.project3.model.entity.BillDetailImeiEntity;
 import com.example.project3.model.entity.BillEntity;
 import com.example.project3.model.entity.BillEntity.BillStatusEnum;
 import com.example.project3.model.entity.BillEntity.BillTypeEnum;
@@ -34,13 +35,18 @@ import com.example.project3.service.ProdSoldService;
 import com.google.gson.JsonObject;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class BillServiceImpl implements BillService {
@@ -74,7 +80,7 @@ public class BillServiceImpl implements BillService {
   private BillDetailImeiRepository billDetailImeiRepository;
 
   @Override
-  public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate) {
+  public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate, String code) {
 
     LocalDateTime end = LocalDateTime.now();
     LocalDateTime start = end.minusMonths(5);
@@ -85,7 +91,7 @@ public class BillServiceImpl implements BillService {
       end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
     List<BillDTO> res = new ArrayList<>();
-    for (BillEntity bill : repository.getAll(profileId, phone, status, type, start, end)) {
+    for (BillEntity bill : repository.getAll(profileId, phone, status, type, start, end, code)) {
       var dto = Maper.getInstance().BillEntityToBillDTO(bill);
       dto.setCreateBy(profileRepository.findFirstById(dto.getProfileId()));
       res.add(dto);
@@ -105,15 +111,15 @@ public class BillServiceImpl implements BillService {
         var imei = billDetailImeiRepository.findAllByBillDetailIdOrderByIdAsc(detailres.getId());
         detailres.setProductCode(product.getCode());
         detailres.setProductName(product.getName());
-        detailres.setImei(imei.stream().map(entity->entity.getImei()).collect(Collectors.toList()));
+        detailres.setImei(imei.stream().map(entity -> entity.getImei()).collect(Collectors.toList()));
         if (product.getAvatarUrl() != null) {
           detailres.setProductAvatar(product.getAvatarUrl());
         }
         detailResponses.add(detailres);
       }
       ProfileEntity modifiedBy = new ProfileEntity();
-      if(bill.getModifiedBy()!=null){
-       modifiedBy = profileRepository.findFirstById(bill.getModifiedBy());
+      if (bill.getModifiedBy() != null) {
+        modifiedBy = profileRepository.findFirstById(bill.getModifiedBy());
       }
       BillDTO billDTO = Maper.getInstance().BillEntityToBillDTO(bill);
       billDTO.setBillDetail(detailResponses);
@@ -141,7 +147,7 @@ public class BillServiceImpl implements BillService {
       var prod = productRepository.findFirstById(billDetail.getProductId());
       if (prod == null) {
         return new ResponseWrapper(EnumResponse.NOT_FOUND, billDetail, "sản phẩm này hiện không còn tồn tại trong hệ thống!");
-      }else if(prod.getStatus().equals(ProductEnum.PAUSE.name())){
+      } else if (prod.getStatus().equals(ProductEnum.PAUSE.name())) {
         return new ResponseWrapper(EnumResponse.FAIL, billDetail.getProductId(), "sản phẩm này hiện đã ngừng kinh doanh!");
 
       }
@@ -150,6 +156,7 @@ public class BillServiceImpl implements BillService {
     billDTO.setCreatedDate(LocalDateTime.now());
     billDTO.setModifiedDate(LocalDateTime.now());
     billDTO.setModifiedBy(ProfileEntity.builder().id(profile.getId()).build());
+    billDTO.setCode(this.getSaltString());
     var billres = repository.save(Maper.getInstance().BillDTOToBillEntity(billDTO));
     List<BillDetailResponse> detailResponseList = new ArrayList<>();
     if (billres.getId() != null) {
@@ -179,7 +186,7 @@ public class BillServiceImpl implements BillService {
     var products = billDTO.getBillDetail();
     for (BillDetailResponse billDetail : products) {
       var pr = productRepository.findFirstById(billDetail.getProductId());
-      if(pr.getStatus().equals(ProductEnum.PAUSE.name())){
+      if (pr.getStatus().equals(ProductEnum.PAUSE.name())) {
         return new ResponseWrapper(EnumResponse.FAIL, billDetail.getProductId(),
             "sản phẩm này hiện đã ngừng kinh doanh!");
       }
@@ -212,6 +219,7 @@ public class BillServiceImpl implements BillService {
     billDTO.setCreatedDate(LocalDateTime.now());
     billDTO.setModifiedDate(LocalDateTime.now());
     billDTO.setModifiedBy(ProfileEntity.builder().id(profile.getId()).build());
+    billDTO.setCode(this.getSaltString());
     var billres = repository.save(Maper.getInstance().BillDTOToBillEntity(billDTO));
     clearShoppingCartByProduct(billDTO.getBillDetail());
     List<BillDetailResponse> detailResponseList = new ArrayList<>();
@@ -235,7 +243,7 @@ public class BillServiceImpl implements BillService {
       }
       //        //gửi thông báo tới toàn bộ adminUser
       List<ProfileEntity> moderators = profileRepository.getAllProfileByRoles(
-          new ArrayList<>(List.of(RoleEnum.ADMIN,RoleEnum.EMPLOYEE,RoleEnum.SUPERADMIN)));
+          new ArrayList<>(List.of(RoleEnum.ADMIN, RoleEnum.EMPLOYEE, RoleEnum.SUPERADMIN)));
 
       JsonObject params = new JsonObject();
       params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
@@ -243,7 +251,7 @@ public class BillServiceImpl implements BillService {
       notificationService.createNotification(NotificationRequest.builder()
           .senderId(profile.getId())
           .profileId(moderators.stream().map(ProfileEntity::getId).collect(Collectors.toList()))
-          .body(String.format("%s đã tạo một đơn hàng mới! ", profile.getFistName()+" "+profile.getLastName()))
+          .body(String.format("%s đã tạo một đơn hàng mới! ", profile.getFistName() + " " + profile.getLastName()))
           .params(params)
           .title("Vừa có một đơn hàng mới !")
           .build());
@@ -270,17 +278,17 @@ public class BillServiceImpl implements BillService {
   @Override
   public ResponseWrapper updateStatus(Long billId, String status, String reason) {
     var requestProfile = profileRepository.findFirstById(Long.parseLong(token.sub("id")));
-    if(Objects.isNull(requestProfile)){
+    if (Objects.isNull(requestProfile)) {
       return new ResponseWrapper(EnumResponse.NOT_FOUND, Long.parseLong(token.sub("id")), "Không thể tìm thấy user này!");
     }
     var bill = repository.findFirstById(billId);
     if (bill != null) {
       if (!bill.getStatus().equals(BillStatusEnum.COMPLETED.name()) && !bill.getStatus().equals(BillStatusEnum.CANCELED.name())) {
         List<BillDetailEntity> list = billDetailRepository.findAllByBillId(bill.getId());
-        switch (BillStatusEnum.valueOf(status)){
+        switch (BillStatusEnum.valueOf(status)) {
           case VERIFIED:
             //bắn thông báo cho user
-            if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+            if (!bill.getProfileId().equals(Long.parseLong(token.sub("id")))) {
               //        //gửi thông báo tới user đặt hàng
               JsonObject params = new JsonObject();
               params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
@@ -288,14 +296,14 @@ public class BillServiceImpl implements BillService {
               notificationService.createNotification(NotificationRequest.builder()
                   .senderId(Long.parseLong(token.sub("id")))
                   .profileId(List.of(bill.getProfileId()))
-                  .body(String.format("Đơn hàng %s đã được xác nhận!", bill.getId()))
+                  .body(String.format("Đơn hàng %s đã được xác nhận!", bill.getCode()))
                   .params(params)
                   .title("Tên cửa hàng!")
                   .build());
             }
             break;
           case INPROGRESS:
-            if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+            if (!bill.getProfileId().equals(Long.parseLong(token.sub("id")))) {
               //        //gửi thông báo tới user đặt hàng
               JsonObject params = new JsonObject();
               params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
@@ -303,7 +311,7 @@ public class BillServiceImpl implements BillService {
               notificationService.createNotification(NotificationRequest.builder()
                   .senderId(Long.parseLong(token.sub("id")))
                   .profileId(List.of(bill.getProfileId()))
-                  .body(String.format("Đơn hàng %s đang được giao!", bill.getId()))
+                  .body(String.format("Đơn hàng %s đang được giao!",  bill.getCode()))
                   .params(params)
                   .title("Tên cửa hàng!")
                   .build());
@@ -315,7 +323,7 @@ public class BillServiceImpl implements BillService {
               prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());
             }
             //bắn thông báo cho user
-            if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+            if (!bill.getProfileId().equals(Long.parseLong(token.sub("id")))) {
               //        //gửi thông báo tới user đặt hàng
               JsonObject params = new JsonObject();
               params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
@@ -323,7 +331,7 @@ public class BillServiceImpl implements BillService {
               notificationService.createNotification(NotificationRequest.builder()
                   .senderId(Long.parseLong(token.sub("id")))
                   .profileId(List.of(bill.getProfileId()))
-                  .body(String.format("Đơn hàng %s đã được giao thành công!", bill.getId()))
+                  .body(String.format("Đơn hàng %s đã được giao thành công!",  bill.getCode()))
                   .params(params)
                   .title("Tên cửa hàng!")
                   .build());
@@ -332,14 +340,14 @@ public class BillServiceImpl implements BillService {
           case CANCELED:
             for (BillDetailEntity billDetail : list) {
               var prod = productRepository.findFirstById(billDetail.getProductId());
-              Long newQuantity= prod.getQuantity() + billDetail.getQuantity();
-              if(newQuantity>0){
+              Long newQuantity = prod.getQuantity() + billDetail.getQuantity();
+              if (newQuantity > 0) {
                 prod.setStatus(ProductEnum.ACTIVE.name());
               }
               prod.setQuantity(newQuantity);
               productRepository.save(prod);
             }
-            if(!bill.getProfileId().equals(Long.parseLong(token.sub("id")))){
+            if (!bill.getProfileId().equals(Long.parseLong(token.sub("id")))) {
               //        gửi thông báo tới user đặt hàng
               JsonObject params = new JsonObject();
               params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
@@ -347,7 +355,7 @@ public class BillServiceImpl implements BillService {
               notificationService.createNotification(NotificationRequest.builder()
                   .senderId(Long.parseLong(token.sub("id")))
                   .profileId(List.of(bill.getProfileId()))
-                  .body(String.format("Đơn hàng %s đã bị hủy!", bill.getId()))
+                  .body(String.format("Đơn hàng %s đã bị hủy!",  bill.getCode()))
                   .params(params)
                   .title("Tên cửa hàng!")
                   .build());
@@ -355,7 +363,7 @@ public class BillServiceImpl implements BillService {
             break;
           case CANCELED_REQUEST:
             List<ProfileEntity> moderators = profileRepository.getAllProfileByRoles(
-                new ArrayList<>(List.of(RoleEnum.ADMIN,RoleEnum.EMPLOYEE,RoleEnum.SUPERADMIN)));
+                new ArrayList<>(List.of(RoleEnum.ADMIN, RoleEnum.EMPLOYEE, RoleEnum.SUPERADMIN)));
             ProfileEntity profile = profileRepository.findFirstById(Long.parseLong(token.sub("id")));
             JsonObject params = new JsonObject();
             params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
@@ -363,7 +371,7 @@ public class BillServiceImpl implements BillService {
             notificationService.createNotification(NotificationRequest.builder()
                 .senderId(profile.getId())
                 .profileId(moderators.stream().map(ProfileEntity::getId).collect(Collectors.toList()))
-                .body(String.format("%s đã yêu cầu hủy đơn hàng %s! ", profile.getFistName()+" "+profile.getLastName(), billId))
+                .body(String.format("%s đã yêu cầu hủy đơn hàng %s! ", profile.getFistName() + " " + profile.getLastName(),  bill.getCode()))
                 .params(params)
                 .title("Vừa có một yêu cầu hủy đơn !")
                 .build());
@@ -433,8 +441,35 @@ public class BillServiceImpl implements BillService {
 
 
   private BillDetailResponse saveDetail(BillDetailResponse detailResponse) {
+    var profile = profileRepository.findFirstById(Long.parseLong(token.sub("id")));
     var entity = Maper.getInstance().ToBillDetailEntity(detailResponse);
     var res = billDetailRepository.save(entity);
+    if (Objects.nonNull(profile)&& !CollectionUtils.isEmpty(detailResponse.getImei())) {
+      for (String imei:  detailResponse.getImei()) {
+        billDetailImeiRepository.save(BillDetailImeiEntity.builder()
+            .imei(imei)
+            .billDetailId(res.getId())
+            .createdBy(profile.getId())
+            .createdDate(LocalDateTime.now())
+            .modifiedBy(profile.getId())
+            .modifiedDate(LocalDateTime.now())
+            .build());
+      }
+    }
     return Maper.getInstance().DetailEntityToResponse(res);
+  }
+
+  private String getSaltString() {
+    ZonedDateTime zdt = LocalDateTime.now().atZone(ZoneId.of("Asia/Ho_Chi_Minh"));
+    long millis = zdt.toInstant().toEpochMilli();
+    String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    StringBuilder salt = new StringBuilder();
+    Random rnd = new Random();
+    while (salt.length() < 10) { // length of the random string.
+      int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+      salt.append(SALTCHARS.charAt(index));
+    }
+    String saltStr = salt.toString();
+    return saltStr+millis;
   }
 }

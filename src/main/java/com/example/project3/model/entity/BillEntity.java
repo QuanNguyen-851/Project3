@@ -49,5 +49,6 @@ public class BillEntity {
   private LocalDateTime modifiedDate;
   private String reason;
   private Long modifiedBy;
+  private String code;
 
 }
