@@ -286,6 +286,26 @@ public class BillServiceImpl implements BillService {
       if (!bill.getStatus().equals(BillStatusEnum.COMPLETED.name()) && !bill.getStatus().equals(BillStatusEnum.CANCELED.name())) {
         List<BillDetailEntity> list = billDetailRepository.findAllByBillId(bill.getId());
         switch (BillStatusEnum.valueOf(status)) {
+          case VERIFYING:
+            if(BillStatusEnum.valueOf(bill.getStatus()).equals(BillStatusEnum.CANCELED_REQUEST)){
+              List<ProfileEntity> moderators = profileRepository.getAllProfileByRoles(
+                  new ArrayList<>(List.of(RoleEnum.ADMIN, RoleEnum.EMPLOYEE, RoleEnum.SUPERADMIN)));
+              ProfileEntity profile = profileRepository.findFirstById(Long.parseLong(token.sub("id")));
+              JsonObject params = new JsonObject();
+              params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+              params.addProperty("billId", bill.getId());
+              notificationService.createNotification(NotificationRequest.builder()
+                  .senderId(profile.getId())
+                  .profileId(moderators.stream().map(ProfileEntity::getId).collect(Collectors.toList()))
+                  .body(String.format("%s đã xóa yêu cầu hủy đơn hàng %s! ", profile.getFistName() + " " + profile.getLastName(),  bill.getCode()))
+                  .params(params)
+                  .title("Thông báo !")
+                  .build());
+            }else {
+              return new ResponseWrapper(EnumResponse.FAIL, Long.parseLong(token.sub("id")),
+                  "Đơn hàng này đang không ở trạng thái đang chờ duyệt yêu cầu hủy!");
+            }
+            break;
           case VERIFIED:
             //bắn thông báo cho user
             if (!bill.getProfileId().equals(Long.parseLong(token.sub("id")))) {
@@ -298,7 +318,7 @@ public class BillServiceImpl implements BillService {
                   .profileId(List.of(bill.getProfileId()))
                   .body(String.format("Đơn hàng %s đã được xác nhận!", bill.getCode()))
                   .params(params)
-                  .title("Tên cửa hàng!")
+                  .title("Nhị Quân Store !")
                   .build());
             }
             break;
@@ -313,7 +333,7 @@ public class BillServiceImpl implements BillService {
                   .profileId(List.of(bill.getProfileId()))
                   .body(String.format("Đơn hàng %s đang được giao!",  bill.getCode()))
                   .params(params)
-                  .title("Tên cửa hàng!")
+                  .title("Nhị Quân Store !")
                   .build());
             }
             break;
@@ -333,7 +353,7 @@ public class BillServiceImpl implements BillService {
                   .profileId(List.of(bill.getProfileId()))
                   .body(String.format("Đơn hàng %s đã được giao thành công!",  bill.getCode()))
                   .params(params)
-                  .title("Tên cửa hàng!")
+                  .title("Nhị Quân Store !")
                   .build());
             }
             break;
@@ -357,7 +377,7 @@ public class BillServiceImpl implements BillService {
                   .profileId(List.of(bill.getProfileId()))
                   .body(String.format("Đơn hàng %s đã bị hủy!",  bill.getCode()))
                   .params(params)
-                  .title("Tên cửa hàng!")
+                  .title("Nhị Quân Store !")
                   .build());
             }
             break;
