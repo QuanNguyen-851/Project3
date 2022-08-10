@@ -35,10 +35,11 @@ public class BillController {
       @RequestParam(value = "status", required = false) String status,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "startDate", required = false) Date startDate,
-      @RequestParam(value = "endDate", required = false) Date endDate
+      @RequestParam(value = "endDate", required = false) Date endDate,
+      @RequestParam(value = "imei" , required = false) String imei
 
   ) {
-    return new ResponseEntity<>(service.getAll(profileId, phone, status, type, startDate, endDate, code), HttpStatus.OK);
+    return new ResponseEntity<>(service.getAll(profileId, phone, status, type, startDate, endDate, code, imei), HttpStatus.OK);
   }
 
   @GetMapping("/getById")

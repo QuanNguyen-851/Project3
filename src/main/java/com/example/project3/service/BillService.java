@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BillService {
 
-  List<BillDTO> getAll(Long profileId,String phone,String status,String type, Date startDate,Date endDate, String code);
+  List<BillDTO> getAll(Long profileId,String phone,String status,String type, Date startDate,Date endDate, String code,String imei);
 
   BillDTO getById(Long billId);
 

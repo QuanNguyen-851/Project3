@@ -80,7 +80,7 @@ public class BillServiceImpl implements BillService {
   private BillDetailImeiRepository billDetailImeiRepository;
 
   @Override
-  public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate, String code) {
+  public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate, String code, String imei) {
 
     LocalDateTime end = LocalDateTime.now();
     LocalDateTime start = end.minusMonths(5);
@@ -91,7 +91,7 @@ public class BillServiceImpl implements BillService {
       end = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
     List<BillDTO> res = new ArrayList<>();
-    for (BillEntity bill : repository.getAll(profileId, phone, status, type, start, end, code)) {
+    for (BillEntity bill : repository.getAll(profileId, phone, status, type, start, end, code, imei)) {
       var dto = Maper.getInstance().BillEntityToBillDTO(bill);
       dto.setCreateBy(profileRepository.findFirstById(dto.getProfileId()));
       res.add(dto);

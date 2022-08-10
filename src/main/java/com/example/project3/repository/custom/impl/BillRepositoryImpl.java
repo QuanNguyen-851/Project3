@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.thymeleaf.util.StringUtils;
 
 public class BillRepositoryImpl implements BillRepositoryCustom {
 
@@ -17,27 +18,34 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
 
   @Override
   public List<BillEntity> getAll(Long profileId, String phone, String status,
-      String type, LocalDateTime startDate, LocalDateTime endDate, String code) {
+      String type, LocalDateTime startDate, LocalDateTime endDate, String code, String imei) {
     var sql = new StringBuilder();
-    sql.append("select * from b_bill \n"
-        + "where id > 0\n");
+    sql.append("select * from b_bill b \n");
+    if(!StringUtils.isEmpty(imei)){
+      sql.append("inner join bd_bill_detail bd on bd.bill_id = b.id ");
+      sql.append("inner join bd_bill_detail_imei bdi on bd.id = bdi.bill_detail_id ");
+    }
+    sql.append("where b.id > 0\n");
+    if(!StringUtils.isEmpty(imei)){
+      sql.append("and bdi.imei = :imei ");
+    }
     if (profileId != null) {
-      sql.append("and profile_id = :profileId\n");
+      sql.append("and b.profile_id = :profileId\n");
     }
     if (phone != null) {
-      sql.append("and phone = :phone\n");
+      sql.append("and b.phone = :phone\n");
     }
     if (status != null) {
-      sql.append("and status = :status\n");
+      sql.append("and b.status = :status\n");
     }
     if (type != null) {
-      sql.append("and type = :type\n");
+      sql.append("and b.type = :type\n");
     }
     if (code != null) {
-      sql.append("and code = :code\n");
+      sql.append("and b.code = :code\n");
     }
-    sql.append(" and (created_date <= :endDate  and created_date>= :startDate ) ");
-    sql.append("ORDER BY id DESC");
+    sql.append(" and (b.created_date <= :endDate  and b.created_date>= :startDate ) ");
+    sql.append("ORDER BY b.id DESC");
     var query = entityManager.createNativeQuery(sql.toString(), BillEntity.class);
 
     if (profileId != null) {
@@ -54,6 +62,9 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     }
     if (code != null) {
       query.setParameter("code", code);
+    }
+    if(!StringUtils.isEmpty(imei)){
+      query.setParameter("imei", imei);
     }
     query.setParameter("endDate", endDate);
     query.setParameter("startDate", startDate);
@@ -82,7 +93,7 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     if (type != null) {
       query.setParameter("type", type);
     }
-    if(month!=null) {
+    if (month != null) {
       query.setParameter("month", month);
     }
     return Long.parseLong(query.getSingleResult().toString());
@@ -93,10 +104,10 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     var sql = new StringBuilder();
     sql.append("select * "
         + "from b_bill where ");
-    if(month.startsWith("00")){
-     month = month.substring(month.lastIndexOf("-")+1);
+    if (month.startsWith("00")) {
+      month = month.substring(month.lastIndexOf("-") + 1);
       sql.append("to_char(created_date, 'YYYY') = :month ");
-    }else {
+    } else {
       sql.append("to_char(created_date, 'MM-YYYY') = :month ");
     }
     if (status != null) {
