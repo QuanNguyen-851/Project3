@@ -7,5 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface WarrantyHistoryRepositoryCustom {
 
-  List<WarrantyHistoryEntity> getListHistoryEntity(String searchKey, Long profileId,  WarrantyHistoryStatus status);
+  List<WarrantyHistoryEntity> getListHistoryEntity(String searchKey, String imei,  WarrantyHistoryStatus status);
+
+  List<String> getListImei(String searchKey,  WarrantyHistoryStatus status);
 }

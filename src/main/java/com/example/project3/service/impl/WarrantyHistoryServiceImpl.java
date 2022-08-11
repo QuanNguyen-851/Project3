@@ -2,6 +2,7 @@ package com.example.project3.service.impl;
 
 import com.example.project3.Common.Maper;
 import com.example.project3.Common.Token;
+import com.example.project3.model.dto.WarrantyHistoryDetail;
 import com.example.project3.model.dto.WarrantyHistoryResponse;
 import com.example.project3.model.entity.WarrantyHistoryEntity;
 import com.example.project3.model.entity.WarrantyHistoryEntity.WarrantyHistoryStatus;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
@@ -41,15 +43,29 @@ public class WarrantyHistoryServiceImpl implements WarrantyHistoryService {
   private ProfileRepository profileRepository;
 
   @Override
-  public List<WarrantyHistoryResponse> getWarrantyHistory(String searchKey, Long profileId, WarrantyHistoryStatus status) {
-    var sdf = profileService.getById(1L);
-    var entity = warrantyHistoryRepository.getListHistoryEntity(searchKey, profileId, status);
-    List<WarrantyHistoryResponse> val = new ArrayList<>();
-    for (WarrantyHistoryEntity item : entity) {
-      var dto = Maper.getInstance().toWarrantyHistoryResponse(item);
-      dto.setProduct(productService.getDetail(dto.getProduct().getId()));
-      dto.setProfile(profileService.getById(dto.getProfile().getId()));
-      val.add(dto);
+  public List<WarrantyHistoryResponse> getWarrantyHistory(String searchKey, WarrantyHistoryStatus status) {
+    var imeis = warrantyHistoryRepository.getListImei(searchKey, status);
+    var val = new ArrayList<WarrantyHistoryResponse>();
+    for (String imei : imeis) {
+      var list = warrantyHistoryRepository.getListHistoryEntity(searchKey, imei, status);
+
+      val.add(WarrantyHistoryResponse.builder()
+          .imei(imei)
+          .product(productService.getDetail(list.get(0).getProductId()))
+          .data(list.stream().map(item -> {
+            var profile = profileService.getById(item.getCreatedBy());
+            return WarrantyHistoryDetail
+                .builder()
+                .id(item.getId())
+                .productCondition(item.getProductCondition())
+                .status(WarrantyHistoryStatus.valueOf(item.getStatus()))
+                .surcharge(item.getSurcharge())
+                .createdDate(item.getCreatedDate())
+                .createdBy(item.getCreatedBy())
+                .createByName(profile.getFistName() + " " + profile.getLastName())
+                .build();
+          }).collect(Collectors.toList()))
+          .build());
     }
     return val;
   }
@@ -67,7 +83,6 @@ public class WarrantyHistoryServiceImpl implements WarrantyHistoryService {
     if (Objects.isNull(entity.getImei()) || Objects.isNull(entity.getProductId())) {
       return new ResponseWrapper(EnumResponse.FAIL, null, String.format("imei hoặc productId không dược để trống "));
     }
-    entity.setUserId(profile.getId());
     entity.setCreatedBy(myId);
     entity.setModifiedBy(myId);
     entity.setCreatedDate(LocalDateTime.now());

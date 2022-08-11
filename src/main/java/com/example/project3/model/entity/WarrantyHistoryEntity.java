@@ -30,7 +30,6 @@ public class WarrantyHistoryEntity {
   private Long id;
   private String imei;
   private Long productId;
-  private Long userId;
   private String productCondition;
   private String status;
   private Long surcharge;
@@ -38,4 +37,7 @@ public class WarrantyHistoryEntity {
   private LocalDateTime modifiedDate;
   private Long createdBy;
   private Long modifiedBy;
+  private String userPhone;
+  private String userName;
+  private String userAddress;
 }

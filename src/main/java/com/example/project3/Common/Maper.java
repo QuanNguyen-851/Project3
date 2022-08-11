@@ -102,20 +102,4 @@ public class Maper {
         .build();
   }
 
-  public WarrantyHistoryResponse toWarrantyHistoryResponse(WarrantyHistoryEntity entity){
-    ProductResponse prod = new ProductResponse();
-    prod.setId(entity.getProductId());
-    ProfileEntity profile = new ProfileEntity();
-    profile.setId(entity.getUserId());
-    return WarrantyHistoryResponse.builder()
-        .id(entity.getId())
-        .imei(entity.getImei())
-        .product(prod)
-        .profile(profile)
-        .status(WarrantyHistoryStatus.valueOf(entity.getStatus()))
-        .surcharge(entity.getSurcharge())
-        .createdDate(entity.getCreatedDate())
-        .productCondition(entity.getProductCondition())
-        .build();
-  }
 }

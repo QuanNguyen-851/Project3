@@ -29,11 +29,11 @@ public class WarrantyHistoryController {
   @GetMapping("/getall")
   private ResponseEntity<List<WarrantyHistoryResponse>> getAll(
 
-      @RequestParam(value = "searchKey", required = false) String searchKey,
-      @RequestParam(value = "profileId", required = false) Long profileId,
+      @RequestParam(value = "phone", required = false) String phone,
+//      @RequestParam(value = "profileId", required = false) Long profileId,
       @RequestParam(value = "status", required = false) WarrantyHistoryStatus status
       ) {
-    return new ResponseEntity<>(warrantyHistoryService.getWarrantyHistory(searchKey, profileId, status), HttpStatus.OK);
+    return new ResponseEntity<>(warrantyHistoryService.getWarrantyHistory(phone, status), HttpStatus.OK);
   }
 
   @PostMapping("/create")

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface WarrantyHistoryService {
 
-  List<WarrantyHistoryResponse> getWarrantyHistory(String searchKey,Long profileId,  WarrantyHistoryStatus status);
+  List<WarrantyHistoryResponse> getWarrantyHistory(String searchKey,  WarrantyHistoryStatus status);
 
   ResponseWrapper createWarrantyHistory(WarrantyHistoryEntity entity);
 }
