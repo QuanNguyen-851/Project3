@@ -44,11 +44,12 @@ public class WarrantyHistoryRepositoryCustomImpl implements WarrantyHistoryRepos
   }
 
   @Override
-  public List<String> getListImei(String searchKey, WarrantyHistoryStatus status) {
+  public List<WarrantyHistoryEntity> getListImei(String searchKey, WarrantyHistoryStatus status) {
     HashMap<String, Object> params = new HashMap<>();
     var sql = new StringBuilder();
-    sql.append("select DISTINCT(pwh.imei) from p_warranty_history pwh ");
-    sql.append("Where pwh.id > 0 ");
+    sql.append("select pwh.* from p_warranty_history pwh where id in(select max(id) as id "
+        + "                                             from p_warranty_history GROUP BY imei) ");
+//    sql.append("Where pwh.id > 0 ");
     if(!StringUtils.isEmpty(searchKey)){
       sql.append("pwh.user_phone = :phone");
       params.put("phone", searchKey);
@@ -57,13 +58,13 @@ public class WarrantyHistoryRepositoryCustomImpl implements WarrantyHistoryRepos
       sql.append("and pwh.status = :status ");
       params.put("status", status.toString());
     }
-    sql.append("Order by pwh.imei ASC ");
+    sql.append("Order by pwh.id DESC ");
 
-    var query = entityManager.createNativeQuery(sql.toString());
+    var query = entityManager.createNativeQuery(sql.toString(), WarrantyHistoryEntity.class);
     for (var paramKey : params.keySet()) {
       query.setParameter(paramKey, params.get(paramKey));
     }
-    List<String> list = query.getResultList();
+    List<WarrantyHistoryEntity> list = query.getResultList();
     return list;
   }
 }

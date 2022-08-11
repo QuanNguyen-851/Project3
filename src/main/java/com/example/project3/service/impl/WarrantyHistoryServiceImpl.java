@@ -46,12 +46,12 @@ public class WarrantyHistoryServiceImpl implements WarrantyHistoryService {
   public List<WarrantyHistoryResponse> getWarrantyHistory(String searchKey, WarrantyHistoryStatus status) {
     var imeis = warrantyHistoryRepository.getListImei(searchKey, status);
     var val = new ArrayList<WarrantyHistoryResponse>();
-    for (String imei : imeis) {
-      var list = warrantyHistoryRepository.getListHistoryEntity(searchKey, imei, status);
+    for (WarrantyHistoryEntity imei : imeis) {
+      var list = warrantyHistoryRepository.getListHistoryEntity(searchKey, imei.getImei(), status);
 
       val.add(WarrantyHistoryResponse.builder()
-          .imei(imei)
-          .product(productService.getDetail(list.get(0).getProductId()))
+          .imei(imei.getImei())
+          .product(productService.getDetail(imei.getProductId()))
           .data(list.stream().map(item -> {
             var profile = profileService.getById(item.getCreatedBy());
             return WarrantyHistoryDetail
