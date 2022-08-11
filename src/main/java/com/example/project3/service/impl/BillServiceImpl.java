@@ -79,6 +79,9 @@ public class BillServiceImpl implements BillService {
   @Autowired
   private BillDetailImeiRepository billDetailImeiRepository;
 
+  @Autowired
+  private BillDetailImeiServiceImpl billDetailImeiServiceImpl;
+
   @Override
   public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate, String code, String imei) {
 
@@ -132,6 +135,7 @@ public class BillServiceImpl implements BillService {
 
   @Override
   public ResponseWrapper create(BillDTO billDTO) {
+
     var er = EnumResponse.FAIL;
     if (billDTO.getBillDetail().isEmpty() || billDTO.getBillDetail() == null) {
       er.setResponseMessage("không có sản phẩm nào trong giỏ hàng à? ");
@@ -144,6 +148,10 @@ public class BillServiceImpl implements BillService {
       billDTO.setStatus(BillStatusEnum.COMPLETED.name());
     }
     for (BillDetailResponse billDetail : billDTO.getBillDetail()) {
+      var isValidImei=  billDetailImeiServiceImpl.areAllUnique(billDetail.getImei());
+      if(!isValidImei){
+        return new ResponseWrapper(EnumResponse.FAIL,billDetail, "imei phải là duy nhất !");
+      }
       var prod = productRepository.findFirstById(billDetail.getProductId());
       if (prod == null) {
         return new ResponseWrapper(EnumResponse.NOT_FOUND, billDetail, "sản phẩm này hiện không còn tồn tại trong hệ thống!");
@@ -185,6 +193,10 @@ public class BillServiceImpl implements BillService {
     }
     var products = billDTO.getBillDetail();
     for (BillDetailResponse billDetail : products) {
+      var isValidImei=  billDetailImeiServiceImpl.areAllUnique(billDetail.getImei());
+      if(!isValidImei){
+        return new ResponseWrapper(EnumResponse.FAIL,billDetail, "imei phải là duy nhất !");
+      }
       var pr = productRepository.findFirstById(billDetail.getProductId());
       if (pr.getStatus().equals(ProductEnum.PAUSE.name())) {
         return new ResponseWrapper(EnumResponse.FAIL, billDetail.getProductId(),

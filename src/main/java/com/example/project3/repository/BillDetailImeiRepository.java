@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface BillDetailImeiRepository extends JpaRepository<BillDetailImeiEntity, Long> {
 
   List<BillDetailImeiEntity> findAllByBillDetailIdOrderByIdAsc(Long billDetailId);
+
+  BillDetailImeiEntity findFirstByImei(String imei);
 }

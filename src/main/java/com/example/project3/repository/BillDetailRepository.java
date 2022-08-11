@@ -9,4 +9,5 @@ public interface BillDetailRepository extends JpaRepository<BillDetailEntity, Lo
   List<BillDetailEntity> findAllByBillId(Long billId);
 
   BillDetailEntity findFirstById(Long id);
+
 }

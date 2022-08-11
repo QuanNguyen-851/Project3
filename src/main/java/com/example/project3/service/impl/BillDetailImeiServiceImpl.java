@@ -10,6 +10,12 @@ import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillDetailImeiService;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +52,9 @@ public class BillDetailImeiServiceImpl implements BillDetailImeiService {
        if(profile==null){
          return new ResponseWrapper(EnumResponse.NOT_FOUND,token.sub("id"), "token error !");
        }
+       if(!areAllUnique(request.getImei())){
+         return new ResponseWrapper(EnumResponse.FAIL,request.getImei(), "imei phải là duy nhất !");
+       }
       var val =  request.getImei().stream()
            .map(imeiString-> repository.save(
            BillDetailImeiEntity.builder()
@@ -58,5 +67,18 @@ public class BillDetailImeiServiceImpl implements BillDetailImeiService {
                .build())).collect(Collectors.toList());
     return new ResponseWrapper(EnumResponse.SUCCESS, val);
 
+  }
+
+  public boolean areAllUnique(List<String> imei){
+    if(imei==null){
+      return true;
+    }
+    Set<String> set = new HashSet<>();
+    for (String t: imei){
+      var exist = repository.findFirstByImei(t);
+      if (!set.add(t)|| Objects.nonNull(exist))
+        return false;
+    }
+    return true;
   }
 }
