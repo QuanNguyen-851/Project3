@@ -7,4 +7,6 @@ import com.example.project3.response.ResponseWrapper;
 public interface BillDetailImeiService {
 
   ResponseWrapper create(BillDetailImeiRequest request);
+
+  Boolean isExistEmei(String imei);
 }

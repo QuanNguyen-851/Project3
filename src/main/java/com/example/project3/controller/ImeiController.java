@@ -32,4 +32,10 @@ public class ImeiController {
   ) {
     return new ResponseEntity<>(billDetailImeiService.create(request), HttpStatus.OK);
   }
+
+  @PostMapping("/isExist")
+  private ResponseEntity<Boolean> isExist(
+      @RequestParam String imei) {
+    return new ResponseEntity<>(billDetailImeiService.isExistEmei(imei), HttpStatus.OK);
+  }
 }

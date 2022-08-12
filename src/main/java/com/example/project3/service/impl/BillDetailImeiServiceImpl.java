@@ -10,6 +10,7 @@ import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillDetailImeiService;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -67,6 +68,12 @@ public class BillDetailImeiServiceImpl implements BillDetailImeiService {
                .build())).collect(Collectors.toList());
     return new ResponseWrapper(EnumResponse.SUCCESS, val);
 
+  }
+
+  @Override
+  public Boolean isExistEmei(String imei) {
+    var isUnique = areAllUnique(Arrays.asList(imei));
+    return (isUnique)?false:true;
   }
 
   public boolean areAllUnique(List<String> imei){
