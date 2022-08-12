@@ -89,4 +89,24 @@ public class WarrantyHistoryServiceImpl implements WarrantyHistoryService {
     entity.setModifiedDate(LocalDateTime.now());
     return new ResponseWrapper(EnumResponse.SUCCESS, warrantyHistoryRepository.save(entity));
   }
+
+  @Override
+  public ResponseWrapper update(WarrantyHistoryEntity entity, Long id) {
+    Long myId = Long.parseLong(token.sub("id"));
+    if (Objects.isNull(myId)) {
+      return new ResponseWrapper(EnumResponse.NOT_FOUND, myId, "không tìm thấy người dùng này!");
+    }
+    var profile = profileService.getById(myId);
+    if (Objects.isNull(profile)) {
+      return new ResponseWrapper(EnumResponse.NOT_FOUND, myId, "không tìm thấy người dùng này!");
+    }
+
+    var res = warrantyHistoryRepository.findFirstById(id);
+    if(Objects.isNull(res)){
+      return new ResponseWrapper(EnumResponse.NOT_FOUND, myId, "không tìm lịch sử bảo hành này!");
+    }
+
+    warrantyHistoryRepository.updateCondition(entity.getProductCondition(), id);
+    return new ResponseWrapper(EnumResponse.SUCCESS, res.getId());
+  }
 }

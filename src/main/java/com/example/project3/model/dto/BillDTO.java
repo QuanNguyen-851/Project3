@@ -12,6 +12,8 @@ import lombok.Setter;
 @Setter
 @Builder
 public class BillDTO {
+  private Long totalCompletedPrice;
+  private Long totalInComingPrice;
   private Long id;
   private Long profileId;
   private Long voucherId;

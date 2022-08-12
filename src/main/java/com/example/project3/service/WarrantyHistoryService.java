@@ -13,4 +13,6 @@ public interface WarrantyHistoryService {
   List<WarrantyHistoryResponse> getWarrantyHistory(String searchKey,  WarrantyHistoryStatus status);
 
   ResponseWrapper createWarrantyHistory(WarrantyHistoryEntity entity);
+
+  ResponseWrapper update(WarrantyHistoryEntity entity, Long warrantyHistoryId);
 }

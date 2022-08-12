@@ -27,7 +27,7 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
     if (name != null) {
       sql.append("and lower(name) LIKE :name");
     }
-    sql.append(" ORDER BY cc.id DESC ");
+    sql.append(" ORDER BY cc.name DESC, cc.id DESC ");
     var query = entityManager.createNativeQuery(sql.toString(), CategoryEntity.class);
     if (status != null) {
       query.setParameter("status", status);

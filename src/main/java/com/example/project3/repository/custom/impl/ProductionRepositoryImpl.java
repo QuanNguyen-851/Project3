@@ -26,7 +26,7 @@ public class ProductionRepositoryImpl implements ProductionRepositoryCustom {
     if (name != null) {
       sql.append("and lower(name) LIKE :name");
     }
-    sql.append(" ORDER BY pp.id DESC ");
+    sql.append(" ORDER BY pp.name DESC, pp.id DESC ");
     var query = entityManager.createNativeQuery(sql.toString(), ProductionEntity.class);
     if (status != null) {
       query.setParameter("status", status);
