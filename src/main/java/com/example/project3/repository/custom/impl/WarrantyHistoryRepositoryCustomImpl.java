@@ -16,14 +16,14 @@ public class WarrantyHistoryRepositoryCustomImpl implements WarrantyHistoryRepos
   @PersistenceContext
   private EntityManager entityManager;
   @Override
-  public List<WarrantyHistoryEntity> getListHistoryEntity(String searchKey, String imei, WarrantyHistoryStatus status) {
+  public List<WarrantyHistoryEntity> getListHistoryEntity(String phone, String imei, WarrantyHistoryStatus status) {
     HashMap<String, Object> params = new HashMap<>();
     var sql = new StringBuilder();
     sql.append("select pwh.* from p_warranty_history pwh ");
     sql.append("Where pwh.id > 0 ");
-    if(!StringUtils.isEmpty(searchKey)){
-      sql.append("pwh.user_phone = :phone");
-      params.put("phone", searchKey);
+    if(!StringUtils.isEmpty(phone)){
+      sql.append("and pwh.user_phone = :phone ");
+      params.put("phone", phone);
     }
     if(imei != null){
       sql.append("and pwh.imei = :imei ");
@@ -35,6 +35,7 @@ public class WarrantyHistoryRepositoryCustomImpl implements WarrantyHistoryRepos
     }
     sql.append("Order by pwh.id DESC ");
 
+//    System.out.println(sql);
     var query = entityManager.createNativeQuery(sql.toString(), WarrantyHistoryEntity.class);
     for (var paramKey : params.keySet()) {
       query.setParameter(paramKey, params.get(paramKey));
@@ -44,22 +45,23 @@ public class WarrantyHistoryRepositoryCustomImpl implements WarrantyHistoryRepos
   }
 
   @Override
-  public List<WarrantyHistoryEntity> getListImei(String searchKey, WarrantyHistoryStatus status) {
+  public List<WarrantyHistoryEntity> getListImei(String phone, WarrantyHistoryStatus status) {
     HashMap<String, Object> params = new HashMap<>();
     var sql = new StringBuilder();
     sql.append("select pwh.* from p_warranty_history pwh where id in(select max(id) as id "
-        + "                                             from p_warranty_history GROUP BY imei) ");
+        + " from p_warranty_history GROUP BY imei) ");
 //    sql.append("Where pwh.id > 0 ");
-    if(!StringUtils.isEmpty(searchKey)){
-      sql.append("pwh.user_phone = :phone");
-      params.put("phone", searchKey);
+    if(!StringUtils.isEmpty(phone)){
+      sql.append(" and pwh.user_phone = :phone ");
+      params.put("phone", phone);
     }
     if(!Objects.isNull(status)){
       sql.append("and pwh.status = :status ");
       params.put("status", status.toString());
     }
-    sql.append("Order by pwh.id DESC ");
+    sql.append(" Order by pwh.id DESC ");
 
+    System.out.println(sql);
     var query = entityManager.createNativeQuery(sql.toString(), WarrantyHistoryEntity.class);
     for (var paramKey : params.keySet()) {
       query.setParameter(paramKey, params.get(paramKey));
