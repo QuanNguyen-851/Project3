@@ -3,6 +3,7 @@ package com.example.project3.service.impl;
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.CategoryEntity;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.repository.CategoryRepository;
 import com.example.project3.repository.ProductRepository;
 import com.example.project3.response.EnumResponse;
@@ -26,9 +27,9 @@ public class CategoryServiceImpl implements CategoryService {
   private ProductRepository productRepository;
 
   @Override
-  public List<CategoryEntity> getAllCategory(String status, String name) {
+  public List<CategoryEntity> getAllCategory(String status, String name, SortByEnum sortByEnum) {
 
-    var res = categoryRepository.getAll(status, name);
+    var res = categoryRepository.getAll(status, name, sortByEnum);
     for (CategoryEntity cate : res) {
       var count = 0L;
       for (ProductEntity prodEntity : productRepository.findAllByCategoryId(cate.getId())) {

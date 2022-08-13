@@ -2,6 +2,7 @@ package com.example.project3.controller;
 
 import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.CategoryEntity;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.CategoryService;
@@ -46,10 +47,11 @@ public class CategoryController {
   @GetMapping("/getall")
   private ResponseEntity<List<CategoryEntity>> getAll(
       @RequestParam(value = "status", required = false) String status,
-      @RequestParam(value = "name", required = false) String name
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "sortBy", required = false) SortByEnum sortByEnum
   ) {
     return new ResponseEntity<>(
-        categoryService.getAllCategory(status, name), HttpStatus.OK);
+        categoryService.getAllCategory(status, name, sortByEnum), HttpStatus.OK);
   }
 
   @PutMapping("/update")

@@ -3,6 +3,7 @@ package com.example.project3.service.impl;
 import com.example.project3.model.entity.ProductEntity;
 import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.ProductionEntity;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.repository.CategoryRepository;
 import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProductionRepository;
@@ -24,9 +25,10 @@ public class ProductionServiceImpl implements ProductionService {
   @Override
   public List<ProductionEntity> getAll(
       String status,
-      String name
+      String name,
+      SortByEnum sortByEnum
   ) {
-    var res= productionRepository.getAll(status, name);
+    var res= productionRepository.getAll(status, name, sortByEnum);
     for (ProductionEntity production: res) {
       var count = 0L;
       for (ProductEntity prodEntity : productRepository.findAllByProductionId(production.getId())) {

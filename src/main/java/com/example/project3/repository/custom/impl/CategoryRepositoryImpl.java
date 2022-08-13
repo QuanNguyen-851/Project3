@@ -2,6 +2,7 @@ package com.example.project3.repository.custom.impl;
 
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.model.entity.ProductResponse;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.repository.custom.CategoryRepositoryCustom;
 import java.util.List;
 import java.util.Locale;
@@ -16,7 +17,7 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
   private Session session;
 
   @Override
-  public List<CategoryEntity> getAll(String status, String name) {
+  public List<CategoryEntity> getAll(String status, String name, SortByEnum sortByEnum) {
     StringBuilder sql = new StringBuilder();
     sql.append("select cc.* from c_category cc \n"
         + "where\n"
@@ -27,7 +28,11 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
     if (name != null) {
       sql.append("and lower(name) LIKE :name");
     }
-    sql.append(" ORDER BY cc.name DESC, cc.id DESC ");
+    if(sortByEnum.equals(SortByEnum.NAME)){
+    sql.append(" ORDER BY cc.name ASC, cc.id DESC ");
+    }else {
+      sql.append("ORDER BY cc.id DESC ");
+    }
     var query = entityManager.createNativeQuery(sql.toString(), CategoryEntity.class);
     if (status != null) {
       query.setParameter("status", status);

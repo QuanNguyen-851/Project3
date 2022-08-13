@@ -3,6 +3,7 @@ package com.example.project3.repository.custom.impl;
 import com.example.project3.model.dto.CategoryProductResponse;
 import com.example.project3.model.entity.CategoryEntity;
 import com.example.project3.model.entity.ProductionEntity;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.repository.custom.ProductionRepositoryCustom;
 import java.util.List;
 import java.util.Locale;
@@ -15,7 +16,7 @@ public class ProductionRepositoryImpl implements ProductionRepositoryCustom {
   private EntityManager entityManager;
 
   @Override
-  public List<ProductionEntity> getAll(String status, String name) {
+  public List<ProductionEntity> getAll(String status, String name, SortByEnum sortByEnum) {
     StringBuilder sql = new StringBuilder();
     sql.append("select pp.* from p_production pp \n"
         + "where\n"
@@ -26,7 +27,11 @@ public class ProductionRepositoryImpl implements ProductionRepositoryCustom {
     if (name != null) {
       sql.append("and lower(name) LIKE :name");
     }
-    sql.append(" ORDER BY pp.name DESC, pp.id DESC ");
+    if(sortByEnum.equals(SortByEnum.NAME)) {
+      sql.append(" ORDER BY pp.name ASC, pp.id DESC ");
+    }else{
+      sql.append(" ORDER BY pp.id DESC ");
+    }
     var query = entityManager.createNativeQuery(sql.toString(), ProductionEntity.class);
     if (status != null) {
       query.setParameter("status", status);

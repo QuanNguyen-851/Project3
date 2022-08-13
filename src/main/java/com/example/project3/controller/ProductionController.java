@@ -2,6 +2,7 @@ package com.example.project3.controller;
 
 import com.example.project3.model.enumpk.DisableStatus;
 import com.example.project3.model.entity.ProductionEntity;
+import com.example.project3.model.enumpk.SortByEnum;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.ProductionService;
@@ -22,9 +23,11 @@ public class ProductionController {
   @GetMapping("/getall")
   private ResponseEntity<List<ProductionEntity>> getAll(
       @RequestParam(value = "status", required = false) String status,
-      @RequestParam(value = "name", required = false) String name
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "sortBy", required = false) SortByEnum sortByEnum
+
   ) {
-    return new ResponseEntity<>(productionService.getAll(status, name), HttpStatus.OK);
+    return new ResponseEntity<>(productionService.getAll(status, name, sortByEnum), HttpStatus.OK);
   }
 
   @PostMapping("/create")
