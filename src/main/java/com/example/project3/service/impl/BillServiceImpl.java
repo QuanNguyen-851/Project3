@@ -356,6 +356,22 @@ public class BillServiceImpl implements BillService {
             }
             //bắn thông báo cho user
             if (!bill.getProfileId().equals(Long.parseLong(token.sub("id")))) {
+              if(requestProfile.getRole().equals(RoleEnum.USER.name())){
+                //        //gửi thông báo tới toàn bộ adminUser
+                List<ProfileEntity> moderators = profileRepository.getAllProfileByRoles(
+                    new ArrayList<>(List.of(RoleEnum.ADMIN, RoleEnum.EMPLOYEE, RoleEnum.SUPERADMIN)));
+
+                JsonObject params = new JsonObject();
+                params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
+                params.addProperty("billId", bill.getId());
+                notificationService.createNotification(NotificationRequest.builder()
+                    .senderId(requestProfile.getId())
+                    .profileId(moderators.stream().map(ProfileEntity::getId).collect(Collectors.toList()))
+                    .body(String.format("Đơn hàng %s đã được giao thành công ! ", bill.getCode()))
+                    .params(params)
+                    .title("Thông báo !")
+                    .build());
+              }else{
               //        //gửi thông báo tới user đặt hàng
               JsonObject params = new JsonObject();
               params.addProperty("Redirect", RedirectEnum.DETAIL_PAGE.name());
@@ -367,6 +383,7 @@ public class BillServiceImpl implements BillService {
                   .params(params)
                   .title("Nhị Quân Store !")
                   .build());
+              }
             }
             break;
           case CANCELED:
