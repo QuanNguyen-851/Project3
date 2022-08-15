@@ -91,18 +91,23 @@ public class ProductServiceImpl implements ProductService {
         maxPrice
     );
 
-    for (ProductResponse item: res
+    for (ProductResponse item : res
     ) {
-      var profileCreate = profileRepository.findFirstById(item.getCreatedBy());
-      var profileModified = profileRepository.findFirstById(item.getModifiedBy());
+      if (item.getCreatedBy() != null) {
+        var profileCreate = profileRepository.findFirstById(item.getCreatedBy());
+        item.setCreatedByName(profileCreate.getFistName() + profileCreate.getLastName());
 
+      }
+      if (item.getModifiedBy() != null) {
+        var profileModified = profileRepository.findFirstById(item.getModifiedBy());
+        item.setModifiedByName(profileModified.getFistName() + profileModified.getLastName());
+      }
       var sale = saleRepository.findFirstByProductId(item.getId());
       var now = LocalDateTime.now();
-      if( sale!=null&& now.isAfter(sale.getStartDate())&& now.isBefore(sale.getEndDate())){
+      if (sale != null && now.isAfter(sale.getStartDate()) && now.isBefore(sale.getEndDate())) {
         item.setSaleEntity(sale);
       }
-      item.setCreatedByName(profileCreate.getFistName()+profileCreate.getLastName());
-      item.setModifiedByName(profileModified.getFistName()+profileModified.getLastName());
+
     }
     return res;
 
@@ -111,12 +116,12 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public List<CategoryProductResponse> userGetAll() {
     var listCate = categoryRepository.getALlCateHasProd();
-    if(CollectionUtils.isEmpty(listCate)){
+    if (CollectionUtils.isEmpty(listCate)) {
       return new ArrayList<>();
     }
     return listCate.stream()
         .map(categoryEntity -> {
-          var listProd = getAll(ProductEnum.ACTIVE.name(), null, null, categoryEntity.getId(), null,null, 10L, null, null, null, null);
+          var listProd = getAll(ProductEnum.ACTIVE.name(), null, null, categoryEntity.getId(), null, null, 10L, null, null, null, null);
           return CategoryProductResponse.builder()
               .categoryId(categoryEntity.getId())
               .categoryName(categoryEntity.getName())
@@ -130,20 +135,20 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ProductResponse getDetail(Long id) {
 //    try {
-      var product = repository.getProductById(id);
-      var createprofile = profileRepository.getById(product.getCreatedBy());
-      var modifiedprofile = profileRepository.getById(product.getModifiedBy());
-      var sale = saleRepository.findFirstByProductId(id);
-      var now = LocalDateTime.now();
-      if( sale!=null&& now.isAfter(sale.getStartDate())&& now.isBefore(sale.getEndDate())){
-        product.setSaleEntity(sale);
-      }
-      product.setListInformation(productInformationRepository.findAllByProductId(id));
-      product.setListImage(imageRepository.getProductImageByIdProduct(id));
-      product.setCreatedByName(createprofile.getFistName() + createprofile.getLastName());
-      product.setModifiedByName(modifiedprofile.getFistName() + modifiedprofile.getLastName());
+    var product = repository.getProductById(id);
+    var createprofile = profileRepository.getById(product.getCreatedBy());
+    var modifiedprofile = profileRepository.getById(product.getModifiedBy());
+    var sale = saleRepository.findFirstByProductId(id);
+    var now = LocalDateTime.now();
+    if (sale != null && now.isAfter(sale.getStartDate()) && now.isBefore(sale.getEndDate())) {
+      product.setSaleEntity(sale);
+    }
+    product.setListInformation(productInformationRepository.findAllByProductId(id));
+    product.setListImage(imageRepository.getProductImageByIdProduct(id));
+    product.setCreatedByName(createprofile.getFistName() + createprofile.getLastName());
+    product.setModifiedByName(modifiedprofile.getFistName() + modifiedprofile.getLastName());
 
-      return product;
+    return product;
 //    } catch (Exception e) {
 //      return new ProductResponse();
 //    }
@@ -173,7 +178,7 @@ public class ProductServiceImpl implements ProductService {
 //    ProductEntity newProduct = repository.getNewProduct();
     ProductEntity newProduct = repository.save(productEntity);
     newProduct.setCode(sortName + newProduct.getId());
-    var saved= repository.save(newProduct);
+    var saved = repository.save(newProduct);
     ImportProductEntity importProductEntity = new ImportProductEntity();
     importProductEntity.setProductId(saved.getId());
     importProductEntity.setImportQuantity(saved.getQuantity());
@@ -221,34 +226,34 @@ public class ProductServiceImpl implements ProductService {
   public ResponseWrapper update(ProductDTO request) {
     if (request.getId() != null) {
 //      try {
-        ProductEntity productResponse = repository.getById(request.getId());
-        ProductEntity productupdate = new ProductEntity();
-        productupdate.setId(request.getId());
-        productupdate.setCode(productResponse.getCode());
-        productupdate.setName(request.getName());
-        productupdate.setDescription(request.getDescription());
-        productupdate.setCategoryId(request.getCategoryId());
-        productupdate.setProductionId(request.getProductionId());
-        productupdate.setSalePrice(request.getSalePrice());
-        productupdate.setImportPrice(request.getImportPrice());
-        productupdate.setDiscount(request.getDiscount());
-        productupdate.setQuantity(request.getQuantity());
-        productupdate.setWarranty(request.getWarranty());
-        productupdate.setStatus(request.getStatus());
-        productupdate.setAvatarUrl(request.getAvatarUrl());
-        productupdate.setCreatedDate(productResponse.getCreatedDate());
-        productupdate.setModifiedDate(LocalDateTime.now());
-        productupdate.setCreatedBy(productResponse.getCreatedBy());
-        productupdate.setModifiedBy(Long.parseLong(token.sub("id")));
-        importProductService.update(productResponse.getId(), request.getImportPrice(),request.getQuantity(), request.getModifiedBy());
-        repository.save(productupdate);
-        for (ProductInformationEntity itemUpdate : request.getListInformation()) {
-          this.updateProductInfor(itemUpdate, request.getId());
-        }
-        for (ImageEntity imageUpdate : request.getListImage()) {
-          this.updateImage(imageUpdate, request.getId(), imageUpdate.getId());
-        }
-        return new ResponseWrapper(EnumResponse.SUCCESS, request);
+      ProductEntity productResponse = repository.getById(request.getId());
+      ProductEntity productupdate = new ProductEntity();
+      productupdate.setId(request.getId());
+      productupdate.setCode(productResponse.getCode());
+      productupdate.setName(request.getName());
+      productupdate.setDescription(request.getDescription());
+      productupdate.setCategoryId(request.getCategoryId());
+      productupdate.setProductionId(request.getProductionId());
+      productupdate.setSalePrice(request.getSalePrice());
+      productupdate.setImportPrice(request.getImportPrice());
+      productupdate.setDiscount(request.getDiscount());
+      productupdate.setQuantity(request.getQuantity());
+      productupdate.setWarranty(request.getWarranty());
+      productupdate.setStatus(request.getStatus());
+      productupdate.setAvatarUrl(request.getAvatarUrl());
+      productupdate.setCreatedDate(productResponse.getCreatedDate());
+      productupdate.setModifiedDate(LocalDateTime.now());
+      productupdate.setCreatedBy(productResponse.getCreatedBy());
+      productupdate.setModifiedBy(Long.parseLong(token.sub("id")));
+      importProductService.update(productResponse.getId(), request.getImportPrice(), request.getQuantity(), request.getModifiedBy());
+      repository.save(productupdate);
+      for (ProductInformationEntity itemUpdate : request.getListInformation()) {
+        this.updateProductInfor(itemUpdate, request.getId());
+      }
+      for (ImageEntity imageUpdate : request.getListImage()) {
+        this.updateImage(imageUpdate, request.getId(), imageUpdate.getId());
+      }
+      return new ResponseWrapper(EnumResponse.SUCCESS, request);
 //      } catch (Exception e) {
 //        return new ResponseWrapper(EnumResponse.NOT_FOUND, null);
 //      }
@@ -311,12 +316,12 @@ public class ProductServiceImpl implements ProductService {
         return new ResponseWrapper(EnumResponse.FAIL, produ);
       }
       Long newQuantity = produ.getQuantity() + number;
-      if(newQuantity==0){
+      if (newQuantity == 0) {
         this.updateStatus(productId, ProductEnum.EMPTY.name());
       }
       produ.setQuantity(newQuantity);
       var res = repository.save(produ);
-      if(res!=null && res.getQuantity()>0){
+      if (res != null && res.getQuantity() > 0) {
         this.updateStatus(productId, ProductEnum.ACTIVE.name());
       }
       return new ResponseWrapper(EnumResponse.SUCCESS, res);
