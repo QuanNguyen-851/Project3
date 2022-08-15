@@ -93,11 +93,16 @@ public class ProductServiceImpl implements ProductService {
 
     for (ProductResponse item: res
     ) {
+      var profileCreate = profileRepository.findFirstById(item.getCreatedBy());
+      var profileModified = profileRepository.findFirstById(item.getModifiedBy());
+
       var sale = saleRepository.findFirstByProductId(item.getId());
       var now = LocalDateTime.now();
       if( sale!=null&& now.isAfter(sale.getStartDate())&& now.isBefore(sale.getEndDate())){
         item.setSaleEntity(sale);
       }
+      item.setCreatedByName(profileCreate.getFistName()+profileCreate.getLastName());
+      item.setModifiedByName(profileModified.getFistName()+profileModified.getLastName());
     }
     return res;
 
