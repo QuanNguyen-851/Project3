@@ -1,6 +1,7 @@
 package com.example.project3.repository.custom.impl;
 
 import com.example.project3.model.entity.BillEntity;
+import com.example.project3.model.entity.BillEntity.BillStatusEnum;
 import com.example.project3.model.entity.TopEmployee;
 import com.example.project3.repository.BillRepository;
 import com.example.project3.repository.custom.BillRepositoryCustom;
@@ -45,7 +46,11 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
       sql.append("and b.code = :code\n");
     }
     sql.append(" and (b.created_date <= :endDate  and b.created_date>= :startDate ) ");
-    sql.append("ORDER BY b.id DESC");
+    if (type != null &&  type.equals(BillStatusEnum.VERIFYING.toString())) {
+      sql.append("ORDER BY b.total_price DESC, b.id ASC ");
+    }else{
+      sql.append("ORDER BY b.id DESC");
+    }
     var query = entityManager.createNativeQuery(sql.toString(), BillEntity.class);
 
     if (profileId != null) {

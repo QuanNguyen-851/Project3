@@ -16,4 +16,7 @@ public class VoucherDTO {
   private Boolean isPercent;
   private LocalDate startDate;
   private LocalDate endDate;
+  private Long minPrice;
+  private Long quantity;
+
 }

@@ -27,6 +27,7 @@ import com.example.project3.repository.ProductRepository;
 import com.example.project3.repository.ProfileRepository;
 import com.example.project3.repository.BillDetailRepository;
 import com.example.project3.repository.ShoppingCartRepository;
+import com.example.project3.repository.VoucherRepository;
 import com.example.project3.response.EnumResponse;
 import com.example.project3.response.ResponseWrapper;
 import com.example.project3.service.BillService;
@@ -82,6 +83,8 @@ public class BillServiceImpl implements BillService {
   @Autowired
   private BillDetailImeiServiceImpl billDetailImeiServiceImpl;
 
+  @Autowired
+  private VoucherRepository voucherRepository;
   @Override
   public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate, String code, String imei) {
 
@@ -160,6 +163,18 @@ public class BillServiceImpl implements BillService {
 
       }
     }
+    if(billDTO.getVoucherId()!=null){
+      var voucher = voucherRepository.findFirstById(billDTO.getVoucherId());
+      if(voucher.getQuantity()<=1){
+        return new ResponseWrapper(EnumResponse.FAIL, voucher.getKey(), "đã hết! ");
+      }
+      if(voucher.getMinPrice()>billDTO.getTotalPrice()){
+        return new ResponseWrapper(EnumResponse.FAIL, voucher.getMinPrice(), String.format("voucher %s có giá trị đơn hàng tối thiểu là %s ", voucher.getKey(), voucher.getMinPrice()));
+      }
+      voucher.setQuantity(voucher.getQuantity()-1);
+      voucher.setModifiedDate(LocalDateTime.now());
+      voucherRepository.save(voucher);
+    }
     billDTO.setProfileId(Long.parseLong(token.sub("id")));
     billDTO.setCreatedDate(LocalDateTime.now());
     billDTO.setModifiedDate(LocalDateTime.now());
@@ -179,6 +194,7 @@ public class BillServiceImpl implements BillService {
         prodSoldService.saveProdSold(billDetail.getProductId(), billDetail.getQuantity());
       }
     }
+
     var billResponse = Maper.getInstance().BillEntityToBillDTO(billres);
     billResponse.setBillDetail(detailResponseList);
     return new ResponseWrapper(EnumResponse.SUCCESS, billResponse);

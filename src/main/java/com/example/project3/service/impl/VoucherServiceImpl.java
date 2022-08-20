@@ -40,6 +40,16 @@ public class VoucherServiceImpl implements VoucherService {
       voucherEntity.setDiscountPrice(voucherDTO.getDiscountPrice());
       voucherEntity.setPercentage(voucherDTO.getPercentage());
       voucherEntity.setIsPercent(voucherDTO.getIsPercent());
+      if(voucherDTO.getMinPrice()==null){
+        voucherEntity.setMinPrice(0L);
+      }else{
+        voucherEntity.setMinPrice(voucherDTO.getMinPrice());
+      }
+      if(voucherDTO.getQuantity()==null){
+        voucherEntity.setQuantity(0L);
+      }else{
+        voucherEntity.setQuantity(voucherDTO.getQuantity());
+      }
       var start = voucherDTO.getStartDate();
       var end = voucherDTO.getEndDate();
       voucherEntity.setStartDate(start.atStartOfDay());
@@ -75,6 +85,8 @@ public class VoucherServiceImpl implements VoucherService {
       voucherEntity.setDiscountPrice(voucherDTO.getDiscountPrice());
       voucherEntity.setPercentage(voucherDTO.getPercentage());
       voucherEntity.setIsPercent(voucherDTO.getIsPercent());
+      voucherEntity.setMinPrice(voucherDTO.getMinPrice()==null?0L:voucherDTO.getMinPrice());
+      voucherEntity.setQuantity(voucherDTO.getQuantity()==null?0L:voucherDTO.getQuantity());
       var start = voucherDTO.getStartDate();
       var end = voucherDTO.getEndDate();
       voucherEntity.setStartDate(start.atStartOfDay());

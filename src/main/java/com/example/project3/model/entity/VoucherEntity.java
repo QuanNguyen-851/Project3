@@ -26,5 +26,7 @@ public class VoucherEntity {
   private LocalDateTime endDate;
   private LocalDateTime createdDate;
   private LocalDateTime modifiedDate;
+  private Long minPrice;
+  private Long quantity;
 
 }
