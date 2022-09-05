@@ -89,7 +89,7 @@ public class BillServiceImpl implements BillService {
   public List<BillDTO> getAll(Long profileId, String phone, String status, String type, Date startDate, Date endDate, String code, String imei) {
 
     LocalDateTime end = LocalDateTime.now();
-    LocalDateTime start = end.minusMonths(5);
+    LocalDateTime start = end.minusMonths(12*5);
     if (startDate != null) {
       start = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
