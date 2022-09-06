@@ -26,7 +26,7 @@ public class VoucherRepositoryImpl implements VoucherRepositoryCustom {
     if (name != null) {
       sql.append("and lower(name) LIKE :name");
     }
-    sql.append(" order by v.key Asc ");
+    sql.append(" order by v.id ESC ");
     var query = entityManager.createNativeQuery(sql.toString(), VoucherEntity.class);
     if (key != null) {
       query.setParameter("key", key);
